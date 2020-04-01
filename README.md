@@ -14,4 +14,5 @@ nombre | version
 [arelux_partner_questionnaire](arelux_partner_questionnaire/) | 10.0.1.0.0
 [arelux_sage](arelux_sage/) | 10.0.1.0.0
 [arelux_sale_reports](arelux_sale_reports/) | 10.0.1.0.0
+[survey_arelux_datawarehouse](survey_arelux_datawarehouse/) | 10.0.1.0.0
 [weather_arelux](weather_arelux/) | 10.0.1.0.0
