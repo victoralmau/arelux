@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="fire_drill_decision_form_view" model="ir.ui.view">
+            <field name="name">Decision simulacro</field>
+            <field name="model">fire.drill.decision</field>
+            <field name="arch" type="xml">
+                <form string="Decision simulacro">                    
+                    <sheet string="child">                        
+                        <group>
+                            <field name="fire_drill_id" invisible="1"/>
+                            <field name="responsible_id" required="True"/>                            
+                            <field name="close_measurement" required="True"/>                                                                                 
+                        </group>
+                    </sheet>                    
+                </form>                
+            </field>
+        </record>                           
+        <record id="fire_drill_decision_tree" model="ir.ui.view">
+            <field name="name">Decisiones simulacros</field>
+            <field name="model">fire.drill.decision</field>            
+            <field name="arch" type="xml">
+                <tree string="Decisiones simulacros">
+                    <field name="fire_drill_id"/>
+                    <field name="responsible_id"/>
+                    <field name="close_measurement"/>                                        
+                </tree>
+            </field>            
+        </record>                
+        <record model="ir.actions.act_window" id="fire_drill_decision_action">
+            <field name="name">Decisiones simulacros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fire.drill.decision</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fire_drill_decision_tree"/>
+        </record>                        
+    </data>
+</openerp>

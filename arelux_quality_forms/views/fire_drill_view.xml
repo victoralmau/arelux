@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="fire_drill_form_view" model="ir.ui.view">
+            <field name="name">Simulacro</field>
+            <field name="model">fire.drill</field>
+            <field name="arch" type="xml">
+                <form string="Simulacro">                    
+                    <sheet string="child">                        
+                        <group>
+                            <field name="date" required="True"/>
+                            <field name="emergency_type" required="True"/>                            
+                            <field name="drill"/>                            
+                            <field name="description" required="True" />
+                            <field name="teams_must_act" required="True" />
+                            <field name="internal_communications" required="True" />
+                            <field name="description_causes" required="True" />
+                            <field name="description_consequences" required="True" />
+                            <field name="general_description_intervention_performed" required="True" />                            
+                            <field name="fire_drill_decision_ids">
+                                <tree editable="bottom">
+                                    <field name="responsible_id" required="True"/>
+                                    <field name="term_date" required="True"/>
+                                    <field name="close_measurement" required="True"/>                                                                        
+                                </tree>
+                            </field>                                                     
+                        </group>
+                    </sheet>                    
+                </form>                
+            </field>
+        </record>                           
+        <record id="fire_drill_tree" model="ir.ui.view">
+            <field name="name">Simulacros</field>
+            <field name="model">fire.drill</field>            
+            <field name="arch" type="xml">
+                <tree string="Simulacros">
+                    <field name="date"/>
+                    <field name="emergency_type"/>
+                    <field name="drill"/>                                        
+                </tree>
+            </field>            
+        </record>                
+        <record model="ir.actions.act_window" id="fire_drill_action">
+            <field name="name">Simulacros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fire.drill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fire_drill_tree"/>
+        </record>                        
+    </data>
+</openerp>

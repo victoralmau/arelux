@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="maintenance_installation_form_view" model="ir.ui.view">
+            <field name="name">Mantenimiento instalacion</field>
+            <field name="model">maintenance.installation</field>
+            <field name="arch" type="xml">
+                <form string="Mantenimiento instalacion">
+                    <header>
+                        <field name="state" widget="statusbar" clickable="True"/>
+                    </header>                    
+                    <sheet string="child">                        
+                        <group>
+                            <field name="date" required="True"/>                            
+                            <field name="maintenance_installation_need_check_id" required="True"/>
+                            <field name="incidence"/>
+                            <field name="solution"/>
+                            <field name="user_id"/>
+                            <field name="close_measurement"/>                                                                                                             
+                        </group>
+                    </sheet>                    
+                </form>                
+            </field>
+        </record>                           
+        <record id="maintenance_installation_tree" model="ir.ui.view">
+            <field name="name">Mantenimiento instalaciones</field>
+            <field name="model">maintenance.installation</field>            
+            <field name="arch" type="xml">
+                <tree string="Mantenimiento instalaciones">
+                    <field name="date"/>
+                    <field name="maintenance_installation_need_check_id"/>                    
+                    <field name="user_id"/>
+                    <field name="state"/>                                                                                
+                </tree>
+            </field>            
+        </record>                
+        <record model="ir.actions.act_window" id="maintenance_installation_action">
+            <field name="name">Mantenimiento instalaciones</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maintenance.installation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="maintenance_installation_tree"/>
+        </record>                        
+    </data>
+</openerp>
