@@ -33,78 +33,20 @@ id | arelux_sale_report_template_id | arelux_sale_report_type_id | position | ar
 
 ### arelux.sale.report.type
 
-<record id="arelux_sale_report_type_data_1" model="arelux.sale.report.type">
-<field name="id">1</field>
-<field name="name">Ventas (Base Imponible)</field>
-<field name="custom_type">sale_order_done_amount_untaxed</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_2" model="arelux.sale.report.type">
-<field name="id">2</field>
-<field name="name">Ventas (Cuenta)</field>
-<field name="custom_type">sale_order_done_count</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_3" model="arelux.sale.report.type">
-<field name="id">3</field>
-<field name="name">Ventas (Ticket medio)</field>
-<field name="custom_type">sale_order_ticket_medio</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_4" model="arelux.sale.report.type">
-<field name="id">4</field>
-<field name="name">Ptos realizados (Cuenta)</field>
-<field name="custom_type">sale_order_sent_count</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_5" model="arelux.sale.report.type">
-<field name="id">5</field>
-<field name="name">Muestras enviadas (Cuenta)</field>
-<field name="custom_type">sale_order_done_muestras</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_6" model="arelux.sale.report.type">
-<field name="id">6</field>
-<field name="name">Ratio muestras</field>
-<field name="custom_type">ratio_muestras</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_7" model="arelux.sale.report.type">
-<field name="id">7</field>
-<field name="name">Ratio calidad</field>
-<field name="custom_type">ratio_calidad</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_8" model="arelux.sale.report.type">
-<field name="id">8</field>
-<field name="name">Contactos pontenciales (Cuenta)</field>
-<field name="custom_type">res_partner_potencial_count</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_9" model="arelux.sale.report.type">
-<field name="id">9</field>
-<field name="name">Cartera Actual activa (Cuenta)</field>
-<field name="custom_type">cartera_actual_activa_count</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_10" model="arelux.sale.report.type">
-<field name="id">10</field>
-<field name="name">Cartera Actual (Cuenta)</field>
-<field name="custom_type">cartera_actual_count</field>
-<field name="group_by_user">True</field>
-</record>
-<record id="arelux_sale_report_type_data_11" model="arelux.sale.report.type">
-<field name="id">11</field>
-<field name="name">Nuevos clientes con ventas</field>
-<field name="custom_type">nuevos_clientes_con_ventas</field>
-<field name="group_by_user">False</field>
-</record>
-<record id="arelux_sale_report_type_data_12" model="arelux.sale.report.type">
-<field name="id">12</field>
-<field name="name">Salto de linea</field>
-<field name="custom_type">line_break</field>
-<field name="group_by_user">False</field>
-</record>
+id | name | custom_type | group_by_user
+--- | --- | --- | ---
+1 | Ventas (Base Imponible) | sale_order_done_amount_untaxed | True
+2 | Ventas (Cuenta) | sale_order_done_count | True
+3 | Ventas (Ticket medio) | sale_order_ticket_medio | True
+4 | Ptos realizados (Cuenta) | sale_order_sent_count | True
+5 | Muestras enviadas (Cuenta) | sale_order_done_muestras | True
+6 | Ratio muestras | ratio_muestras | True
+7 | Ratio calidad | ratio_calidad | True
+8 | Contactos pontenciales (Cuenta) | res_partner_potencial_count | True
+9 | Cartera Actual activa (Cuenta) | cartera_actual_activa_count | True
+10 | Cartera Actual (Cuenta) | cartera_actual_count | True
+11 | Nuevos clientes con ventas | nuevos_clientes_con_ventas | False
+12 | Salto de linea | line_break | False
 
 
 En el apartado Ventas > Configuración se añade el apartado "Arelux Reporte de ventas" con los siguientes apartados:
