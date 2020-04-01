@@ -32,315 +32,64 @@ nombre | name | filter_company | filter_ar_qt_customer_type | position | other
 4 | Otro | arelux | profesional | 3 | False
 
 ### res.partner.reason.install
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Ahorra tiempo (regar, cortar, etc.) | todocesped | particular | 0 | False
+2 | Ahorra dinero / agua | todocesped | particular | 1 | False
+3 | Decoración | todocesped | particular | 2 | False
+4 | Seguridad (niños, zonas de juegos, etc) | todocesped | particular | 3 | False
+5 | Otro | todocesped | particular | 4 | True
 
-<record id="res_partner_reason_install_data_1" model="res.partner.reason.install">
-<field name="id">1</field>
-<field name="name">Ahorra tiempo (regar, cortar, etc.)</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_install_data_2" model="res.partner.reason.install">
-<field name="id">2</field>
-<field name="name">Ahorra dinero / agua</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_install_data_3" model="res.partner.reason.install">
-<field name="id">3</field>
-<field name="name">Decoración</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_install_data_4" model="res.partner.reason.install">
-<field name="id">4</field>
-<field name="name">Seguridad (niños, zonas de juegos, etc)</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_install_data_5" model="res.partner.reason.install">
-<field name="id">5</field>
-<field name="name">Otro</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">4</field>
-<field name="other">True</field>
-</record>
- 
+### res.partner.specific.segment
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Comunidad de vecinos | todocesped | particular | 0 | False
+2 | Decoración | todocesped | particular | 1 | False
+3 | Mascota | todocesped | particular | 2 | False
+4 | Niños | todocesped | particular | 3 | False
+5 | Piscina (de obra, hinchable, agua salada...) | todocesped | particular | 4 | False
+6 | Otro | todocesped | particular | 5 | True
 
-res.partner.specific.segment
+### res.partner.stock.capacity
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Tiene almacen (espacio) | all | profesional | 0 | False
+2 | Tiene capacidad finaciera (liquidez) | all | profesional | 1 | False
+3 | No | all | profesional | 2 | False
 
-<record id="res_partner_specific_segment_data_1" model="res.partner.specific.segment">
-<field name="id">1</field>
-<field name="name">Comunidad de vecinos</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_specific_segment_data_2" model="res.partner.specific.segment">
-<field name="id">2</field>
-<field name="name">Decoración</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_specific_segment_data_3" model="res.partner.specific.segment">
-<field name="id">3</field>
-<field name="name">Mascota</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_specific_segment_data_4" model="res.partner.specific.segment">
-<field name="id">4</field>
-<field name="name">Niños</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_specific_segment_data_5" model="res.partner.specific.segment">
-<field name="id">5</field>
-<field name="name">Piscina (de obra, hinchable, agua salada...)</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">4</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_specific_segment_data_6" model="res.partner.specific.segment">
-<field name="id">6</field>
-<field name="name">Otro</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">5</field>
-<field name="other">True</field>
-</record>
- 
+### res.partner.type.customer.sale
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Profesionales | all | all | 0 | False
+2 | Particulares | all | all | 1 | False
+3 | No vende | all | all | 2 | False
 
-res.partner.stock.capacity
+### res.partner.type.surface
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Tierra | todocesped | particular | 1 | False
+2 | Hormigón / Cemento | todocesped | particular | 3 | False
+3 | Baldosa | todocesped | particular | 4 | False
+4 | Otro | todocesped | particular | 5 | True
+5 | Cesped natural | todocesped | particular | 2 | False
 
-<record id="res_partner_stock_capacity_data_1" model="res.partner.stock.capacity">
-<field name="id">1</field>
-<field name="name">Tiene almacen (espacio)</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_stock_capacity_data_2" model="res.partner.stock.capacity">
-<field name="id">2</field>
-<field name="name">Tiene capacidad finaciera (liquidez)</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_stock_capacity_data_3" model="res.partner.stock.capacity">
-<field name="id">3</field>
-<field name="name">No</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
- 
-
-res.partner.type.customer.sale
-
-<record id="res_partner_type_customer_sale_data_1" model="res.partner.type.customer.sale">
-<field name="id">1</field>
-<field name="name">Profesionales</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_customer_sale_data_2" model="res.partner.type.customer.sale">
-<field name="id">2</field>
-<field name="name">Particulares</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_customer_sale_data_3" model="res.partner.type.customer.sale">
-<field name="id">3</field>
-<field name="name">No vende</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
- 
-
-res.partner.type.surface
-
-<record id="res_partner_type_surface_data_1" model="res.partner.type.surface">
-<field name="id">1</field>
-<field name="name">Tierra</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_surface_data_5" model="res.partner.type.surface">
-<field name="id">5</field>
-<field name="name">Cesped natural</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_surface_data_2" model="res.partner.type.surface">
-<field name="id">2</field>
-<field name="name">Hormigón / Cemento</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_surface_data_3" model="res.partner.type.surface">
-<field name="id">3</field>
-<field name="name">Baldosa</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">4</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_type_surface_data_4" model="res.partner.type.surface">
-<field name="id">4</field>
-<field name="name">Otro</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">5</field>
-<field name="other">True</field>
-</record>
- 
-
-res.partner.valuation.thing
-
-<record id="res_partner_valuation_thing_data_1" model="res.partner.valuation.thing">
-<field name="id">1</field>
-<field name="name">Calidad (ensayos, certificados, propiedades)</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_2" model="res.partner.valuation.thing">
-<field name="id">2</field>
-<field name="name">Calidad - Precio</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_3" model="res.partner.valuation.thing">
-<field name="id">3</field>
-<field name="name">Precio</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_4" model="res.partner.valuation.thing">
-<field name="id">4</field>
-<field name="name">Servicio (muestras, rapidez, entrega, instalacion, asesoramiento...)</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_5" model="res.partner.valuation.thing">
-<field name="id">5</field>
-<field name="name">Valores de Empresa: RSC</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">4</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_6" model="res.partner.valuation.thing">
-<field name="id">6</field>
-<field name="name">Tiempo de entrega</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">5</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_7" model="res.partner.valuation.thing">
-<field name="id">7</field>
-<field name="name">Ensayos y certificaciones</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">6</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_8" model="res.partner.valuation.thing">
-<field name="id">8</field>
-<field name="name">Asesoramiento y anteción recibidos</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">7</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_9" model="res.partner.valuation.thing">
-<field name="id">9</field>
-<field name="name">Envío de clientes</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">8</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_10" model="res.partner.valuation.thing">
-<field name="id">10</field>
-<field name="name">Corte a medida</field>
-<field name="filter_company">todocesped</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">9</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_11" model="res.partner.valuation.thing">
-<field name="id">11</field>
-<field name="name">Servicio (muestras, rapidez entrega, instalación, asesoramiento...)</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">10</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_12" model="res.partner.valuation.thing">
-<field name="id">12</field>
-<field name="name">Valores de Empresa: RSC</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">11</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_13" model="res.partner.valuation.thing">
-<field name="id">13</field>
-<field name="name">Personalización de productos (etiquetas, envases)</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">12</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_valuation_thing_data_14" model="res.partner.valuation.thing">
-<field name="id">14</field>
-<field name="name">Otro</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">13</field>
-<field name="other">True</field>
-</record>
+### res.partner.valuation.thing
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Calidad (ensayos, certificados, propiedades) | all | all | 0 | False
+2 | Calidad - Precio | all | all | 1 | False
+3 | Precio | all | all | 2 | False
+4 | Servicio (muestras, rapidez, entrega, instalacion, asesoramiento...) | all | all | 3 | False
+5 | Valores de Empresa: RSC | all | all | 4 | False
+6 | Tiempo de entrega | all | profesional | 5 | False
+7 | Ensayos y certificaciones | all | profesional | 6 | False
+8 | Asesoramiento y anteción recibidos | all | profesional | 7 | False
+9 | Envío de clientes | all | profesional | 8 | False
+10 | Corte a medida | all | profesional | 9 | False
+11 | Servicio (muestras, rapidez entrega, instalación, asesoramiento...) | all | profesional | 10 | False
+12 | Valores de Empresa: RSC | all | profesional | 11 | False
+13 | Personalización de productos (etiquetas, envases) | all | profesional | 12 | False
+14 | Otro | all | profesional | 13 | True
  
 
 En el apartado Configuración > Técnico se añade el apartado "Arelux Partner Questionnaire" con los siguientes apartados:
