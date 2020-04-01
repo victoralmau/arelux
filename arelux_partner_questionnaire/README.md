@@ -2,75 +2,19 @@ El módulo contiene el desarrollo para implementar funcionalidades relacionadas 
 
 Se introducen los siguientes datos por defecto en la instalación:
 
-res.partner.contact.form
+### res.partner.contact.form
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Búsqueda activa de nuevos clientes | all | profesional | 0 | False
+2 | Buzoneo | all | all | 1 | False
+3 | Formulario web | all | all | 2 | False
+4 | Llamada | all | all | 3 | False
+5 | Whatsapp | all | all | 4 | False
+6 | Visita a la nave | all | all | 5 | False
+7 | Otro | all | all | 7 | True
+8 | Redes sociales | all | all | 6 | False
 
-<record id="res_partner_contact_form_data_1" model="res.partner.contact.form">
-<field name="id">1</field>
-<field name="name">Búsqueda activa de nuevos clientes</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_2" model="res.partner.contact.form">
-<field name="id">2</field>
-<field name="name">Buzoneo</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_3" model="res.partner.contact.form">
-<field name="id">3</field>
-<field name="name">Formulario web</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_4" model="res.partner.contact.form">
-<field name="id">4</field>
-<field name="name">Llamada</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_5" model="res.partner.contact.form">
-<field name="id">5</field>
-<field name="name">Whatsapp</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">4</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_6" model="res.partner.contact.form">
-<field name="id">6</field>
-<field name="name">Visita a la nave</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">5</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_8" model="res.partner.contact.form">
-<field name="id">8</field>
-<field name="name">Redes sociales</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">6</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_contact_form_data_7" model="res.partner.contact.form">
-<field name="id">7</field>
-<field name="name">Otro</field>
-<field name="filter_company">all</field>
-<field name="filter_ar_qt_customer_type">all</field>
-<field name="position">7</field>
-<field name="other">True</field>
-</record>
- 
-
-res.partner.qualification.product
+### res.partner.qualification.product
 
 <record id="res_partner_qualifiction_product_data_1" model="res.partner.qualification.product">
 <field name="id">1</field>
