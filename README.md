@@ -12,6 +12,7 @@ nombre | version
 [arelux_datalake](arelux_datalake/) | 10.0.1.0.0
 [arelux_installer](arelux_installer/) | 10.0.1.0.0
 [arelux_partner_questionnaire](arelux_partner_questionnaire/) | 10.0.1.0.0
+[arelux_quality_forms](arelux_quality_forms/) | 10.0.1.0.0
 [arelux_sage](arelux_sage/) | 10.0.1.0.0
 [arelux_sale_reports](arelux_sale_reports/) | 10.0.1.0.0
 [survey_arelux_datawarehouse](survey_arelux_datawarehouse/) | 10.0.1.0.0
