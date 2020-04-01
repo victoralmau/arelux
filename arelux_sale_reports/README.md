@@ -6,22 +6,10 @@ arelux_sale_report_mail_template_id
 ``` 
 
 ### arelux.sale.report.template
-
-<record id="arelux_sale_report_template_data_1" model="arelux.sale.report.template">
-<field name="id">1</field>
-<field name="name">TodoCESPED Ventas Online</field>
-<field name="active">True</field>
-<field name="custom_type">weekly</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_data_2" model="arelux.sale.report.template">
-<field name="id">2</field>
-<field name="name">TodoCESPED Ventas Offline</field>
-<field name="active">True</field>
-<field name="custom_type">weekly</field>
-<field name="show_in_table_format">True</field>
-</record>
- 
+id | name | active | custom_type | show_in_table_format
+--- | --- | --- | --- | ---
+1 | TodoCESPED Ventas Online | True | weekly | True
+2 | TodoCESPED Ventas Offline | True | weekly | True 
 
 ### arelux.sale.report.template.line
 
