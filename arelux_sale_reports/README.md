@@ -13,146 +13,22 @@ id | name | active | custom_type | show_in_table_format
 
 ### arelux.sale.report.template.line
 
-<record id="arelux_sale_report_template_line_data_1" model="arelux.sale.report.template.line">
-<field name="id">1</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_1')"/>
-<field name="position">1</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_2" model="arelux.sale.report.template.line">
-<field name="id">2</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_2')"/>
-<field name="position">2</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_3" model="arelux.sale.report.template.line">
-<field name="id">3</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_3')"/>
-<field name="position">3</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_4" model="arelux.sale.report.template.line">
-<field name="id">4</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_4')"/>
-<field name="position">4</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_5" model="arelux.sale.report.template.line">
-<field name="id">5</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_5')"/>
-<field name="position">5</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_6" model="arelux.sale.report.template.line">
-<field name="id">6</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_6')"/>
-<field name="position">6</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">False</field>
-<field name="show_in_table_format">False</field>
-</record>
-<record id="arelux_sale_report_template_line_data_7" model="arelux.sale.report.template.line">
-<field name="id">7</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_7')"/>
-<field name="position">7</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">particular</field>
-<field name="group_by_user">False</field>
-<field name="show_in_table_format">False</field>
-</record>
-<record id="arelux_sale_report_template_line_data_8" model="arelux.sale.report.template.line">
-<field name="id">8</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_1')"/>
-<field name="position">1</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_9" model="arelux.sale.report.template.line">
-<field name="id">9</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_2')"/>
-<field name="position">2</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_10" model="arelux.sale.report.template.line">
-<field name="id">10</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_3')"/>
-<field name="position">3</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_11" model="arelux.sale.report.template.line">
-<field name="id">11</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_8')"/>
-<field name="position">4</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_12" model="arelux.sale.report.template.line">
-<field name="id">12</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_9')"/>
-<field name="position">5</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">True</field>
-<field name="show_in_table_format">True</field>
-</record>
-<record id="arelux_sale_report_template_line_data_12" model="arelux.sale.report.template.line">
-<field name="id">12</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_10')"/>
-<field name="position">6</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">False</field>
-<field name="show_in_table_format">False</field>
-</record>
-<record id="arelux_sale_report_template_line_data_13" model="arelux.sale.report.template.line">
-<field name="id">13</field>
-<field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
-<field name="arelux_sale_report_type_id" eval="ref('arelux_sale_reports.arelux_sale_report_type_data_11')"/>
-<field name="position">7</field>
-<field name="ar_qt_activity_type">todocesped</field>
-<field name="ar_qt_customer_type">profesional</field>
-<field name="group_by_user">False</field>
-<field name="show_in_table_format">False</field>
-</record>
+id | arelux_sale_report_template_id | arelux_sale_report_type_id | position | ar_qt_activity_type | ar_qt_customer_type | group_by_user | show_in_table_format
+--- | --- | --- | --- | --- | --- | --- | ---
+1 | 1 | 1 | 1 | todocesped | particular | True | True
+2 | 1 | 2 | 2 | todocesped | particular | True | True
+3 | 1 | 3 | 3 | todocesped | particular | True | True
+4 | 1 | 4 | 4 | todocesped | particular | True | True
+5 | 1 | 5 | 5 | todocesped | particular | True | True
+6 | 1 | 6 | 6 | todocesped | particular | False | False
+7 | 1 | 7 | 7 | todocesped | particular | False | False
+8 | 2 | 1 | 1 | todocesped | profesional | True | True
+9 | 2 | 2 | 2 | todocesped | profesional | True | True
+10 | 2 | 3 | 3 | todocesped | profesional | True | True
+11 | 2 | 8 | 4 | todocesped | profesional | True | True
+12 | 2 | 9 | 5 | todocesped | profesional | True | True
+12 | 2 | 10 | 6 | todocesped | profesional | False | False
+13 | 2 | 11 | 7 | todocesped | profesional | False | False
  
 
 ### arelux.sale.report.type
