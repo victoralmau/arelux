@@ -15,86 +15,23 @@ nombre | name | filter_company | filter_ar_qt_customer_type | position | other
 8 | Redes sociales | all | all | 6 | False
 
 ### res.partner.qualification.product
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Impermeabilizantes | arelux | particular | 0 | False
+2 | Pinturas térmicas | arelux | particular | 1 | False
+3 | Aislantes reflexivos | arelux | particular | 2 | False
+4 | Tratamiento de superficies | arelux | particular | 3 | False
+5 | Otro | arelux | particular | 4 | True
 
-<record id="res_partner_qualifiction_product_data_1" model="res.partner.qualification.product">
-<field name="id">1</field>
-<field name="name">Impermeabilizantes</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_qualifiction_product_data_2" model="res.partner.qualification.product">
-<field name="id">2</field>
-<field name="name">Pinturas térmicas</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_qualifiction_product_data_3" model="res.partner.qualification.product">
-<field name="id">3</field>
-<field name="name">Aislantes reflexivos</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_qualifiction_product_data_4" model="res.partner.qualification.product">
-<field name="id">4</field>
-<field name="name">Tratamiento de superficies</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">3</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_qualifiction_product_data_5" model="res.partner.qualification.product">
-<field name="id">5</field>
-<field name="name">Otro</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">particular</field>
-<field name="position">4</field>
-<field name="other">True</field>
-</record>
- 
+### res.partner.reason.buy
+nombre | name | filter_company | filter_ar_qt_customer_type | position | other
+--- | --- | --- | --- | --- | ---
+1 | Prevención / Anticiparse a los problemas (humedades, filtraciones) | arelux | profesional | 0 | False
+2 | Problema puntual (filtraciones, humedades, etc) | arelux | profesional | 1 | False
+3 | Reforma o rehabilitación | arelux | profesional | 2 | False
+4 | Otro | arelux | profesional | 3 | False
 
-res.partner.reason.buy
-
-<record id="res_partner_reason_buy_1" model="res.partner.reason.buy">
-<field name="id">1</field>
-<field name="name">Prevención / Anticiparse a los problemas (humedades, filtraciones)</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">0</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_buy_2" model="res.partner.reason.buy">
-<field name="id">2</field>
-<field name="name">Problema puntual (filtraciones, humedades, etc).</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">1</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_buy_3" model="res.partner.reason.buy">
-<field name="id">3</field>
-<field name="name">Reforma o rehabilitación</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">2</field>
-<field name="other">False</field>
-</record>
-<record id="res_partner_reason_buy_4" model="res.partner.reason.buy">
-<field name="id">4</field>
-<field name="name">Otro</field>
-<field name="filter_company">arelux</field>
-<field name="filter_ar_qt_customer_type">profesional</field>
-<field name="position">3</field>
-<field name="other">True</field>
-</record>
- 
-
-res.partner.reason.install
+### res.partner.reason.install
 
 <record id="res_partner_reason_install_data_1" model="res.partner.reason.install">
 <field name="id">1</field>
