@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_type_customer_sale_data_1" model="res.partner.type.customer.sale">
+        <field name="id">1</field>
+        <field name="name">Profesionales</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">0</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_type_customer_sale_data_2" model="res.partner.type.customer.sale">
+        <field name="id">2</field>
+        <field name="name">Particulares</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">1</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_type_customer_sale_data_3" model="res.partner.type.customer.sale">
+        <field name="id">3</field>
+        <field name="name">No vende</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">2</field>
+        <field name="other">False</field>
+    </record>        
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>     
+    <record id="crm_team_view_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">view_crm_lead_real_arelux_questionarie_tree</field>
+        <field name="model">crm.team</field>
+        <field name="inherit_id" ref="sales_team.crm_team_view_tree"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="crm_team_view_arelux_questionarie_form" model="ir.ui.view">
+        <field name="name">crm_team_view_arelux_questionarie_form</field>
+        <field name="model">crm.team</field>
+        <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>     
+</odoo>

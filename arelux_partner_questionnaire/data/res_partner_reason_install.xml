@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_reason_install_data_1" model="res.partner.reason.install">
+        <field name="id">1</field>
+        <field name="name">Ahorra tiempo (regar, cortar, etc.)</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">particular</field>
+        <field name="position">0</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_reason_install_data_2" model="res.partner.reason.install">
+        <field name="id">2</field>
+        <field name="name">Ahorra dinero / agua</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">particular</field>
+        <field name="position">1</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_reason_install_data_3" model="res.partner.reason.install">
+        <field name="id">3</field>
+        <field name="name">Decoración</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">particular</field>
+        <field name="position">2</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_reason_install_data_4" model="res.partner.reason.install">
+        <field name="id">4</field>
+        <field name="name">Seguridad (niños, zonas de juegos, etc)</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">particular</field>
+        <field name="position">3</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_reason_install_data_5" model="res.partner.reason.install">
+        <field name="id">5</field>
+        <field name="name">Otro</field>
+        <field name="filter_company">todocesped</field>
+        <field name="filter_ar_qt_customer_type">particular</field>
+        <field name="position">4</field>
+        <field name="other">True</field>
+    </record>    
+</odoo>

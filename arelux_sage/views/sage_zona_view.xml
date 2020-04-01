@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sage_zona_action" model="ir.actions.act_window">
+        <field name="name">Sage Zonas</field>
+        <field name="res_model">sage.zona</field>
+        <field name="view_mode">tree,form</field>                
+    </record> 
+    <menuitem 
+        action="sage_zona_action" 
+        name="Sage Zona"
+        id="menuitem_sage_zona" 
+        parent="menu_odoo_sage"
+    />
+</odoo>    

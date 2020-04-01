@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_picking_form_arelux_questionarie" model="ir.ui.view">
+        <field name="name">stock_picking_form_arelux_questionarie</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="origin" position="before">
+                <field name="ar_qt_activity_type" attrs="{'readonly': True}" />
+                <field name="ar_qt_customer_type" attrs="{'readonly': True}" />
+            </field>                                                            
+        </field>
+    </record>
+    <record id="stock_picking_tree_arelux_questionarie" model="ir.ui.view">
+        <field name="name">stock_picking_tree_arelux_questionarie</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+            </field>                                                            
+        </field>
+    </record>
+    <record id="view_picking_internal_search_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">view_picking_internal_search_arelux_partner_questionnaire</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="done" position="before">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+                <separator/>
+            </filter>                                                                                                                
+        </field>
+    </record>                
+</odoo>

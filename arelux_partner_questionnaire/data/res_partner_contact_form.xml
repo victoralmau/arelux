@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_contact_form_data_1" model="res.partner.contact.form">
+        <field name="id">1</field>
+        <field name="name">Búsqueda activa de nuevos clientes</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">profesional</field>
+        <field name="position">0</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_2" model="res.partner.contact.form">
+        <field name="id">2</field>
+        <field name="name">Buzoneo</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">1</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_3" model="res.partner.contact.form">
+        <field name="id">3</field>
+        <field name="name">Formulario web</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">2</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_4" model="res.partner.contact.form">
+        <field name="id">4</field>
+        <field name="name">Llamada</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">3</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_5" model="res.partner.contact.form">
+        <field name="id">5</field>
+        <field name="name">Whatsapp</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">4</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_6" model="res.partner.contact.form">
+        <field name="id">6</field>
+        <field name="name">Visita a la nave</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">5</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_8" model="res.partner.contact.form">
+        <field name="id">8</field>
+        <field name="name">Redes sociales</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">6</field>
+        <field name="other">False</field>
+    </record>
+    <record id="res_partner_contact_form_data_7" model="res.partner.contact.form">
+        <field name="id">7</field>
+        <field name="name">Otro</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">7</field>
+        <field name="other">True</field>
+    </record>        
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>     
+    <record id="arelux_partner_questionnaire_email_compose_message_wizard_form" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_email_compose_message_wizard_form</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="subject" position="after">
+                <field name="ar_qt_activity_type" invisible="1" />
+            </field>
+            <field name="template_id" position="replace">
+                <field name="template_id" options="{'no_create': True}" domain="[('model', '=', model),('ar_qt_activity_type','in', [False, ar_qt_activity_type])]" context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
+            </field>                                    
+        </field>
+    </record>             
+</odoo>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_filter_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">res_partner_filter_arelux_partner_questionnaire</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="type_company" position="after">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+            </filter>                                                                                                                
+        </field>
+    </record>
+    <record id="view_partner_arelux_tree" model="ir.ui.view">
+        <field name="name">Add partner extra fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="ar_qt_customer_type" />
+                <field name="ar_qt_activity_type" />
+                <field name="ar_qt_pf_frequency_customer_type" />                                                                
+            </field>            
+        </field>
+    </record>
+    <record id="res_partner_view_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">res.partner.view.arelux_partner_questionnaire</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="ar_qt_profession" attrs="{'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_samples" attrs="{'readonly': True, 'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_customer_type" attrs="{'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_activity_type" attrs="{'invisible': [('customer','=',False),('supplier','=',False)]}" />                
+                <field name="is_potential_advertise_oniad" attrs="{'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_pf_frequency_customer_type" attrs="{'readonly': True, 'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_pf_sale_customer_type" attrs="{'readonly': True, 'invisible': [('customer','=',False),('supplier','=',False)]}" />
+                <field name="ar_qt_questionnaire_todocesped_show" invisible="1" />
+                <field name="ar_qt_questionnaire_arelux_show" invisible="1" />                
+            </field>                                    
+            <page name="sales_purchases" position="after">
+                <page name="arelux_partner_questionnaire_todocesped" string="Todocesped" attrs="{'invisible': [('ar_qt_questionnaire_todocesped_show','=',False)]}">
+                    <group name="arelux_partner_questionnaire_todocesped2">
+                        <group name="arelux_partner_questionnaire_todocesped_left" col="1">
+                            <!--Particular!-->
+                            <field name="ar_qt_todocesped_pr_where_install" string="1.Dónde lo instala"  attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}"/>
+                            <field name="ar_qt_todocesped_pr_where_install_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pr_where_install', '!=', 'other')]}" />
+                            <field name="ar_qt_todocesped_pr_budget_instalation" string="1.b ¿Quiere presupuesto de instalación?" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_todocesped_pr_type_surface" string="2.Tipo de superficie" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_todocesped_pr_type_surface_other_show" invisible="1" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_todocesped_pr_type_surface_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pr_type_surface_other_show', '=', False)]}" />
+                            <field name="ar_qt_todocesped_pr_specific_segment" string="3.Segmento específico" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />                            
+                            <field name="ar_qt_todocesped_pr_specific_segment_other_show" invisible="1" />                            
+                            <field name="ar_qt_todocesped_pr_specific_segment_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pr_specific_segment_other_show', '=', False)]}" />
+                            <field name="ar_qt_todocesped_pr_why_install_it" string="4.¿Por qué lo instala?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_todocesped_pr_why_install_it_other_show" invisible="1" />
+                            <field name="ar_qt_todocesped_pr_why_install_it_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pr_why_install_it_other_show', '=', False)]}" />
+                            <!--Profesional!-->
+                            <field name="ar_qt_todocesped_pf_customer_type" string="1. Tipo de cliente" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_todocesped_pf_customer_type_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pf_customer_type', '!=', 'other')]}" />
+                            <field name="ar_qt_todocesped_pf_install_artificial_grass" string="2.¿Instala el cesped artificial?" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_todocesped_pf_type_customers_sale" string="3.¿A que tipo de clientes vende nuestro cesped?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_todocesped_pf_stock_capacity" string="4.¿Tiene capacidad de stockar?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />                            
+                        </group>
+                        <group name="arelux_partner_questionnaire_todocesped_right" col="1">    
+                            <!--Particular!-->
+                            <field name="ar_qt_todocesped_pr_who_values_more" string="5. ¿Qué valora mas?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_todocesped_pr_who_values_more_other_show" invisible="1" />
+                            <field name="ar_qt_todocesped_pr_who_values_more_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pr_who_values_more_other_show', '=', False)]}" />
+                            <label for="ar_qt_todocesped_interest_product_1" string="6.Modelos que mas le interesan"/>
+                            <div>
+                                <field name="ar_qt_todocesped_interest_product_1" placeholder="Producto 1" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_todocesped_interest_product_2" placeholder="Producto 2" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_todocesped_interest_product_3" placeholder="Producto 3" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_todocesped_interest_product_4" placeholder="Producto 4" nolabel="1" options="{'no_create_edit': True}" />                                
+                            </div>
+                            <field name="ar_qt_todocesped_interest_product_all" string="Todos" />
+                            <field name="ar_qt_todocesped_interest_products_not_yet" string="Todavia no lo tiene claro" />
+                            <field name="ar_qt_todocesped_contact_form" string="7.Forma de contacto / Colectivo" widget="many2many_checkboxes" domain="[('filter_company', 'in', ('all', 'todocesped', 'evert')),('filter_ar_qt_customer_type', 'in', ('all', ar_qt_customer_type))]" />
+                            <field name="ar_qt_todocesped_contact_form_other_show" invisible="1" />
+                            <field name="ar_qt_todocesped_contact_form_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_contact_form_other_show', '=', False)]}" />
+                            <field name="ar_qt_todocesped_is_recommendation" string="¿Viene recomendado?" />
+                            <field name="ar_qt_todocesped_recommendation_partner_id" string="¿Quién nos recomendó?" attrs="{'invisible':[('ar_qt_todocesped_is_recommendation', '==', False)]}" />
+                            <!--Profesional!-->
+                            <field name="ar_qt_todocesped_pf_valuation_thing" string="5.Qué valor más" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_todocesped_pf_valuation_thing_other_show" invisible="1" />
+                            <field name="ar_qt_todocesped_pf_valuation_thing_other" string="Otro" attrs="{'invisible':[('ar_qt_todocesped_pf_valuation_thing_other_show', '=', False)]}" />                                                                                                                                    
+                         </group> 
+                     </group>                                   
+                </page>
+                <page name="arelux_partner_questionnaire_arelux" string="Arelux" attrs="{'invisible': [('ar_qt_questionnaire_arelux_show','=',False)]}">
+                    <group name="arelux_partner_questionnaire_arelux2">
+                        <group name="arelux_partner_questionnaire_arelux_left" col="1">
+                            <!--Particular!-->
+                            <field name="ar_qt_arelux_pr_ql_product" string="1.Clasificación según producto" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_waterproofing_show" invisible="1" />                                
+                            <field name="ar_qt_arelux_pr_ql_product_waterproofing" string="¿Por qué?" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_waterproofing_show', '==', False)]}" />                            
+                            <field name="ar_qt_arelux_pr_ql_product_waterproofing_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_waterproofing', '!=', 'other')]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_thermal_paints_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_ql_product_thermal_paints" string="¿Por qué pintura térmica?" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_thermal_paints_show', '==', False)]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_thermal_paints_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_thermal_paints', '!=', 'other')]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_reflective_insulators_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_ql_product_reflective_insulators" string="¿Por qué aislantes?" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_reflective_insulators_show', '==', False)]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_reflective_insulators_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_reflective_insulators', '!=', 'other')]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_surface_treatment_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_ql_product_surface_treatment" string="¿Dónde?" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_surface_treatment_show', '==', False)]}" />
+                            <field name="ar_qt_arelux_pr_ql_product_surface_treatment_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_surface_treatment', '!=', 'other')]}" />                                                        
+                            <field name="ar_qt_arelux_pr_ql_product_other_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_ql_product_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_ql_product_other_show', '==', False)]}" />                            
+                            <field name="ar_qt_arelux_pr_insall_the_same" string="1b. ¿Lo aplica o instala el//ella misma?" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_arelux_pr_reason_buy" string="2. ¿Por qué lo compran?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_arelux_pr_reason_buy_other_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_reason_buy_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_reason_buy_other_show', '==', False)]}" />
+                            <!--Profesional!-->
+                            <field name="ar_qt_arelux_pf_customer_type" string="Tipo de cliente" widget="many2one_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_arelux_pf_customer_type_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pf_customer_type', '!=', 'other')]}" />
+                            <field name="ar_qt_arelux_pf_install" string="1b. ¿Hacen ellos la aplicación?" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_arelux_pf_stock_capacity" string="3.¿Tiene capacidad de stockar?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />                        
+                            <field name="ar_qt_arelux_is_recommendation" string="¿Viene recomendado?" />
+                            <field name="ar_qt_arelux_recommendation_partner_id" string="¿Quién nos recomendó?" attrs="{'invisible':[('ar_qt_arelux_is_recommendation', '==', False)]}" />                                                        
+                        </group>
+                        <group name="arelux_partner_questionnaire_arelux_particular_right" col="1">
+                            <!--Particular!-->
+                            <field name="ar_qt_arelux_pr_valuation_thing" string="3.Qué valora más" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'profesional')]}" />
+                            <field name="ar_qt_arelux_pr_valuation_thing_other_show" invisible="1" />
+                            <field name="ar_qt_arelux_pr_valuation_thing_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pr_valuation_thing_other_show', '==', False)]}" />
+                            <label for="ar_qt_arelux_interest_product_1" string="4. Productos relacionados"/>
+                            <div>
+                                <field name="ar_qt_arelux_interest_product_1" placeholder="Producto 1" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_arelux_interest_product_2" placeholder="Producto 2" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_arelux_interest_product_3" placeholder="Producto 3" nolabel="1" options="{'no_create_edit': True}" />
+                                <field name="ar_qt_arelux_interest_product_4" placeholder="Producto 4" nolabel="1" options="{'no_create_edit': True}" />
+                            </div>
+                            <field name="ar_qt_arelux_interest_product_all" string="Todos" />
+                            <field name="ar_qt_arelux_interest_product_not_yet" string="Todavia no lo tiene claro" />
+                            <field name="ar_qt_arelux_contact_form" string="5.Forma de contacto/colectivo" widget="many2many_checkboxes" domain="[('filter_company', 'in', ('all', 'arelux')),('filter_ar_qt_customer_type', 'in', ('all', ar_qt_customer_type))]" />
+                            <field name="ar_qt_arelux_contact_form_other_show" invisible="1" />
+                            <field name="ar_qt_arelux_contact_form_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_contact_form_other_show', '==', False)]}" />
+                            <!--Profesional!-->
+                            <field name="ar_qt_arelux_pf_type_customers_sale" string="2. ¿A que tipo de cliente vende nuestros productos?" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_arelux_pf_valuation_thing" string="4. Qué valora más" widget="many2many_checkboxes" attrs="{'invisible':[('ar_qt_customer_type', '==', 'particular')]}" />
+                            <field name="ar_qt_arelux_pf_valuation_thing_other_show" invisible="1" />
+                            <field name="ar_qt_arelux_pf_valuation_thing_other" string="Otro" attrs="{'invisible':[('ar_qt_arelux_pf_valuation_thing_other_show', '==', False)]}" />                        
+                        </group> 
+                    </group>                   
+                </page>                                                                
+            </page>
+        </field>
+    </record>
+    <record id="partner_type_surface_action" model="ir.actions.act_window">
+        <field name="name">Tipos de superficie</field>
+        <field name="res_model">res.partner.type.surface</field>
+        <field name="view_mode">tree,form</field>                
+    </record>
+    <record id="partner_reason_install_action" model="ir.actions.act_window">
+        <field name="name">Razones instalacion</field>
+        <field name="res_model">res.partner.reason.install</field>
+        <field name="view_mode">tree,form</field>                
+    </record>
+    <record id="partner_specific_segment_action" model="ir.actions.act_window">
+        <field name="name">Segmentos especificos</field>
+        <field name="res_model">res.partner.specific.segment</field>
+        <field name="view_mode">tree,form</field>                
+    </record>
+    <record id="partner_stock_capacity_action" model="ir.actions.act_window">
+        <field name="name">Capacidad stock</field>
+        <field name="res_model">res.partner.stock.capacity</field>
+        <field name="view_mode">tree,form</field>                
+    </record>
+    <record id="partner_type_customer_sale_action" model="ir.actions.act_window">
+        <field name="name">Tipo clientes venden</field>
+        <field name="res_model">res.partner.type.customer.sale</field>
+        <field name="view_mode">tree,form</field>                
+    </record>        
+    <record id="partner_contact_form_action" model="ir.actions.act_window">
+        <field name="name">Formas de contacto</field>
+        <field name="res_model">res.partner.contact.form</field>
+        <field name="view_mode">tree,form</field>                
+    </record>        
+    <record id="partner_valuation_thing_action" model="ir.actions.act_window">
+        <field name="name">Cosas a valorar</field>
+        <field name="res_model">res.partner.valuation.thing</field>
+        <field name="view_mode">tree,form</field>                
+    </record>
+    <record id="partner_qualification_product_action" model="ir.actions.act_window">
+        <field name="name">Qualification Prodduct</field>
+        <field name="res_model">res.partner.qualification.product</field>
+        <field name="view_mode">tree,form</field>                
+    </record>    
+    <record id="partner_reason_buy_action" model="ir.actions.act_window">
+        <field name="name">Razones comprar</field>
+        <field name="res_model">res.partner.reason.buy</field>
+        <field name="view_mode">tree,form</field>                
+    </record>      
+    <menuitem 
+        id="menu_odoo_arelux_partner_questionnaire" 
+        name="Arelux Partner Questionnaire"
+        parent="base.menu_custom" 
+        sequence="46"
+    />
+    <menuitem 
+        action="partner_type_surface_action" 
+        name="Tipos de superficie"
+        id="menuitem_partner_type_surface" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />
+    <menuitem 
+        action="partner_reason_install_action" 
+        name="Razones instalacion"
+        id="menuitem_partner_reason_install" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />     
+    <menuitem 
+        action="partner_specific_segment_action" 
+        name="Segmentos especificos"
+        id="menuitem_partner_specific_segment" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />     
+    <menuitem 
+        action="partner_stock_capacity_action" 
+        name="Capacidad stock"
+        id="menuitem_partner_stock_capacity" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />     
+    <menuitem 
+        action="partner_type_customer_sale_action" 
+        name="Tipo clientes venden"
+        id="menuitem_partner_type_customer_sale" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />     
+    <menuitem 
+        action="partner_contact_form_action" 
+        name="Formas de contacto"
+        id="menuitem_partner_contact_form" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />     
+    <menuitem 
+        action="partner_valuation_thing_action" 
+        name="Cosas a valorar"
+        id="menuitem_partner_valuation_thing" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />                                        
+    <menuitem 
+        action="partner_qualification_product_action" 
+        name="Qualification Product"
+        id="menuitem_partner_qualification_product" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />    
+    <menuitem 
+        action="partner_reason_buy_action" 
+        name="Razones compra"
+        id="menuitem_partner_reason_buy" 
+        parent="menu_odoo_arelux_partner_questionnaire"
+    />            
+</odoo>

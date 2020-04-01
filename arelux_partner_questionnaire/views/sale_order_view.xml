@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_arelux_questionarieform" model="ir.ui.view">
+        <field name="name">sale.order.view.questionarie_arelux</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="payment_term_id" position="after">
+                <field name="ar_qt_activity_type" readonly="1"/>
+                <field name="ar_qt_customer_type" readonly="1"/>
+            </field>                                                            
+        </field>
+    </record>
+    <record id="website_quote.sale_order_form_quote_arelux_questionarieform" model="ir.ui.view">
+        <field name="name">sale_order_form_quote_arelux_questionarieform</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="website_quote.sale_order_form_quote" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="template_id" position="replace">
+                <field name="template_id" context="{'company_id': company_id}" options="{'no_create': True, 'no_open': True}" domain="[('ar_qt_activity_type','in', ['both', ar_qt_activity_type])]"/>
+            </field>                                                            
+        </field>
+    </record>
+    <record id="sale_view_quotation_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">sale_view_quotation_arelux_questionarie_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+            </field>                                                            
+        </field>
+    </record>
+    <record id="sale_view_order_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">sale_view_order_arelux_questionarie_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree" />
+        <field name="priority" eval="20"/>                
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+            </field>                                                            
+        </field>
+    </record>
+    <record id="sale_order_view_search_inherit_quotation_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">sale_order_view_search_inherit_quotation_arelux_partner_questionnaire</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="sales" position="before">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+                <separator/>
+            </filter>                                                                                                                
+        </field>
+    </record>
+    <record id="sale_order_view_search_inherit_sale_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">sale_order_view_search_inherit_sale_arelux_partner_questionnaire</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="sales" position="before">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+                <separator/>
+            </filter>                                                                                                                
+        </field>
+    </record>                    
+</odoo>

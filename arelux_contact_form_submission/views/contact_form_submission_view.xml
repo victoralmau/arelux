@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="contact_form_submission_action_form_view" model="ir.ui.view">
+            <field name="name">contact_form_submission_action_form_view</field>
+            <field name="model">contact.form.submission</field>
+            <field name="arch" type="xml">
+                <form string="Contact form submission">
+                    <sheet string="child">
+                        <group>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="m2"/>
+                            <field name="description"/>
+                            <field name="user_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="lang"/>
+                            <field name="country_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="state_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="ar_qt_todocesped_pr_type_surface" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="category_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="ar_qt_customer_type"/>
+                            <field name="ar_qt_activity_type"/>
+                            <field name="ar_qt_todocesped_contact_form" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="ar_qt_todocesped_pf_install_artificial_grass"/>
+                            <field name="date_deadline"/>
+                            <field name="date_action"/>
+                            <field name="medium_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="source_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="utm_website_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="next_activity_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="team_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}'/>
+                            <field name="tracking_profile_uuid"/>
+                            <field name="tracking_cookie_uuid"/>
+                            <field name="tracking_user_uuid"/>
+                            <field name="tracking_session_uuid"/>
+                            <field name="partner_id" options='{"no_create": True, "no_create_edit": True}'/>
+                            <field name="lead_id" options='{"no_create": True, "no_create_edit": True}'/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="contact_form_submission_action_tree" model="ir.ui.view">
+            <field name="name">contact_form_submission_action_tree</field>
+            <field name="model">contact.form.submission</field>
+             <field name="arch" type="xml">
+                <tree string="Contact form submission">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="m2"/>
+                    <field name="user_id"/>
+                    <field name="lang"/>
+                    <field name="country_id"/>
+                    <field name="state_id"/>
+                    <field name="partner_id"/>
+                    <field name="lead_id"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="contact_form_submission_action">
+            <field name="name">Contact form submission</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">contact.form.submission</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="contact_form_submission_action"
+            name="Contact form submission"
+            id="menuitem_contact_form_submission"
+            parent="sales_team.menu_localisation"
+        />
+    </data>
+</openerp>

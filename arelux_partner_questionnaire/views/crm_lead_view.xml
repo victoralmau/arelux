@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>     
+    <record id="view_crm_case_opportunities_filter_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">view_crm_case_opportunities_filter_arelux_partner_questionnaire</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="message_needaction" position="before">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+                <separator/>
+            </filter>                                                                                                                
+        </field>
+    </record>
+    <record id="view_crm_lead_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">view_crm_lead_arelux_questionarie_tree</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="ar_qt_todocesped_pf_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="crm_lead_view_tree_activity_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">crm_lead_view_tree_activity_arelux_questionarie_tree</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_tree_activity"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="ar_qt_todocesped_pf_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>    
+    <record id="view_crm_lead_arelux_questionarie_form" model="ir.ui.view">
+        <field name="name">view_crm_lead_arelux_questionarie_form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="team_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="ar_qt_todocesped_pf_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="view_crm_case_leads_filter_arelux_partner_questionnaire" model="ir.ui.view">
+        <field name="name">view_crm_case_leads_filter_arelux_partner_questionnaire</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <filter name="not_opt_out" position="before">
+                <separator/>
+                <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
+                <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>
+                <separator/>
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+                <separator/>
+            </filter>                                                                                                                
+        </field>
+    </record>    
+    <record id="view_crm_lead_real_arelux_questionarie_tree" model="ir.ui.view">
+        <field name="name">view_crm_lead_real_arelux_questionarie_tree</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="view_crm_lead_real_arelux_questionarie_form" model="ir.ui.view">
+        <field name="name">view_crm_lead_real_arelux_questionarie_tree</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="team_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="view_create_opportunity_simplified_arelux_questionarie" model="ir.ui.view">
+        <field name="name">view_create_opportunity_simplified_arelux_questionarie</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_create_opportunity_simplified"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>                                                
+            </field>                                    
+        </field>
+    </record>         
+</odoo>

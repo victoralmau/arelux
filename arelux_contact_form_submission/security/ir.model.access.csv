@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contact_form_submission_admin,contact.form.submission,model_contact_form_submission,,1,1,1,1
+access_contact_form_submission_group_user,contact.form.submission.user,model_contact_form_submission,base.group_user,1,1,1,1

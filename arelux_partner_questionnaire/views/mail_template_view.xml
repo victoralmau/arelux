@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>     
+    <record id="arelux_partner_questionnaire_email_template_form" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_email_template_form</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="mail_server_id" position="after">
+                <field name="ar_qt_activity_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="arelux_partner_questionnaire_email_template_tree" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_email_template_tree</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_tree"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <field name="model_id" position="after">
+                <field name="ar_qt_activity_type"/>                                                
+            </field>                                    
+        </field>
+    </record>
+    <record id="arelux_partner_questionnaire_view_email_template_search" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_view_email_template_search</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.view_email_template_search" />
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="model_id" position="after">
+                <filter string="Todocesped" name="type_contacts" domain="[('ar_qt_activity_type','=','todocesped')]"/>
+                <filter string="Arelux" name="type_contacts" domain="[('ar_qt_activity_type','=','arelux')]"/>
+                <filter string="Evert" name="type_contacts" domain="[('ar_qt_activity_type','=','evert')]"/>
+            </field>                                                                                                                
+        </field>
+    </record>                  
+</odoo>

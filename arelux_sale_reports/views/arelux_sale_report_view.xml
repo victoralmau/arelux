@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="sale_menu_arelux_sale_report" name="Arelux Reportes de ventas" parent="sales_team.menu_sale_config" groups="sales_team.group_sale_manager" sequence="54"/>
+    <record id="arelux_sale_report_form_view" model="ir.ui.view">
+        <field name="name">Reporte</field>
+        <field name="model">arelux.sale.report</field>
+        <field name="arch" type="xml">
+            <form string="Reporte">   
+                <header>                                                
+                    <field name="state" widget="statusbar" statusbar_colors='{}'/>
+                    <button name="action_generate_ir_report" string="Generar reporte" type="object" attrs="{'invisible': [('state','in',('generate','sent'))]}" />
+                    <button name="action_cancel_report" string="Cancelar reporte" type="object" attrs="{'invisible': [('state','in',('new','sent'))]}" />
+                    <button name="action_send_mail" string="Enviar por email" type="object" attrs="{'invisible': [('state','in',('new','sent'))]}" />
+                </header>             
+                <sheet string="child">                                        
+                    <group>
+                        <field name="name"/>                             
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="show_in_table_format"/>
+                        <field name="order_by" />
+                        <field name="order_way" />                                                
+                        <field name="ir_attachment_id" readonly="1"/>
+                        <field name="report_line"/>                                                                         
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_sale_report_line_form_view" model="ir.ui.view">
+        <field name="name">Linea de reporte</field>
+        <field name="model">arelux.sale.report.line</field>
+        <field name="arch" type="xml">
+            <form string="Linea de reporte">                
+                <sheet string="child">
+                    <group>
+                        <field name="arelux_sale_report_type_id"/>                             
+                        <field name="ar_qt_activity_type"/>
+                        <field name="ar_qt_customer_type"/>
+                        <field name="crm_team_id"/>
+                        <field name="group_by_user"/>
+                        <field name="show_in_table_format"/>
+                        <field name="position"/>                                                                         
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_sale_report_line_tree" model="ir.ui.view">
+        <field name="name">Lineas de reportes</field>
+        <field name="model">arelux.sale.report.line</field>            
+        <field name="arch" type="xml">
+            <tree string="Lineas de reportes">
+                <field name="arelux_sale_report_type_id"/>
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="crm_team_id"/>
+                <field name="group_by_user"/>
+                <field name="show_in_table_format"/>                
+                <field name="position"/>                                                                                                                    
+            </tree>
+        </field>            
+    </record>
+    
+    <record id="arelux_sale_report_tree" model="ir.ui.view">
+        <field name="name">Reportes</field>
+        <field name="model">arelux.sale.report</field>            
+        <field name="arch" type="xml">
+            <tree string="Reportes">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state"/>                                                                                                                    
+            </tree>
+        </field>            
+    </record>                
+    <record model="ir.actions.act_window" id="arelux_sale_report_action">
+        <field name="name">Reportes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">arelux.sale.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="arelux_sale_report_tree"/>
+    </record>
+    <menuitem 
+        action="arelux_sale_report_action" 
+        name="Reportes"
+        id="menuitem_arelux_sale_report" 
+        parent="sale_menu_arelux_sale_report"
+        sequence="1"
+    />
+    <record id="arelux_sale_report_type_form_view" model="ir.ui.view">
+        <field name="name">Tipo de reporte</field>
+        <field name="model">arelux.sale.report.type</field>
+        <field name="arch" type="xml">
+            <form string="Tipo de reporte">                
+                <sheet string="child">                    
+                    <group>
+                        <field name="name"/>                             
+                        <field name="custom_type"/>
+                        <field name="group_by_user"/>                                                                                                 
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_sale_report_type_tree" model="ir.ui.view">
+        <field name="name">Tipos de reportes</field>
+        <field name="model">arelux.sale.report.type</field>            
+        <field name="arch" type="xml">
+            <tree string="Tipos de reportes">
+                <field name="name"/>
+                <field name="custom_type"/>
+                <field name="group_by_user"/>                                                                                                                                    
+            </tree>
+        </field>            
+    </record>                
+    <record model="ir.actions.act_window" id="arelux_sale_report_type_action">
+        <field name="name">Tipos de reportes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">arelux.sale.report.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="arelux_sale_report_type_tree"/>
+    </record>
+    <menuitem 
+        action="arelux_sale_report_type_action" 
+        name="Tipos de reportes"
+        id="menuitem_arelux_sale_report_type" 
+        parent="sale_menu_arelux_sale_report"
+        sequence="2"
+    />
+    <record id="arelux_sale_report_template_form_view" model="ir.ui.view">
+        <field name="name">Plantilla de reporte</field>
+        <field name="model">arelux.sale.report.template</field>
+        <field name="arch" type="xml">
+            <form string="Plantilla de reporte">                
+                <sheet string="child">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="name"/>                             
+                        <field name="custom_type"/>
+                        <field name="show_in_table_format"/>
+                        <field name="order_by" />
+                        <field name="order_way" />
+                        <field name="report_template_line"/>                                                                         
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_sale_report_template_tree" model="ir.ui.view">
+        <field name="name">Plantillas de reportes</field>
+        <field name="model">arelux.sale.report.template</field>            
+        <field name="arch" type="xml">
+            <tree string="Plantillas de reportes">
+                <field name="name"/>
+                <field name="custom_type"/>                                                                                                                    
+            </tree>
+        </field>            
+    </record>
+    <record id="arelux_sale_report_template_line_form_view" model="ir.ui.view">
+        <field name="name">Linea plantilla de reporte</field>
+        <field name="model">arelux.sale.report.template.line</field>
+        <field name="arch" type="xml">
+            <form string="Linea plantilla de reporte">                
+                <sheet string="child">
+                    <group>
+                        <field name="arelux_sale_report_type_id"/>                             
+                        <field name="ar_qt_activity_type"/>
+                        <field name="ar_qt_customer_type"/>
+                        <field name="crm_team_id"/>
+                        <field name="group_by_user"/>
+                        <field name="show_in_table_format"/>                        
+                        <field name="position"/>                                                                         
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_sale_report_template_line_tree" model="ir.ui.view">
+        <field name="name">Lineas plantillas de reportes</field>
+        <field name="model">arelux.sale.report.template.line</field>            
+        <field name="arch" type="xml">
+            <tree string="Lineas plantillas de reportes">
+                <field name="arelux_sale_report_type_id"/>
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="crm_team_id"/>
+                <field name="group_by_user"/>
+                <field name="show_in_table_format"/>                
+                <field name="position"/>                                                                                                                    
+            </tree>
+        </field>            
+    </record>                
+    <record model="ir.actions.act_window" id="arelux_sale_report_template_action">
+        <field name="name">Plantillas de reportes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">arelux.sale.report.template</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="arelux_sale_report_template_tree"/>
+    </record>            
+    <menuitem 
+        action="arelux_sale_report_template_action" 
+        name="Plantillas reportes"
+        id="menuitem_arelux_sale_report_template" 
+        parent="sale_menu_arelux_sale_report"
+        sequence="3"
+    />        
+</odoo>    
