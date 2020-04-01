@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Arelux Sage",
-    'summary': """Arelux Sage""",    
-    'author': "@victor.almau",
-    'website': "http://www.arelux.com",
-    'category': 'Test',
-    'version': '1.2.3',
+    'name': 'Arelux Sage',
+    'version': '10.0.1.0.0',    
+    'author': 'Odoo Nodriza Tech (ONT)',
+    'website': 'https://nodrizatech.com/',
+    'category': 'Tools',
+    'license': 'AGPL-3',
     'depends': ['base', 'sale'],
     'data': [
         'views/sage_actividad_view.xml',
@@ -22,4 +22,6 @@
         'views/sale_order_view.xml',
         'security/ir.model.access.csv',
     ],
+    'installable': True,
+    'auto_install': False,    
 }

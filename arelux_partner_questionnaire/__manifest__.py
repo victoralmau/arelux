@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Arelux Partner Questionnaire",
-    'summary': """Arelux Partner Questionnaire""",    
-    'author': "@victor.almau",
-    'website': "http://www.arelux.com",
-    'category': 'Test',
-    'version': '1.6.6',
+    'name': 'Arelux Partner Questionnaire',
+    'version': '10.0.1.0.0',    
+    'author': 'Odoo Nodriza Tech (ONT)',
+    'website': 'https://nodrizatech.com/',
+    'category': 'Tools',
+    'license': 'AGPL-3',
     'depends': ['base', 'crm', 'mail', 'sale', 'product', 'stock', 'website_quote', 'base_delivery_carrier_expedition'],
     'data': [
         'views/crm_lead_view.xml',
@@ -28,6 +28,8 @@
         'views/mail_template_view.xml',
         'views/mail_compose_message_view.xml',
         'data/ir_cron.xml',
-        'security/ir.model.access.csv',        
+        'security/ir.model.access.csv',
     ],
+    'installable': True,
+    'auto_install': False,    
 }
