@@ -660,3 +660,341 @@ Original > https://github.com/odoo/odoo/blob/10.0/addons/sale/report/sale_report
     </t>
 </t>
 ```
+
+### [report_arelux] report_delivery_document
+Original > https://github.com/odoo/odoo/blob/10.0/addons/stock/report/report_deliveryslip.xml#L4
+
+#### Original
+```
+<?xml version="1.0"?>
+<t t-name="stock.report_delivery_document">
+        <t t-call="report.html_container">
+            <t t-call="report.external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                <div class="page">
+                    <div class="row" name="customer_address">
+                        <div class="col-xs-4 pull-right">
+                            <div>
+                                <span><strong>Customer Address:</strong></span>
+                            </div>
+                            <div t-if="o.move_lines and o.move_lines[0].partner_id" name="partner_header">
+                                <div t-field="o.move_lines[0].partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;, &quot;fax&quot;], &quot;no_marker&quot;: True}"/>
+                            </div>
+                            <div t-if="not (o.move_lines and o.move_lines[0].partner_id) and o.partner_id" name="partner_header">
+                                <div t-field="o.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;, &quot;fax&quot;], &quot;no_marker&quot;: True}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>
+                        <span t-field="o.name"/>
+                    </h2>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th t-if="o.origin"><strong>Order (Origin)</strong></th>
+                                <th name="td_sched_date_h">
+                                    <strong>Date</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td t-if="o.origin">
+                                    <span t-field="o.origin"/>
+                                </td>
+                                <td name="td_sched_date">
+                                   <t t-if="o.state == 'done'">
+                                        <span t-field="o.date_done"/>
+                                   </t>
+                                   <t t-if="o.state != 'done'">
+                                        <span t-field="o.min_date"/>
+                                   </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-condensed mt48" t-if="not o.pack_operation_ids">
+                        <thead>
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th><strong>Ordered Quantity</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.move_lines" t-as="move">
+                                <td><span t-field="move.product_id"/></td>
+                                <td>
+                                    <span t-field="move.ordered_qty"/>
+                                    <span t-field="move.product_uom"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <t t-set="backorder" t-value="False"/>
+                    <table class="table table-condensed mt48" t-if="o.pack_operation_ids">
+                        <t t-set="has_serial_number" t-value="o.pack_operation_ids.filtered('pack_lot_ids')" groups="stock.group_production_lot"/>
+                        <thead>
+                            <tr>
+                                <th><strong>Product</strong></th>
+                                <th name="lot_serial" t-if="has_serial_number">
+                                    <span class="pull-left">Lot/Serial Number</span>
+                                </th>
+                                <th class="text-center"><strong>Ordered Quantity</strong></th>
+                                <th t-if="any([pack_operation.state == 'done' for pack_operation in o.pack_operation_ids])" class="text-right">
+                                        <strong>Delivered Quantity</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.pack_operation_ids" t-as="pack_operation">
+                                <td>
+                                    <span t-field="pack_operation.product_id"/>
+                                    <t t-if="not pack_operation.product_id and pack_operation.package_id">
+                                        <span t-field="pack_operation.package_id"/>
+                                    </t>
+                                </td>
+                                <t t-if="has_serial_number">
+                                    <td t-if="pack_operation.pack_lot_ids">
+                                        <table class="table table-condensed" t-if="pack_operation.pack_lot_ids">
+                                            <tr t-foreach="pack_operation.pack_lot_ids" t-as="packlot">
+                                                <td>
+                                                    <span t-field="packlot.lot_id"/>
+                                                    <t t-if="not packlot.lot_id">
+                                                        <span t-field="packlot.lot_name"/>
+                                                    </t>
+                                                </td>
+                                                <td name="lot_qty">
+                                                    <span t-field="packlot.qty"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td t-if="not pack_operation.pack_lot_ids"/>
+                                </t>
+                                <td class="text-center">
+                                    <span t-if="pack_operation.package_id">:</span>
+                                    <span t-field="pack_operation.package_id"/>
+                                    <span t-field="pack_operation.ordered_qty"/>
+                                    <t t-if="pack_operation.linked_move_operation_ids">
+                                        <span t-field="pack_operation.linked_move_operation_ids[0].move_id.product_uom"/>
+                                    </t>
+                                    <t t-else="1">
+                                        <span t-field="pack_operation.product_uom_id"/>
+                                    </t>
+                                </td>
+                                <td class="text-right" t-if="pack_operation.state == 'done'">
+                                    <t t-if="pack_operation.ordered_qty != pack_operation.qty_done_uom_ordered">
+                                        <t t-set="backorder" t-value="True"/>
+                                    </t>
+                                    <span t-field="pack_operation.qty_done_uom_ordered"/>
+                                    <t t-if="pack_operation.linked_move_operation_ids">
+                                        <span t-field="pack_operation.linked_move_operation_ids[0].move_id.product_uom"/>
+                                    </t>
+                                    <t t-else="1">
+                                        <span t-field="pack_operation.product_uom_id"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p t-if="o.backorder_id">
+                        This shipment is a backorder of <t t-esc="o.backorder_id.name"/>.
+                    </p>
+                    <p>
+                        <t t-if="backorder">
+                            All items couldn't be shipped, the remaining ones will be shipped as soon as they become available.
+                        </t>
+                    </p>
+                </div>
+            </t>
+         </t>
+    </t>
+```
+
+#### Modificado
+```
+<?xml version="1.0"?>
+<t t-name="stock.report_delivery_document">
+        <t t-call="report.html_container">
+            <t t-call="report.external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                <t t-if="o.ar_qt_activity_type=='arelux'">                
+                    <t t-set="custom_color_1" t-value="'#195660'" />
+                    <t t-set="custom_color_2" t-value="'#307584'" />
+                    <t t-set="custom_color_3" t-value="'#4996AA'" />
+                    <t t-set="custom_color_4" t-value="'#60B2C4'" />
+                    <t t-set="custom_color_5" t-value="'#8ECCD3'" />
+                </t>
+                <t t-else="">
+                    <t t-set="custom_color_1" t-value="'#12575E'" />
+                    <t t-set="custom_color_2" t-value="'#076973'" />
+                    <t t-set="custom_color_3" t-value="'#057473'" />
+                    <t t-set="custom_color_4" t-value="'#008C73'" />
+                    <t t-set="custom_color_5" t-value="'#18A379'" />
+                </t>
+                <div class="page">
+                    <div class="row">
+                        <div class="col-xs-5"></div>
+                        <div class="col-xs-6 col-xs-offset-1" style="padding-right:0px;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_1+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;'">Dirección de entrega</div>                    
+                            <div style="margin-left:15px;margin-top: 5px;">
+                               <p t-field="o.partner_id.name" style="margin-bottom:0px;" />
+                               <p t-field="o.partner_id.street" style="margin-bottom:0px;" />
+                               <p style="margin-bottom:0px;"><span t-field="o.partner_id.zip" /> <span t-field="o.partner_id.city" /></p>
+                               <p t-field="o.partner_id.country_id" style="margin-bottom:0px;" />
+                               <t t-if="o.partner_id.phone">
+                                    <p style="margin-bottom:0px;">
+                                        <i class="fa fa-phone"></i>
+                                        <span t-field="o.partner_id.phone" />
+                                    </p>
+                               </t>
+                               <p t-if="o.partner_id.vat" style="margin-bottom: 0px;">NIF: <span t-field="o.partner_id.vat"/></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <h4 style="font-weight:bold;"><span t-field="o.name"/></h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Cliente</div>    
+                            <t t-if="o.partner_id.parent_id.id>0">
+                                <p t-field="o.partner_id.parent_id.name" style="margin-bottom:0px;margin-left: 15px;" />
+                            </t>
+                            <t t-if="o.partner_id.parent_id.id==0">
+                                <p t-field="o.partner_id.name" style="margin-bottom:0px;margin-left: 15px;" />
+                            </t>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="row">
+                                <div class="col-xs-6" style="text-align:center;padding-left:0px;padding-right:0px;">
+                                    <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px;width:100%;margin-bottom: 5px;'">Origen</div>    
+                                    <p t-field="o.origin" />
+                                </div>
+                                <div class="col-xs-6" style="text-align:center;padding-right: 0px;">
+                                    <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px;width:100%;margin-bottom: 5px;'">Fecha</div>    
+                                    <t t-if="o.management_date">
+                                        <p t-esc="o.management_date[:-9]" t-options="{&quot;widget&quot;: &quot;date&quot;}" />
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2" style="text-align:center;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px;width:100%;margin-bottom: 5px;'">Transporte</div>    
+                            <p t-field="o.carrier_id" />
+                        </div>
+                        <div class="col-xs-1" style="text-align:center;padding-left:0px;padding-right:0px;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px;width:100%;margin-bottom: 5px;'">Peso</div>    
+                            <span t-field="o.weight"/>
+                            <span t-field="o.weight_uom_id"/>
+                        </div>
+                        <div class="col-xs-1" style="text-align:center;padding-right: 0px;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px;width:100%;margin-bottom: 5px;'">Bultos</div>    
+                            <p t-field="o.number_of_packages" />
+                        </div>
+                    </div>
+                    <div class="row" id="table_header" style="margin-top:20px;">
+                        <div class="col-xs-8" style="padding-right: 0px;">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;padding-left:15px;'">Descripción</div>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;text-align:center;height:40px;'">Cantidad<br/><small>m2/L</small></div>
+                        </div>
+                        <div class="col-xs-2" style="padding-right: 0px;padding-left: 0px;">
+                            <t t-if="o.total_cashondelivery>0">
+                                <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Importe total</div>
+                            </t>
+                        </div>
+                    </div>
+                    <t t-foreach="o.pack_operation_ids" t-as="move">
+                       <div class="row" style="padding: 5px 0px;">
+                           <div class="col-xs-8" style="margin-left: 15px;margin-right: -15px;">
+                              <span t-field="move.name"/>
+                           </div>
+                           <div class="col-xs-2" style="text-align:center;padding-right: 0px;">
+                               <span t-field="move.qty_done"/>
+                           </div>
+                            <div class="col-xs-2" style="text-align:right;padding-left:0px;">
+                                <t t-if="o.total_cashondelivery>0">
+                                     <t t-if="o.order_id">
+                                         <t t-set="price_unit_line" t-value="0"/>
+                                         <t t-foreach="o.order_id.order_line" t-as="line">
+                                             <t t-if="line.product_id.id==move.product_id.id">
+                                                 <t t-set="price_unit_line" t-value="line.price_subtotal"/>        
+                                             </t>
+                                         </t>
+                                         <t t-if="price_unit_line>0">
+                                             <span t-esc="price_unit_line" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                         </t>
+                                     </t>
+                                </t>
+                            </div>
+                       </div>
+                   </t>
+                   <t t-if="o.total_cashondelivery>0">
+                       <div class="row">
+                           <div class="col-xs-7"></div>
+                           <div class="col-xs-5" style="border-top:1px solid black;margin-top: 20px;">
+                               <div class="row" style="padding-bottom:5px;">
+                                   <div class="col-xs-8">Base imponible</div>
+                                   <div class="col-xs-4" style="text-align:right;">
+                                       <span t-field="o.order_id.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   </div>
+                               </div>
+                               <div class="row" style="padding-bottom:5px;">
+                                   <!--<div class="col-xs-8">Iva</div>!-->
+                                   <div class="col-xs-8">
+                                       <t t-set="order_taxes" t-value="[]"/>
+                                       <t t-foreach="o.order_id.order_line" t-as="l">
+                                           <t t-foreach="l.tax_id" t-as="tax">
+                                               <t t-set="order_taxes" t-value="list(set([tax.description]))"/>
+                                           </t>
+                                       </t>
+                                       <t t-foreach="order_taxes" t-as="order_tax">
+                                           <span t-esc="order_tax"/>
+                                       </t>
+                                    </div>
+                                   <div class="col-xs-4" style="text-align:right;">
+                                       <span t-field="o.order_id.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   </div>
+                               </div>
+                               <div name="total" class="row" t-att-style="'border: 1px solid '+custom_color_4+';'">
+                                   <div class="col-xs-8" t-att-style="'background:'+custom_color_4+';color:white;font-weight:bold;'">Total</div>
+                                   <div class="col-xs-4" style="text-align:right;font-weight:bold;">
+                                       <span t-field="o.order_id.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </t>
+                   <div class="row" style="margin-left: 0px;margin-right: 0px;margin-top: 30px;">
+                        <p style="font-size: 11px;"><b>IMPORTANTE - Comprobar Estado Mercancía.</b></p>   
+                        <p style="font-size: 11px;">Esta mercancía ha salido de nuestro almacén en perfecto estado. Le rogamos compruebe, en el momento de la recepción, si existe algún desperfecto <b>anótelo en el albarán de entrega</b> de la empresa de transporte y <b>efectúe inmediatamente la reclamación</b> oportuna a la agencia de transporte y a Grupo Arelux.</p>
+                        <p style="font-size: 11px;"><b>Grupo Arelux no se responsabiliza del estado de la mercancía pasadas 24 horas.</b></p>
+                    </div>
+                    <div class="row" style="margin-top:30px;">
+                        <div class="col-xs-6">
+                            <t t-if="o.total_cashondelivery>0">
+                                <div class="title_bar" t-att-style="'background:'+custom_color_5+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;'">PEDIDO CONTRAREEMBOLSO</div>
+                                <div class="row" style="padding:5px 0px;">
+                                    <div class="col-xs-6" style="margin-left: 15px;font-weight:bold;">CANTIDAD A ABONAR</div>
+                                    <div class="col-xs-4" style="text-align: right;font-weight: bold;font-size: 15px;">
+                                        <span t-field="o.total_cashondelivery" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-xs-6" style="padding-left:0px;padding-right:0px;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_5+';color: white;font-weight: bold;padding: 5px;width:100%%;text-align:center;'">Observaciones</div>                                                
+                            <div t-att-style="'border-left:1px solid  '+custom_color_5+';border-right:1px solid  '+custom_color_5+';border-bottom:1px solid  '+custom_color_5+';padding: 10px;'">
+                                <p style="font-size:11px;" t-field="o.sale_order_note"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+         </t>
+    </t>
+```    
