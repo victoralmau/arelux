@@ -1315,3 +1315,397 @@ Original > https://github.com/odoo/odoo/blob/10.0/addons/purchase/report/purchas
          </t>
     </t>
 ```    
+
+### [report_arelux] report_invoice_document
+Original > https://github.com/odoo/odoo/blob/10.0/addons/account/views/report_invoice.xml#L4
+
+#### Original
+```
+<?xml version="1.0"?>
+<t t-name="account.report_invoice_document">
+    <t t-call="report.external_layout">
+        <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+        <div class="page">
+            <div class="row">
+                <div name="invoice_address" class="col-xs-5 col-xs-offset-7">
+                    <address t-field="o.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                    <span t-if="o.partner_id.vat">TIN: <span t-field="o.partner_id.vat"/></span>
+                </div>
+            </div>
+
+            <h2>
+                <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Invoice</span>
+                <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA</span>
+                <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                <span t-if="o.type == 'out_refund'">Refund</span>
+                <span t-if="o.type == 'in_refund'">Vendor Refund</span>
+                <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                <span t-field="o.number"/>
+            </h2>
+
+            <div class="row mt32 mb32">
+                <div class="col-xs-2" t-if="o.name">
+                    <strong>Description:</strong>
+                    <p t-field="o.name"/>
+                </div>
+                <div class="col-xs-2" t-if="o.date_invoice">
+                    <strong>Invoice Date:</strong>
+                    <p t-field="o.date_invoice"/>
+                </div>
+                <div class="col-xs-2" t-if="o.date_due and o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">
+                    <strong>Due Date:</strong>
+                    <p t-field="o.date_due"/>
+                </div>
+                <div class="col-xs-2" t-if="o.origin">
+                    <strong>Source:</strong>
+                    <p t-field="o.origin"/>
+                </div>
+                <div class="col-xs-2" t-if="o.partner_id.ref">
+                    <strong>Customer Code:</strong>
+                    <p t-field="o.partner_id.ref"/>
+                </div>
+                <div name="reference" class="col-xs-2" t-if="o.reference">
+                    <strong>Reference:</strong>
+                    <p t-field="o.reference"/>
+                </div>
+            </div>
+
+            <!-- Is there a discount on at least one line? -->
+            <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="hidden">Source Document</th>
+                        <th class="text-right">Quantity</th>
+                        <th class="text-right">Unit Price</th>
+                        <th t-if="display_discount" class="text-right">Disc.(%)</th>
+                        <th class="text-right">Taxes</th>
+                        <th class="text-right">Tax Excluded Price</th>
+                    </tr>
+                </thead>
+                <tbody class="invoice_tbody">
+                    <tr t-foreach="o.invoice_line_ids" t-as="l">
+                        <td><span t-field="l.name"/></td>
+                        <td class="hidden"><span t-field="l.origin"/></td>
+                        <td class="text-right">
+                            <span t-field="l.quantity"/>
+                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="l.price_unit"/>
+                        </td>
+                        <td t-if="display_discount" class="text-right">
+                            <span t-field="l.discount"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-esc="', '.join(map(lambda x: (x.description or x.name), l.invoice_line_tax_ids))"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="l.price_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="row">
+                <div class="col-xs-4 pull-right">
+                    <table class="table table-condensed">
+                        <tr class="border-black">
+                            <td><strong>Subtotal</strong></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                        </tr>
+                        <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
+                            <tr>
+                                <td><span t-esc="amount_by_group[0] if len(o.tax_line_ids) &gt; 1 else (o.tax_line_ids.tax_id.description or o.tax_line_ids.tax_id.name)"/></td>
+                                <td class="text-right">
+                                    <span t-esc="amount_by_group[1]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr class="border-black">
+                            <td><strong>Total</strong></td>
+                            <td class="text-right">
+                                 <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DO NOT REMOVE THIS TABLE. MANDATORY IN SOME COUNTRIES -->
+            <div class="row" t-if="len(o.tax_line_ids) &gt; 0">
+                <div class="col-xs-6">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Tax</th>
+                                <th class="text-right">Base</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.tax_line_ids" t-as="t">
+                                <td><span t-field="t.tax_id.description"/></td>
+                                <td class="text-right">
+                                    <span t-field="t.base" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="t.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <p t-if="o.comment">
+                <strong>Comment:</strong>
+                <span t-field="o.comment"/>
+            </p>
+            <p t-if="o.payment_term_id">
+                <span t-field="o.payment_term_id.note"/>
+            </p>
+            <p t-if="o.fiscal_position_id.note">
+                <strong>Fiscal Position Remark:</strong>
+                <span t-field="o.fiscal_position_id.note"/>
+            </p>
+        </div>
+    </t>
+</t>
+```
+
+#### Modificado
+```
+<?xml version="1.0"?>
+<t t-name="account.report_invoice_document">
+    <t t-call="report.external_layout">
+        <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+        <t t-if="o.ar_qt_activity_type=='arelux'">                
+            <t t-set="custom_color_1" t-value="'#195660'" />
+            <t t-set="custom_color_2" t-value="'#307584'" />
+            <t t-set="custom_color_3" t-value="'#4996AA'" />
+            <t t-set="custom_color_4" t-value="'#60B2C4'" />
+            <t t-set="custom_color_5" t-value="'#8ECCD3'" />
+        </t>
+        <t t-else="">
+            <t t-set="custom_color_1" t-value="'#12575E'" />
+            <t t-set="custom_color_2" t-value="'#076973'" />
+            <t t-set="custom_color_3" t-value="'#057473'" />
+            <t t-set="custom_color_4" t-value="'#008C73'" />
+            <t t-set="custom_color_5" t-value="'#18A379'" />
+        </t>
+        <div class="page">
+            <div class="oe_structure"/>
+            <div class="row">
+                <div class="col-xs-5"></div>
+                <div class="col-xs-6 col-xs-offset-1" style="padding-right: 0px;">
+                    <div class='title_bar' t-att-style="'background:'+custom_color_1+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;'">Direccion de facturación</div>                    
+                    <div style="margin-left:15px;margin-top: 5px;">
+                       <p t-field="o.partner_id.name" style="margin-bottom:0px;" />
+                       <p t-field="o.partner_id.street" style="margin-bottom:0px;" />
+                       <p t-field="o.partner_id.street2" style="margin-bottom:0px;" />
+                       <p style="margin-bottom:0px;"><span t-field="o.partner_id.zip" /> <span t-field="o.partner_id.city" /></p>
+                       <p t-field="o.partner_id.country_id" style="margin-bottom:0px;" />
+                       <t t-if="o.partner_id.phone">
+                           <p style="margin-bottom:0px;">
+                                <i class="fa fa-phone"></i>
+                                <span t-field="o.partner_id.phone"  />
+                            </p>
+                       </t>
+                       <p t-if="o.partner_id.vat" style="margin-bottom: 0px;">NIF: <span t-field="o.partner_id.vat"/></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-5">
+                    <t t-if="o.type=='out_refund'">
+                        <h4 style="font-weight: bold;margin-top: 0px;">Factura rectificativa <span t-field="o.number"/></h4>
+                    </t>
+                    <t t-if="o.type!='out_refund'">
+                        <h4 style="font-weight: bold;margin-top: 0px;">Factura <span t-field="o.number"/></h4>
+                    </t>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="row" style="padding-right: 15px;">
+                        <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Origen</div>    
+                        <t t-if="o.origin">
+                            <t t-set="origin_split" t-value="o.origin.split(',')"/>
+                            <t t-foreach="origin_split" t-as="origin_item">
+                                <p t-esc="origin_item" style="margin-left:15px;" />    
+                            </t>
+                        </t>
+                    </div>
+                    <t t-if="o.name">
+                        <div class="row" style="padding-right: 15px;">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Referencia</div>    
+                            <p t-field="o.name" style="margin-left:15px;" />
+                        </div>
+                    </t>
+                </div>
+                <div class="col-xs-4">
+                    <div class="row" style="padding-right: 15px;">
+                        <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Fecha factura</div>    
+                        <p t-field="o.date_invoice" style="margin-left:15px;" />
+                    </div>
+                    <div class="row" style="padding-right: 15px;">
+                        <t t-if="o.payment_term_id">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Plazo de pago</div>    
+                            <p t-field="o.payment_term_id" style="margin-left:15px;" />
+                        </t>
+                    </div>
+                </div>    
+                <div class="col-xs-4">
+                    <div class="row">
+                        <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Fecha de vencimiento</div>                        
+                        <p t-field="o.date_due" style="margin-left:15px;" />
+                    </div>
+                    <div class="row">
+                        <t t-if="o.payment_mode_id">
+                            <div class='title_bar' t-att-style="'background:'+custom_color_2+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Modo de pago</div>                        
+                            <p t-field="o.payment_mode_id" style="margin-left:15px;" />
+                        </t>
+                    </div>
+                </div>
+            </div>
+            <!-- Is there a discount on at least one line? -->
+            <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+            <div class="row" id="table_header" style="margin-top:30px;">
+                <div class="col-xs-6">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;    padding-left: 15px;width:100%;height: 40px;line-height: 40px;'">Descripción</div>
+                </div>
+                <div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;text-align:center;'">Cantidad<br/><small>m2/Kg/L</small></div>
+                </div>
+                <div class="col-xs-2" style="padding-right:0px;">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Precio unitario</div>
+                </div>
+                <div class="col-xs-1" style="padding-right:0px;">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Dto.</div>
+                </div>
+                <div class="col-xs-2" style="padding-right:0px;">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_3+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Importe</div>
+                </div>
+            </div>
+            <t t-foreach="o.invoice_line_ids" t-as="l">
+                <div class="row" style="padding: 5px 0px;">
+                    <div class="col-xs-6" style="margin-left:15px;margin-right: -15px;">
+                       <span t-field="l.name"/>
+                    </div>
+                    <div class="col-xs-1" style="text-align:center;padding-left: 0px;padding-right: 0px;">
+                        <t t-if="l.quantity>0">
+                            <span t-field="l.quantity"/>
+                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                        </t>
+                    </div>
+                    <div class="col-xs-2" style="text-align:center;padding-right:0px;">
+                        <t t-if="l.price_unit>0">
+                            <!--<span t-field="l.price_unit"/>!-->
+                            <span t-esc="str(l.price_unit)"/>
+                        </t>
+                    </div>
+                    <div class="col-xs-1" groups="sale.group_discount_per_so_line" style="text-align:center;padding-right:0px;">
+                        <t t-if="l.discount>0">
+                           <span t-field="l.discount"/>%
+                        </t>
+                    </div>
+                    <div class="col-xs-2" style="text-align:right;" groups="sale.group_show_price_subtotal">
+                        <t t-if="l.price_subtotal>0">
+                            <span t-field="l.price_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </t>
+                    </div>
+                </div>
+            </t>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-xs-5"></div>
+                <div class="col-xs-2"></div>
+                <div class="col-xs-5" style="border-top:1px solid black;">
+                    <div class="row" style="padding-bottom: 5px;">
+                        <div class="col-xs-8">Base imponible</div>
+                        <div class="col-xs-4" style="text-align:right;">
+                            <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom: 5px;">
+                        <!--<div class="col-xs-8">Iva</div>!-->
+                        <div class="col-xs-8">
+                            <t t-foreach="o.tax_line_ids" t-as="tax_line">
+                                <span t-field="tax_line.tax_id.name"/>
+                            </t>
+                        </div>
+                        <div class="col-xs-4" style="text-align:right;">
+                            <span t-field="o.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </div>
+                    </div>
+                    <div name="total" class="row" t-att-style="'border: 1px solid '+custom_color_4+';'">
+                        <div class="col-xs-8" t-att-style="'background:'+custom_color_4+';color:white;font-weight:bold;'">Total</div>
+                        <div class="col-xs-4" style="text-align:right;font-weight:bold;">
+                            <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-xs-6">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_5+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;'">Vencimientos</div>
+                    <div class="row" t-att-style="'border-bottom:1px solid'+custom_color_5+';margin-left: 0px;margin-right: 0px;text-align: center;font-weight: bold;'">
+                        <div class="col-xs-4">Fecha</div>
+                        <div class="col-xs-4">Importe</div>
+                    </div>
+                    <t t-if="o.type=='out_invoice'">
+                        <t t-foreach="o.move_id.line_ids" t-as="line">
+                            <t t-if="line.debit>0">
+                                <div class="row" style="margin-left: 0px;margin-right: 0px;text-align:center;">
+                                    <div class="col-xs-4">
+                                        <span t-field="line.date_maturity"></span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span t-field="line.debit"></span>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-if="o.type=='out_refund'">
+                        <t t-foreach="o.move_id.line_ids" t-as="line">
+                            <t t-if="line.credit>0">
+                                <t t-if="line.user_type_id.type=='receivable'">
+                                    <div class="row" style="margin-left: 0px;margin-right: 0px;text-align:center;">
+                                        <div class="col-xs-4">
+                                            <span t-field="line.date_maturity"></span>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span t-field="line.credit"></span>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+                <div class="col-xs-5 col-xs-offset-1" style="padding-left:0px;padding-right:0px;">
+                    <div class='title_bar' t-att-style="'background:'+custom_color_5+';color: white;font-weight: bold;padding: 5px;width:100%%;text-align:center;'">Observaciones</div>                                                
+                    <div t-att-style="'border-left:1px solid '+custom_color_5+';border-right:1px solid '+custom_color_5+';border-bottom:1px solid  #18A379;padding: 10px;'">
+                        <p style="font-size:11px;" t-field="o.comment"/>
+                    </div>
+                </div>
+            </div>
+            <t t-if="o.hide_fiscal_position_description==False">
+                <t t-if="o.fiscal_position_id.id>0">
+                    <t t-if="o.fiscal_position_id.invoice_description">    
+                        <div class="row" style="margin-left: 0px;margin-right: 0px;margin-top: 20px;">
+                            <p t-field="o.fiscal_position_id.invoice_description" style="font-size:11px;" />
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </div>
+    </t>
+</t>
+```
