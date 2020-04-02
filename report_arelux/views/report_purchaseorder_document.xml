@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <template id="report_arelux_report_purchaseorder_document" name="report_arelux_report_purchaseorder_document" customize_show="True" inherit_id="purchase.report_purchaseorder_document" priority="20">
+        <xpath expr="//div" position="replace">
+            <t t-set="custom_color_black" t-value="'#434343'"/>
+            <t t-set="custom_color_green" t-value="'#98C020'"/>
+            <t t-set="custom_color_blue" t-value="'#4997AD'"/>
+            <t t-set="custom_color_red" t-value="'#AA002F'"/>                        
+            <div class="page">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class='company_data' style="line-height: 15px;font-size: 13px;margin-top: 20px;">
+                            <p t-field="o.company_id.partner_id.name" style="margin-bottom:0px;font-weight: bold;text-transform: uppercase;"/>
+                            <p t-field="o.company_id.partner_id.vat" style="margin-bottom: 0px;"/>
+                            <p t-field="o.company_id.partner_id.street" style="margin-bottom:0px;"/>
+                            <p style="margin-bottom:0px;"><span t-field="o.company_id.partner_id.zip"/> <span t-field="o.company_id.partner_id.city"/></p>
+                            <p t-field="o.company_id.partner_id.country_id" style="margin-bottom:0px;"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-6" style="padding-left: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_black+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;'">Proveedor</div>                    
+                        <div style="margin-left:15px;margin-top: 5px;">
+                           <p t-field="o.partner_id.name" style="margin-bottom:0px;"/>
+                           <p t-field="o.partner_id.street" style="margin-bottom:0px;"/>
+                           <p style="margin-bottom:0px;"><span t-field="o.partner_id.zip"/> <span t-field="o.partner_id.city"/></p>
+                           <p t-field="o.partner_id.country_id" style="margin-bottom:0px;"/>
+                           <t t-if="o.partner_id.phone">
+                                <p style="margin-bottom:0px;">
+                                    <i class="fa fa-phone"/>
+                                    <span t-field="o.partner_id.phone"/>
+                                </p>
+                           </t>
+                           <p t-if="o.partner_id.vat" style="margin-bottom: 0px;">NIF: <span t-field="o.partner_id.vat"/></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-5">
+                        <h4 style="font-weight:bold;">Pedido de compra <span t-field="o.name"/></h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-7" style="padding-right: 0px;padding-left: 0px;">
+                        <div class="col-xs-6">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_green+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Fecha pedido</div>    
+                            <p t-esc="o.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>                                                
+                        </div>
+                        <div class="col-xs-6" style="padding-left: 0px;">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_green+';color: white;font-weight: bold;padding: 5px 5px 5px 15px;width:100%;margin-bottom: 5px;'">Fecha prevista recepcion</div>    
+                            <p t-esc="o.date_planned" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>                        
+                        </div>                    
+                    </div>                    
+                    <div class="col-xs-5"></div>                    
+                </div>
+                <div class="row" id="table_header" style="margin-top:20px;">
+                    <div class="col-xs-7" style="padding-left: 0px;">
+                        <div class="col-xs-6" style="padding-right: 5px;">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;padding-left:15px;'">Descripción proveedor</div>
+                        </div>
+                        <div class="col-xs-6" style="padding-right: 0px;padding-left: 10px;">
+                            <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;padding-left:15px;'">Descripción Grupo Arelux</div>
+                        </div>
+                    </div>
+                    <div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;text-align:center;height:40px;'">Cantidad<br/><small>m2/L</small></div>
+                    </div>
+                    <div class="col-xs-1" style="padding-right: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Precio<br/>unitario</div>
+                    </div>
+                    <div class="col-xs-1" style="padding-right: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Dto</div>
+                    </div>
+                    <div class="col-xs-2" style="padding-right: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_blue+';color: white;font-weight: bold;width:100%;height: 40px;line-height: 40px;text-align:center;'">Importe</div>
+                    </div>
+                </div>
+                <tr t-foreach="o.order_line" t-as="line">
+                    <div class="row" id="table_header" style="margin-top:20px;">
+                        <div class="col-xs-7" style="padding-left: 0px;">
+                            <div class="col-xs-6" style="padding-right: 5px;">
+                                <span t-field="line.name"/>    
+                            </div>
+                            <div class="col-xs-6" style="padding-right: 0px;padding-left: 10px;">
+                                <span t-field="line.product_id.name"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;text-align:center;">
+                            <span t-field="line.product_qty"/>
+                        </div>
+                        <div class="col-xs-1" style="padding-right: 0px;text-align:center;">
+                            <span t-field="line.price_unit"/>
+                        </div>
+                        <div class="col-xs-1" style="padding-right: 0px;text-align:center;">
+                            <t t-if="line.discount != '0.00'">
+                                <span t-field="line.discount"/>
+                            </t>
+                        </div>
+                        <div class="col-xs-2" style="padding-left: 0px;text-align: right;">
+                             <span t-field="line.price_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </div>
+                    </div>
+                </tr>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-xs-8" style="padding-right: 0px;">
+                        <div class="title_bar" t-att-style="'background:'+custom_color_red+';color: white;font-weight: bold;padding: 5px;width:100%;text-align:center;'">Observaciones</div>                                              
+                        <div t-att-style="'border-left: 1px solid '+custom_color_red+';border-right:1px solid '+custom_color_red+';border-bottom:1px solid '+custom_color_red+';padding: 10px;'">
+                            <p style="font-size:11px;" t-field="o.notes"/>                            
+                        </div>
+                    </div>
+                   <div class="col-xs-4">
+                       <div class="row" style="padding-bottom: 5px;margin-left: 0px;border-top: 1px solid black;">
+                           <div class="col-xs-8" style="padding-left: 5px;padding-top: 10px;">Base imponible</div>
+                           <div class="col-xs-4" style="padding-top: 10px;text-align:right;">
+                               <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                           </div>
+                       </div>
+                       <div class="row" style="padding-bottom: 5px;margin-left: 0px;">
+                           <div class="col-xs-8" style="padding-left: 5px;">
+                                <t t-set="order_taxes" t-value="[]"/>
+                                <t t-foreach="o.order_line" t-as="line">
+                                    <t t-foreach="line.taxes_id" t-as="tax">
+                                        <t t-set="order_taxes" t-value="list(set([tax.name]))"/>
+                                    </t>
+                                </t>
+                                <t t-foreach="order_taxes" t-as="order_tax">
+                                    <span t-esc="order_tax"/>
+                                </t>
+                           </div>
+                           <div class="col-xs-4" style="text-align:right;">
+                               <span t-field="o.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                           </div>
+                       </div>
+                       <div name="total" class="row" t-att-style="'margin-left:0px;border: 1px solid '+custom_color_blue+';'">
+                           <div class="col-xs-8" t-att-style="'background:'+custom_color_blue+';color:white;font-weight:bold;'">Total</div>
+                           <div class="col-xs-4" style="text-align:right;font-weight:bold;">
+                               <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="row" style="margin-left: 0px;">
+                    <p><b>Forma de pago:</b> <span t-field="o.payment_term_id"/></p>
+                    <p><b>Solicitado por:</b> <span t-field="o.user_id"/></p>
+               </div>
+               <div class="row" style="margin-top:30px;margin-left: 0px;">
+                    <div class="title_bar" t-att-style="'background:'+custom_color_black+';color: white;font-weight: bold;padding: 10px;width:100%;'">IMPORTANTE:</div>
+                    <div style="padding: 5px 10px;">
+                        <p><b>Rogamos</b></p>
+                        <p>-Confirmación de recepción y tramitación de pedido.</p>
+                        <p>-Incluir referencia de nuestro pedido en su albarán y factura.</p>
+                        <p>-Suministro en palet europeo.</p>
+                    </div>
+               </div>
+            </div>
+        </xpath>        
+    </template>                
+</odoo>
