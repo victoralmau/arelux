@@ -9,7 +9,8 @@
     'depends': ['base', 'crm', 'mail', 'sale', 'product', 'stock', 'website_quote', 'shipping_expedition'],
     'data': [
         'views/crm_lead_view.xml',
-        'views/crm_team_view.xml',        
+        'views/crm_team_view.xml',
+        'views/product_pricelist.xml',        
         'data/res_partner_contact_form.xml',
         'data/res_partner_qualification_product.xml',
         'data/res_partner_reason_buy.xml',

@@ -71,4 +71,18 @@ class SaleOrder(models.Model):
         if self.opportunity_id.id>0:
             values['team_id'] = self.opportunity_id.team_id.id
                     
-        self.update(values)                                                               
+        self.update(values)
+        
+    @api.model
+    def create(self, values):   
+        return_val = super(SaleOrder, self).create(values)
+        #operations
+        if self.opportunity_id.id>0:
+            #ar_qt_activity_type                    
+            if self.opportunity_id.ar_qt_activity_type!=False and self.opportunity_id.ar_qt_activity_type!=self.ar_qt_activity_type:
+                self.ar_qt_activity_type = self.opportunity_id.ar_qt_activity_type
+            #ar_qt_customer_type                    
+            if self.opportunity_id.ar_qt_customer_type!=False and self.opportunity_id.ar_qt_customer_type!=self.ar_qt_customer_type:
+                self.ar_qt_customer_type = self.opportunity_id.ar_qt_customer_type
+        #return
+        return return_val                                                                                       

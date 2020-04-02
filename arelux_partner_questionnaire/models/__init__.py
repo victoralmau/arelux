@@ -1,6 +1,7 @@
 import account_invoice
 import crm_lead
 import crm_team
+import product_pricelist
 import res_partner_arelux
 import res_partner_todocesped
 import res_partner
