@@ -998,3 +998,17 @@ Original > https://github.com/odoo/odoo/blob/10.0/addons/stock/report/report_del
          </t>
     </t>
 ```    
+
+### [report_arelux] report_purchaseorder
+
+#### Original
+```
+<?xml version="1.0"?>
+<t t-name="purchase.report_purchaseorder">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="purchase.report_purchaseorder_document" t-lang="o.partner_id.lang"/>
+        </t>
+    </t>
+</t>
+```
