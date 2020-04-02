@@ -141,23 +141,6 @@ class ContactFormSubmission(models.Model):
     )
 
     @api.one
-    def tracking_user_identify(self):
-        if self.partner_id.id>0:
-            if self.tracking_user_uuid!=False and self.tracking_profile_uuid!=False:
-                headers = {
-                    'Content-type': 'application/json',
-                    'origin': 'erp.arelux.com',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0'
-                }
-                data = {
-                    "profile_uuid": str(self.tracking_profile_uuid),
-                    "identity": str(self.partner_id.id)
-                }
-                url = 'https://tr.oniad.com/api/user/' + str(self.tracking_user_uuid) + '/identify'
-                response = requests.post(url, data=json.dumps(data), headers=headers)
-                return response.status_code
-
-    @api.one
     def tracking_session_addProperties(self):
         if self.lead_id.id>0:
             if self.tracking_profile_uuid!=False and self.tracking_session_uuid!=False:
@@ -266,8 +249,9 @@ class ContactFormSubmission(models.Model):
                     res_partner_obj = self.env['res.partner'].sudo(self.create_uid.id).create(res_partner_vals)
                 #update
                 self.partner_id = res_partner_obj.id
-            # tracking_user_identify
-            self.tracking_user_identify()
+                #tr_oniad
+                if self.partner_id.id>0:
+                    self.partner_id.tracking_user_identify()
 
     @api.one
     def operations_item_lead_id(self):
@@ -375,9 +359,9 @@ class ContactFormSubmission(models.Model):
                 self.mail_followers_check('crm.lead', self.lead_id.id, False, True)
                 #partner_id (fix)
                 self.lead_id.partner_id = self.partner_id.id
-            # tracking_session_addProperties
-            if self.tracking_session_uuid != False:
-                self.tracking_session_addProperties()
+                #tr_oniad
+                if self.lead_id.id>0:
+                    self.lead_id.tracking_session_addProperties()
 
     @api.one
     def mail_followers_check(self, model, res_id, check_remove=True, check_add=True):
