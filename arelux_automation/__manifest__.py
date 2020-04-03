@@ -6,10 +6,12 @@
     'website': 'https://nodrizatech.com/',
     'category': 'Tools',
     'license': 'AGPL-3',
-    'depends': ['base', 'crm', 'sale', 'stock', 'ont_automation_base'],
+    'depends': ['base', 'crm', 'sale', 'stock', 'sms_arelux', 'ont_automation_base'],
     'data': [
         'data/ir_configparameter_data.xml',
         'data/ir_cron.xml',
+        'security/ir.model.access.csv',
+        'views/arelux_automation_process_view.xml',
     ],    
     'installable': True,
     'auto_install': False,    
