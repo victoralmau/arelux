@@ -1,0 +1,48 @@
+<openerp>
+    <data noupdate="1">
+        <record id="cron_automation_todocesped_profesional" model="ir.cron">
+            <field name="name">Automation Todocesped Profesional</field>
+            <field name="active" eval="False" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model" eval="'crm.lead'" />
+            <field name="function" eval="'cron_automation_todocesped_profesional'" />
+            <field name="args" eval="" />
+        </record>
+        <record id="cron_automation_todocesped_particular_sale_orders" model="ir.cron">
+            <field name="name">Automation Todocesped Particular Sale Orders</field>
+            <field name="active" eval="False" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model" eval="'sale.order'" />
+            <field name="function" eval="'cron_automation_todocesped_particular_sale_orders'" />
+            <field name="args" eval="" />
+        </record>
+        <record id="cron_automation_todocesped_particular_sale_orders_mail2" model="ir.cron">
+            <field name="name">Automation Todocesped Particular Sale Orders Mail 2</field>
+            <field name="active" eval="False" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model" eval="'sale.order'" />
+            <field name="function" eval="'cron_automation_todocesped_particular_sale_orders_mail2'" />
+            <field name="args" eval="" />
+        </record>
+        <record id="cron_automation_profesional_sale_orders_sens_sms" model="ir.cron">
+            <field name="name">Automation Profesional Sale Orders Send SMS</field>
+            <field name="active" eval="False" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model" eval="'sale.order'" />
+            <field name="function" eval="'cron_automation_profesional_sale_orders_sens_sms'" />
+            <field name="args" eval="" />
+        </record>                                                                                
+    </data>
+</openerp>

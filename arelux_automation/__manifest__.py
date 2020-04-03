@@ -6,8 +6,11 @@
     'website': 'https://nodrizatech.com/',
     'category': 'Tools',
     'license': 'AGPL-3',
-    'depends': ['base', 'stock', 'ont_automation_base'],
-    'data': [],    
+    'depends': ['base', 'crm', 'sale', 'stock', 'ont_automation_base'],
+    'data': [
+        'data/ir_configparameter_data.xml',
+        'data/ir_cron.xml',
+    ],    
     'installable': True,
     'auto_install': False,    
 }
