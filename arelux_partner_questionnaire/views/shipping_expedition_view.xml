@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="arelux_questionarie_shipping_expedition_form_view" model="ir.ui.view">
-        <field name="name">arelux_questionarie_shipping_expedition_form_view</field>
+    <record id="arelux_partner_questionnaire_shipping_expedition_form_view" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_shipping_expedition_form_view</field>
         <field name="model">shipping.expedition</field>
-        <field name="inherit_id" ref="base_delivery_carrier_expedition.shipping_expedition_form_view" />
+        <field name="inherit_id" ref="shipping_expedition.shipping_expedition_form_view" />
         <field name="priority" eval="20"/>                
         <field name="arch" type="xml">
             <field name="picking_id" position="before">
@@ -12,10 +12,10 @@
             </field>                                                            
         </field>
     </record>
-    <record id="arelux_questionarie_shipping_expedition_tree" model="ir.ui.view">
-        <field name="name">arelux_questionarie_shipping_expedition_tree</field>
+    <record id="arelux_partner_questionnaire_shipping_expedition_tree" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_shipping_expedition_tree</field>
         <field name="model">shipping.expedition</field>
-        <field name="inherit_id" ref="base_delivery_carrier_expedition.shipping_expedition_tree" />
+        <field name="inherit_id" ref="shipping_expedition.shipping_expedition_tree" />
         <field name="priority" eval="20"/>                
         <field name="arch" type="xml">
             <field name="state" position="after">
@@ -24,10 +24,10 @@
             </field>                                                            
         </field>
     </record>
-    <record id="view_shipping_expedition_search_arelux_partner_questionnaire" model="ir.ui.view">
-        <field name="name">view_shipping_expedition_search_arelux_partner_questionnaire</field>
+    <record id="arelux_partner_questionnaire_view_shipping_expedition_search" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_view_shipping_expedition_search</field>
         <field name="model">shipping.expedition</field>
-        <field name="inherit_id" ref="base_delivery_carrier_expedition.view_shipping_expedition_search" />
+        <field name="inherit_id" ref="shipping_expedition.view_shipping_expedition_search" />
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='my_shipping_expeditions_filter']" position="after">
