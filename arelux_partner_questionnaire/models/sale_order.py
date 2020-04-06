@@ -85,4 +85,21 @@ class SaleOrder(models.Model):
             if self.opportunity_id.ar_qt_customer_type!=False and self.opportunity_id.ar_qt_customer_type!=self.ar_qt_customer_type:
                 self.ar_qt_customer_type = self.opportunity_id.ar_qt_customer_type
         #return
-        return return_val                                                                                       
+        return return_val
+        
+    @api.multi
+    def write(self, vals):
+        allow_write = True                        
+        #fix validate template_id
+        if 'template_id' in vals:
+            if vals['template_id']!=False:
+                template_id_check = vals['template_id']            
+                sale_quote_template_obj = self.env['sale.quote.template'].browse(template_id_check)
+                if sale_quote_template_obj.ar_qt_activity_type!=False:
+                    if sale_quote_template_obj.ar_qt_activity_type!=self.ar_qt_activity_type:
+                        allow_write = False
+                        raise Warning("La plantilla de presupuesto no corresponde con el tipo de actividad")                    
+        #allow_write                
+        if allow_write==True:                        
+            return_object = super(SaleOrder, self).write(vals)                        
+            return return_object                                                                                               
