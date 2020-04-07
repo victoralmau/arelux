@@ -69,6 +69,6 @@
         action="odoo_arelux_automation_process_action"
         name="Arelux Automation Process"
         id="menuitem_odoo_arelux_automation_process"
-        parent="ont_automation_base.menu_odoo_automation"
+        parent="automation_log.menu_odoo_automation"
     />
 </odoo>
