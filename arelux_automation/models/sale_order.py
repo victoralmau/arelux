@@ -39,13 +39,13 @@ class SaleOrder(models.Model):
         '''
         #special_log
         if 'action_log' in params:
-            arelux_automation_log_vals = {                    
+            automation_log_vals = {                    
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
                 'action': str(params['action_log']),                                                                                                                                                                                           
             }
-            arelux_automation_log_obj = self.env['arelux.automation.log'].sudo().create(arelux_automation_log_vals)
+            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
         #check_user_id sale_order
         if 'user_id' in params:
             if self.user_id.id==0:            
@@ -113,7 +113,7 @@ class SaleOrder(models.Model):
                 'category': 'crm_lead',
                 'action': 'change_stage_id',                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['arelux.automation.log'].sudo().create(automation_log_vals)        
+            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)        
     
     @api.multi    
     def cron_automation_profesional_sale_orders_sens_sms(self, cr=None, uid=False, context=None):    
@@ -315,12 +315,12 @@ class SaleOrder(models.Model):
         
         if skip_cron==False:            
             arelux_automation_tc_part_sale_orders_mail2_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_sale_orders_mail2_mail_template_id'))
-            #arelux_automation_log send_mail
-            arelux_automation_log_ids_send_mail = self.env['arelux.automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail')])        
-            sale_order_ids_get_in = arelux_automation_log_ids_send_mail.mapped('res_id')
-            #arelux_automation_log previously send_mail2
-            arelux_automation_log_ids_send_mail2 = self.env['arelux.automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2')])
-            sale_order_ids_get_not_in = arelux_automation_log_ids_send_mail2.mapped('res_id')
+            #automation_log_ids_send_mail send_mail
+            automation_log_ids_send_mail = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail')])        
+            sale_order_ids_get_in = automation_log_ids_send_mail.mapped('res_id')
+            #automation_log_ids_send_mail2 previously send_mail2
+            automation_log_ids_send_mail2 = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2')])
+            sale_order_ids_get_not_in = automation_log_ids_send_mail2.mapped('res_id')
             #sale_orders
             current_date = datetime.today()
             date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)
@@ -344,8 +344,8 @@ class SaleOrder(models.Model):
     @api.one
     def action_sale_order_mail2(self, template_id=False):
         need_send_mail = False        
-        arelux_automation_log_ids = self.env['arelux.automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2'),('res_id', '=', self.id)])
-        if len(arelux_automation_log_ids)==0:                    
+        automation_log_ids = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2'),('res_id', '=', self.id)])
+        if len(automation_log_ids)==0:                    
             if self.claim==False and self.state=='sent' and self.amount_untaxed>0:
                 current_date = datetime.today()
                 date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)                        
@@ -415,7 +415,7 @@ class SaleOrder(models.Model):
                 'category': 'sale_order',
                 'action': 'send_mail2',                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['arelux.automation.log'].sudo().create(automation_log_vals)
+            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
                                         
     @api.one
     def action_send_mail_with_template_id(self, template_id=False):
