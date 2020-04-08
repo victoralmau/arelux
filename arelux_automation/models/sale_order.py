@@ -146,8 +146,8 @@ class SaleOrder(models.Model):
             arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux'))
             arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both'))
             
-            arelux_automation_log_ids = self.env['arelux.automation.log'].search([('model', '=', 'sale.order'),('category', '=', 'sale_order'),('action', '=', 'send_sms_done')])
-            sale_order_ids_get_not_in = arelux_automation_log_ids.mapped('res_id')
+            automation_log_ids = self.env['automation.log'].search([('model', '=', 'sale.order'),('category', '=', 'sale_order'),('action', '=', 'send_sms_done')])
+            sale_order_ids_get_not_in = automation_log_ids.mapped('res_id')
             
             #confirmation_date
             confirmation_date_start = current_date + relativedelta(days=-5)
