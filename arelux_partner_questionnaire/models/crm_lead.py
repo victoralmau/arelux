@@ -66,7 +66,7 @@ class CrmLead(models.Model):
                     
     @api.onchange('user_id')
     def change_user_id(self):
-        return_item = super(CrmLead, self).change_user_id()
+        return_item = super(CrmLead, self)._onchange_user_id()
         #operations
         if self._origin.id>0 and self.user_id.id>0:
             self.fix_copy_custom_field_sale_orders(True)
