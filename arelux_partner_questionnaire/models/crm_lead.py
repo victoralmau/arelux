@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields
+from openerp.exceptions import Warning
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 import logging
-
 _logger = logging.getLogger(__name__)
 
 class CrmLead(models.Model):
