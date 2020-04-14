@@ -124,7 +124,8 @@
                         <div class="col-xs-2" style="text-align:center;padding-right:0px;">
                             <t t-if="l.price_unit>0">
                                 <!--<span t-field="l.price_unit"/>!-->
-                                <span t-esc="str(l.price_unit)"/>
+                                <!--<span t-esc="str(l.price_unit)"/>!-->
+                                <span t-esc="l.price_unit" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                             </t>
                         </div>
                         <div class="col-xs-1" groups="sale.group_discount_per_so_line" style="text-align:center;padding-right:0px;">

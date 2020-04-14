@@ -88,7 +88,8 @@
                             <span t-field="line.product_qty"/>
                         </div>
                         <div class="col-xs-1" style="padding-right: 0px;text-align:center;">
-                            <span t-field="line.price_unit"/>
+                            <!--<span t-field="line.price_unit"/>!-->
+                            <span t-esc="line.price_unit" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                         </div>
                         <div class="col-xs-1" style="padding-right: 0px;text-align:center;">
                             <t t-if="line.discount != '0.00'">
