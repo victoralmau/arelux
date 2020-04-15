@@ -49,7 +49,7 @@ class CrmLead(models.Model):
     
     @api.onchange('partner_id')
     def change_partner_id(self):
-        return_item = super(CrmLead, self).change_partner_id()
+        return_item = super(CrmLead, self)._onchange_partner_id()
         #operations
         if self._origin.id==0 and self.partner_id.id>0:
             #ar_qt_activity_type
