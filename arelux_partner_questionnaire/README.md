@@ -11,8 +11,9 @@ nombre | name | filter_company | filter_ar_qt_customer_type | position | other
 4 | Llamada | all | all | 3 | False
 5 | Whatsapp | all | all | 4 | False
 6 | Visita a la nave | all | all | 5 | False
-7 | Otro | all | all | 7 | True
+7 | Otro | all | all | 8 | True
 8 | Redes sociales | all | all | 6 | False
+9 | Tienda online | all | all | 7 | False
 
 ### res.partner.qualification.product
 nombre | name | filter_company | filter_ar_qt_customer_type | position | other
