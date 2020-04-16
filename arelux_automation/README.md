@@ -18,6 +18,7 @@ arelux_automation_tc_prof_sale_orders_sms_template_id_both
 arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped
 arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux
 arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both
+arelux_automation_tc_part_repaso_mail_template_id
 ``` 
 
 ## Crones
@@ -46,3 +47,9 @@ Limitaciones: Solo se envía de Lunes-Viernes en horario de 08:00 - 18:00 y Sáb
 Descripción: Revisa todos los PV en estado "Presupuesto enviado" que NO sean reclamacion, que tengan flujo de ventas asignado, con "fecha gestion" <= hoy -2 dias - 5minutos, flujo con probabilidad > 0 y < 100, que sea de los previamente gestionados automáticamente y a los que NO les hayamos enviado ya este email2
 
 Envía un email automáticamente
+
+### Automation Todocesped Particular Repaso Mail 
+Frecuencia: 1 vez al día (laborable)
+
+Descripción: Respecto a todos los flujos que están en la etapa "presupuesto enviado" se buscan si tiene algún presupuesto de importe 0€ con el transportista nacex confirmado, respecto a ese, se busca el albarán correspondiente para ver si está Hecho y si tiene expedición vinculada, si la tiene, se busca si la misma está en estado Entregado y si la fecha (date) de la expedición es <4 días de la fecha de ejecución del cron. 
+En el caso de que cumpla los criterios anteriores, se busca respecto al lead inicial, si existe otro presupuesto vinculado de importe >0€ en estado 'presupuesto enviado' que NO sea una reclamación y en caso de encontrarlo, se procede a enviar un email de acuerdo a (arelux_automation_tc_part_repaso_mail_template_id) y se cambia el estado del flujo a la etapa "Repaso".
