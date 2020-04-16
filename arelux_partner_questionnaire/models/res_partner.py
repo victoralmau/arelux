@@ -180,7 +180,20 @@ class ResPartner(models.Model):
             for sale_order_id in sale_order_ids:
                 for order_line in sale_order_id.order_line:
                     if order_line.product_id.id==97:
-                        partner_id.ar_qt_samples  = sale_order_id.confirmation_date                                                      
+                        partner_id.ar_qt_samples  = sale_order_id.confirmation_date
+                        
+    @api.model
+    def create(self, values):
+        record = super(ResPartner, self).create(values)
+        #operations                        
+        if record.parent_id.id>0:
+            if record.parent_id.ar_qt_activity_type!=False:
+                record.ar_qt_activity_type = record.parent_id.ar_qt_activity_type
+
+            if record.parent_id.ar_qt_customer_type!=False:
+                record.ar_qt_customer_type = record.parent_id.ar_qt_customer_type                
+        #return                
+        return record                                                                              
     
     @api.multi    
     def cron_action_generate_customer_type(self, cr=None, uid=False, context=None):        
