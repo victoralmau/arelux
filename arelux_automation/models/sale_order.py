@@ -340,6 +340,79 @@ class SaleOrder(models.Model):
             if len(sale_order_ids)>0:
                 for sale_order_id in sale_order_ids:
                     sale_order_id.action_sale_order_mail2(arelux_automation_tc_part_sale_orders_mail2_mail_template_id)
+                    
+    @api.multi    
+    def cron_automation_todocesped_particular_repaso_mail(self, cr=None, uid=False, context=None):
+        _logger.info('cron_automation_todocesped_particular_repaso_mail')
+        #def
+        arelux_automation_tc_part_repaso_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_repaso_mail_template_id'))        
+        current_date = datetime.today()
+        shipping_expedition_date = current_date + relativedelta(days=-4)
+        #leads
+        total_items = 0
+        crm_lead_ids = self.env['crm.lead'].search(
+            [
+                ('type', '=', 'opportunity'),
+                ('active', '=', True),
+                ('probability', '>', 0),
+                ('probability', '<', 100),
+                ('ar_qt_activity_type', '=', 'todocesped'),
+                ('ar_qt_customer_type', '=', 'particular'),
+                ('stage_id', '=', 2)                
+             ]
+        )
+        #quizas limitar la consulta a 1000 puesto que si devuelve como ahora 11800 no dara tiempo en 30 minutos de odoo.conf
+        if len(crm_lead_ids)>0:
+            for crm_lead_id in crm_lead_ids:
+                #sale.order
+                sale_order_ids = self.env['sale.order'].search(
+                    [
+                        ('opportunity_id', '=', crm_lead_id.id),
+                        ('claim', '=', False),
+                        ('amount_total', '=', 0),
+                        ('carrier_id.carrier_type', '=', 'nacex')                                        
+                     ]
+                )
+                if len(sale_order_ids)>0:
+                    sale_order_id = sale_order_ids[0]
+                    #stock.picking (shipping.expedition)
+                    stock_picking_ids = self.env['stock.picking'].search(
+                        [
+                            ('origin', '=', sale_order_id.name),
+                            ('state', '=', 'done'),
+                            ('carrier_id.carrier_type', '=', 'nacex'),
+                            ('shipping_expedition_id', '!=', False),
+                            ('shipping_expedition_id.state', '=', 'delivered'),
+                            ('shipping_expedition_id.date', '<=', shipping_expedition_date.strftime("%Y-%m-%d"))                            
+                        ]
+                    )
+                    if len(stock_picking_ids)>0:
+                        #search opposite sale.order
+                        sale_order_ids_operations = self.env['sale.order'].search(
+                            [
+                                ('opportunity_id', '=', crm_lead_id.id),
+                                ('claim', '=', False),
+                                ('amount_total', '>', 0),
+                                ('state', '=', 'sent')                                        
+                             ]
+                        )
+                        if len(sale_order_ids_operations)>0:
+                            sale_order_id_operations = sale_order_ids_operations[0]
+                            #send_mail (sale.order)
+                            #change state_id (opportunity_id)
+                            _logger.info('Operaciones del presupuesto '+str(sale_order_id_operations.name))
+                            #automation_proces
+                            '''
+                            sale_order_id_operations.automation_proces({
+                                'action_log': 'repaso_mail',
+                                'mail_template_id': arelux_automation_tc_part_repaso_mail_template_id,
+                                'lead_stage_id': 3#Repaso
+                            })
+                            '''
+                            #total_items
+                            total_items += 1
+        #log total_items
+        _logger.info('Total items aplicados '+str(total_items))                            
     
     @api.one
     def action_sale_order_mail2(self, template_id=False):

@@ -346,4 +346,4 @@ class CrmLead(models.Model):
         #self.cron_automation_todocesped_profesional_recurrentes()
         #fidelizados
         #self.cron_automation_todocesped_profesional_fidelizados()
-        _logger.info('cron_automation_todocesped_profesional')                                                                                                  
+        _logger.info('cron_automation_todocesped_profesional')                                                                                                              

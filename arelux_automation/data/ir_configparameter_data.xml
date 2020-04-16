@@ -68,6 +68,10 @@
         <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both" model="ir.config_parameter">
             <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both</field>
             <field name="value">1</field>
+        </record>
+        <record id="arelux_automation_tc_part_repaso_mail_template_id" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_part_repaso_mail_template_id</field>
+            <field name="value">0</field>
         </record>                                                                   
     </data>
 </openerp>
