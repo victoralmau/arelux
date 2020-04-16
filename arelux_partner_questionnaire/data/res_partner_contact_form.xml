@@ -56,12 +56,20 @@
         <field name="position">6</field>
         <field name="other">False</field>
     </record>
+    <record id="res_partner_contact_form_data_9" model="res.partner.contact.form">
+        <field name="id">9</field>
+        <field name="name">Tienda online</field>
+        <field name="filter_company">all</field>
+        <field name="filter_ar_qt_customer_type">all</field>
+        <field name="position">7</field>
+        <field name="other">False</field>
+    </record>
     <record id="res_partner_contact_form_data_7" model="res.partner.contact.form">
         <field name="id">7</field>
         <field name="name">Otro</field>
         <field name="filter_company">all</field>
         <field name="filter_ar_qt_customer_type">all</field>
-        <field name="position">7</field>
+        <field name="position">8</field>
         <field name="other">True</field>
     </record>        
 </odoo>
