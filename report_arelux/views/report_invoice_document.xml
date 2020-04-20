@@ -224,23 +224,27 @@
                     </t>
                 </t>
                 <t t-if="o.type=='out_invoice'">
-                    <t t-if="o.payment_mode_id.id>0">
-                        <div class="acc_numbers" style="margin-top:30px;">
-                            <p style="text-decoration:underline;">Números de Cuenta a favor de TodoCesped/Arelux</p>
-                            <ul style="padding-left: 20px;">
-                                <t t-if="o.payment_mode_id.bank_account_link=='fixed'">
-                                    <li><span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.bank_id.public_name" />: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number" /></li>                        
-                                </t>
-                                <t t-if="o.payment_mode_id.bank_account_link=='variable'">
-                                    <t t-foreach="o.payment_mode_id.variable_journal_ids" t-as="journal_id">
-                                        <li><span t-field="journal_id.bank_account_id.bank_id.public_name" />: <span t-field="journal_id.bank_account_id.acc_number" /></li>
-                                    </t>
-                                </t>
-                            </ul>
-                            <br/>
-                            <p>Rogamos indiquen nombre y número de pedido. Ejemplo: PV/2020/XXXX</p>
-                            <p>Para mayor rapidez en la gestión de su pedido, remita el justificante de la transferencia a su comercial.</p>                            
-                        </div>
+                    <t t-if="o.state=='open'">
+                        <t t-if="o.payment_mode_id.id>0">
+                            <t t-if="o.payment_mode_id.payment_method_id.mandate_required==False">
+                                <div class="acc_numbers" style="margin-top:30px;">
+                                    <p style="text-decoration:underline;">Números de Cuenta a favor de TodoCesped/Arelux</p>
+                                    <ul style="padding-left: 20px;">
+                                        <t t-if="o.payment_mode_id.bank_account_link=='fixed'">
+                                            <li><span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.bank_id.public_name" />: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number" /></li>                        
+                                        </t>
+                                        <t t-if="o.payment_mode_id.bank_account_link=='variable'">
+                                            <t t-foreach="o.payment_mode_id.variable_journal_ids" t-as="journal_id">
+                                                <li><span t-field="journal_id.bank_account_id.bank_id.public_name" />: <span t-field="journal_id.bank_account_id.acc_number" /></li>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                    <br/>
+                                    <p>Rogamos indiquen nombre y número de pedido. Ejemplo: PV/2020/XXXX</p>
+                                    <p>Para mayor rapidez en la gestión de su pedido, remita el justificante de la transferencia a su comercial.</p>                            
+                                </div>
+                            </t>
+                        </t>
                     </t>
                 </t>
             </div>
