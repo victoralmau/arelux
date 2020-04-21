@@ -623,11 +623,26 @@ class ContactFormSubmission(models.Model):
                             if param_need_check_not_format in message_body:
                                 # replace+assign
                                 key_val = str(param_need_check_not_format.replace('odoo_', ''))
-                                contact_form_submission_vals[key_val] = message_body[param_need_check_not_format]
+                                contact_form_submission_vals[key_val] = message_body[param_need_check_not_format]                                                                                
                         #replace
                         if 'partner_category_id' in contact_form_submission_vals:
                             contact_form_submission_vals['category_id'] = contact_form_submission_vals['partner_category_id']
                             del contact_form_submission_vals['partner_category_id']
+                        #ar_qt_todocesped_pr_type_surface (check imposible)
+                        if 'ar_qt_todocesped_pr_type_surface' in contact_form_submission_vals:
+                            res_partner_type_surface_ids = self.env['res.partner.type.surface'].search([('id', '=', int(contact_form_submission_vals['ar_qt_todocesped_pr_type_surface']))])
+                            if len(res_partner_type_surface_ids)==0:
+                                del contact_form_submission_vals['ar_qt_todocesped_pr_type_surface']
+                        #category_id (check imposible)
+                        if 'category_id' in contact_form_submission_vals:
+                            res_partner_category_ids = self.env['res.partner.category'].search([('id', '=', int(contact_form_submission_vals['category_id']))])
+                            if len(res_partner_category_ids)==0:
+                                del contact_form_submission_vals['category_id']
+                        #ar_qt_todocesped_contact_form (check imposible)
+                        if 'ar_qt_todocesped_contact_form' in contact_form_submission_vals:
+                            res_partner_contact_form_ids = self.env['res.partner.contact.form'].search([('id', '=', int(contact_form_submission_vals['ar_qt_todocesped_contact_form']))])
+                            if len(res_partner_contact_form_ids)==0:
+                                del contact_form_submission_vals['category_id']                                                            
                         # final_operations
                         result_message['data'] = contact_form_submission_vals
                         _logger.info(result_message)
