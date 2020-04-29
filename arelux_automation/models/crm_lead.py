@@ -60,7 +60,7 @@ class CrmLead(models.Model):
         # next_activity_id
         if 'next_activity' in params:
             if params['next_activity'] == True:
-                self.self.write({
+                self.write({
                     'next_activity_id': int(params['next_activity_id']),  # Tarea
                     'date_action': str(params['next_activity_date_action']),
                     'title_action': str(params['next_activity_title_action'])
