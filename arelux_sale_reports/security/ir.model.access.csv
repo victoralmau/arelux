@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_arelux_sale_report_admin,arelux.sale.report,model_arelux_sale_report,,1,1,1,1
-access_arelux_sale_report_line_admin,arelux.sale.report.line,model_arelux_sale_report_line,,1,1,1,1
-access_arelux_sale_report_type_admin,arelux.sale.report.type,model_arelux_sale_report_type,,1,1,1,1
-access_arelux_sale_report_template_admin,arelux.sale.report.template,model_arelux_sale_report_template,,1,1,1,1
-access_arelux_sale_report_template_line_admin,arelux.sale.report.template.line,model_arelux_sale_report_template_line,,1,1,1,1

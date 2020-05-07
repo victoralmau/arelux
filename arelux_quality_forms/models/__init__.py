@@ -1,7 +1,0 @@
-import fire_drill
-import fire_drill_decision
-import maintenance_installation
-import maintenance_installation_need_check
-import waste_remove
-import waste_remove_detail
-import waste_remove_product
