@@ -4,8 +4,8 @@ from odoo import api, models, fields
 import logging
 _logger = logging.getLogger(__name__)
 
-class SaleQuoteTemplate(models.Model):
-    _inherit = 'sale.quote.template'
+class SaleOrderTemplate(models.Model):
+    _inherit = 'sale.order.template'
     
     ar_qt_activity_type = fields.Selection(
         [

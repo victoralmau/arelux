@@ -63,7 +63,7 @@
         <field name="inherit_id" ref="crm.view_crm_case_leads_filter" />
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
-            <filter name="not_opt_out" position="before">
+            <filter name="assigned_to_me" position="before">
                 <separator/>
                 <filter string="Particulares" name="type_contacts" domain="[('ar_qt_customer_type','=','particular')]"/>
                 <filter string="Profesionales" name="type_contacts" domain="[('ar_qt_customer_type','=','profesional')]"/>

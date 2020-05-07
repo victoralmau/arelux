@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>     
-    <record id="view_sale_quote_template_arelux_questionarie_tree" model="ir.ui.view">
-        <field name="name">view_sale_quote_template_arelux_questionarie_tree</field>
-        <field name="model">sale.quote.template</field>
-        <field name="inherit_id" ref="website_quote.view_sale_quote_template_tree"/>
+    <record id="arelux_partner_questionnaire_sale_order_template_view_tree" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_sale_order_template_view_tree</field>
+        <field name="model">sale.order.template</field>
+        <field name="inherit_id" ref="sale_management.sale_order_template_view_tree"/>
         <field name="priority" eval="90"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
@@ -11,10 +11,10 @@
             </field>                                    
         </field>
     </record>
-    <record id="view_sale_quote_template_arelux_questionarie_form" model="ir.ui.view">
-        <field name="name">view_sale_quote_template_arelux_questionarie_form</field>
-        <field name="model">sale.quote.template</field>
-        <field name="inherit_id" ref="website_quote.view_sale_quote_template_form"/>
+    <record id="arelux_partner_questionnaire_sale_order_template_view_form" model="ir.ui.view">
+        <field name="name">arelux_partner_questionnaire_sale_order_template_view_form</field>
+        <field name="model">sale.order.template</field>
+        <field name="inherit_id" ref="sale_management.sale_order_template_view_form"/>
         <field name="priority" eval="90"/>
         <field name="arch" type="xml">
             <field name="mail_template_id" position="after">

@@ -16,7 +16,7 @@ from . import res_partner_valuation_thing
 from . import res_partner_qualification_product
 from . import res_partner_reason_buy
 from . import sale_order
-from . import sale_quote_template
+from . import sale_order_template
 from . import shipping_expedition
 from . import stock_picking
 from . import mail_template
