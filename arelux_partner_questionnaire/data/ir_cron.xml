@@ -1,26 +1,27 @@
-<openerp>
-    <data noupdate="1">
-        <record id="cron_arelux_partner_qt_generate_customer_type" model="ir.cron">
-            <field name="name">Arelux - Generar tipo cliente</field>
-            <field name="active" eval="True" />
-            <field name="user_id" ref="base.user_root" />
-            <field name="interval_number">1</field>
-            <field name="interval_type">months</field>
-            <field name="numbercall">-1</field>
-            <field name="model" eval="'res.partner'" />
-            <field name="function" eval="'cron_action_generate_customer_type'" />
-            <field name="args" eval="" />
-        </record>
-        <record id="cron_action_generate_ar_qt_todocesped_pf_customer_type" model="ir.cron">
-            <field name="name">Leads - Generar ar_qt_todocesped_pf_customer_type</field>
-            <field name="active" eval="False" />
-            <field name="user_id" ref="base.user_root" />
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
-            <field name="model" eval="'crm.lead'" />
-            <field name="function" eval="'cron_action_generate_ar_qt_todocesped_pf_customer_type'" />
-            <field name="args" eval="" />
-        </record>
-    </data>
-</openerp>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_arelux_partner_qt_generate_customer_type" forcecreate="True" model="ir.cron">
+        <field name="name">Arelux - Generar tipo cliente</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_action_generate_customer_type()</field>
+    </record>
+    <record id="cron_action_generate_ar_qt_todocesped_pf_customer_type" forcecreate="True" model="ir.cron">
+        <field name="name">Leads - Generar ar_qt_todocesped_pf_customer_type</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_crm_lead"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_action_generate_ar_qt_todocesped_pf_customer_type()</field>
+    </record>
+</odoo>

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 
 class ResPartnerAreluxParticularContactForm(models.Model):
     _name = 'res.partner.arelux.particular.contact.form'
+    _description = 'Res Partner Arelux Particular Contact Form'
 
     name = fields.Char(
         string="Nombre"
@@ -10,6 +11,7 @@ class ResPartnerAreluxParticularContactForm(models.Model):
 
 class ResPartnerAreluxParticularValuationThing(models.Model):
     _name = 'res.partner.arelux.particular.valuation.thing'
+    _description = 'Res Partner Arelux Particular Valuation Thing'
 
     name = fields.Char(
         string="Nombre"

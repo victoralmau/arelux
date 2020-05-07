@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 
 class ResPartnerTypeSurface(models.Model):
     _name = 'res.partner.type.surface'
+    _description = 'Res Partner Type Surface'
     _order = "position asc"
 
     name = fields.Char(

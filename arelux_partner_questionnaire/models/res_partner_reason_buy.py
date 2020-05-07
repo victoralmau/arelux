@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 
 class ResPartnerReasonBuy(models.Model):
     _name = 'res.partner.reason.buy'
+    _description = 'Res Partner Reason Buy'
     _order = "position asc"
 
     name = fields.Char(

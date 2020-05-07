@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 
 class ResPartnerValuationThing(models.Model):
     _name = 'res.partner.valuation.thing'
+    _description = 'Res Partner Valuation Thing'
     _order = "position asc"
 
     name = fields.Char(

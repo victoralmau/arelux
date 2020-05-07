@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 import logging
-
 _logger = logging.getLogger(__name__)
 
 class ResPartner(models.Model):
@@ -195,8 +194,8 @@ class ResPartner(models.Model):
         #return                
         return record                                                                              
     
-    @api.multi    
-    def cron_action_generate_customer_type(self, cr=None, uid=False, context=None):        
+    @api.model    
+    def cron_action_generate_customer_type(self):        
         current_date = datetime.today()
         start_date = current_date + relativedelta(months=-12, day=1)
         end_date = datetime(current_date.year, start_date.month, 1) + relativedelta(months=1, days=-1)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
                 
 class ResPartnerReasonInstall(models.Model):
     _name = 'res.partner.reason.install'
+    _description = 'Res Partner Reason Install'
     _order = "position asc"
 
     name = fields.Char(

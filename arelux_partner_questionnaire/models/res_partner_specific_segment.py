@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
                 
 class ResPartnerSpecificSegment(models.Model):
     _name = 'res.partner.specific.segment'
+    _description = 'Res Partner Specific Segment'
     _order = "position asc"
 
     name = fields.Char(

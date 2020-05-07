@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from odoo import api, models, fields
 
 class ResPartnerContactForm(models.Model):
     _name = 'res.partner.contact.form'
+    _description = 'Res Partner Contact Form'
     _order = "position asc"
 
     name = fields.Char(

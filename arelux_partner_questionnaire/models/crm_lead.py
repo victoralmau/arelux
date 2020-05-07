@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
-from openerp.exceptions import Warning
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
+from odoo import api, models, fields
+from odoo.exceptions import Warning
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -43,8 +41,8 @@ class CrmLead(models.Model):
         readonly=True,
     )
     
-    @api.multi    
-    def cron_action_generate_ar_qt_todocesped_pf_customer_type(self, cr=None, uid=False, context=None):
+    @api.model    
+    def cron_action_generate_ar_qt_todocesped_pf_customer_type(self):
         self.env.cr.execute("UPDATE crm_lead SET ar_qt_todocesped_pf_customer_type = (SELECT rp.ar_qt_todocesped_pf_customer_type FROM res_partner AS rp WHERE rp.id = crm_lead.partner_id) WHERE crm_lead.partner_id IN (SELECT rp.id FROM res_partner AS rp WHERE rp.customer = True AND rp.active = True AND rp.type = 'contact' AND rp.ar_qt_activity_type = 'todocesped' AND rp.ar_qt_customer_type = 'profesional')")
     
     @api.onchange('partner_id')
