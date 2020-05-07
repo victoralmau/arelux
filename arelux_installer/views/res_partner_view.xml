@@ -20,15 +20,5 @@
                <filter string="Instaladores" name="installer" domain="[('installer', '=', 1)]" />
            </filter>
         </field>
-   </record>
-   <record id="action_installer_form" model="ir.actions.act_window">
-       <field name="name">Instaladores</field>
-       <field name="type">ir.actions.act_window</field>
-       <field name="res_model">res.partner</field>
-       <field name="view_type">form</field>
-       <field name="view_mode">kanban,tree,form</field>
-       <field name="context">{"search_default_installer": 1, 'default_installer': 1, 'default_customer': 0, 'default_supplier': 1}</field>
-       <field name="search_view_id" ref="view_res_partner_filter"/>
-   </record>
-   <menuitem id="menu_installer_form" parent="sales_team.menu_sale_config" action="action_installer_form"/>
+   </record>   
 </odoo>
