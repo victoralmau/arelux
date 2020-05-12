@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="arelux_automation_form_view" model="ir.ui.view">
+        <field name="name">Arelux Automation Process</field>
+        <field name="model">arelux.automation.process</field>
+        <field name="arch" type="xml">
+            <form string="Arelux Automation Process">
+                <header>
+                    <button name="action_calculate" attrs="{'invisible': [('state', '!=', 'draft')]}" string="Calcular" type="object"/>
+                    <button name="action_run" attrs="{'invisible': [('state', '!=', 'calculate')]}" string="Ejecutar" type="object"/>
+                    <button name="action_change_to_draft" attrs="{'invisible': [('state', '!=', 'calculate')]}" string="Cambiar a borrador" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_colors='{}'/>
+                </header>
+                <sheet string="child">
+                    <group>
+                        <field name="model" attrs="{'readonly': [('state','!=', 'draft')]}" />
+                        <field name="lead_type" attrs="{'invisible': [('model','!=','crm.lead')], 'readonly': [('state','!=', 'draft')]}" />
+                        <field name="ar_qt_activity_type" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="ar_qt_activity_type_upper" invisible="1"/>
+                        <field name="ar_qt_customer_type" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="user_ids" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="crm_lead_ids" readonly="1" attrs="{'invisible': [('model','!=', 'crm.lead')]}"/>
+                        <field name="sale_order_ids" readonly="1" attrs="{'invisible': [('model','!=', 'sale.order')]}"/>
+                        <field name="create_date_from" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="create_date_to" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="lead_m2_from" attrs="{'invisible': [('ar_qt_activity_type','=','arelux')], 'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="lead_m2_to" attrs="{'invisible': [('ar_qt_activity_type','=','arelux')], 'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="mail_template_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}' domain="[('model_id.model', '=', model),('ar_qt_activity_type', '=', ar_qt_activity_type)]" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="sms_template_id" options='{"no_open": True,"no_create": True, "no_create_edit": True}' domain="[('model_id.model', '=', model)]" attrs="{'invisible': [('model','!=','sale.order')], 'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="stage_id" attrs="{'readonly': [('state','!=', 'draft')]}" options='{"no_open": True,"no_create": True, "no_create_edit": True}' />
+                        <field name="total_records" readonly="1"/>
+                        <field name="create_date" readonly="1"/>
+                        <field name="create_uid" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="arelux_automation_process_tree" model="ir.ui.view">
+        <field name="name">Arelux Automation Process</field>
+        <field name="model">arelux.automation.process</field>
+        <field name="arch" type="xml">
+            <tree string="Arelux Automation Process">
+                <field name="create_date"/>
+                <field name="create_uid"/>
+                <field name="model"/>
+                <field name="ar_qt_activity_type"/>
+                <field name="ar_qt_customer_type"/>
+                <field name="create_date_from"/>
+                <field name="create_date_to"/>
+                <field name="total_records"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record id="odoo_arelux_automation_process_action" model="ir.actions.act_window">
+        <field name="name">Arelux Automation Process</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">arelux.automation.process</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="arelux_automation_process_tree"/>
+    </record>
+    <menuitem
+        action="odoo_arelux_automation_process_action"
+        name="Arelux Automation Process"
+        id="menuitem_odoo_arelux_automation_process"
+        parent="automation_log.menu_odoo_automation"
+    />
+</odoo>
