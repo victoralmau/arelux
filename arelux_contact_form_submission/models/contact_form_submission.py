@@ -108,11 +108,7 @@ class ContactFormSubmission(models.Model):
     utm_website_id = fields.Many2one(
         comodel_name='utm.website',
         string='Website id'
-    )
-    next_activity_id = fields.Many2one(
-        comodel_name='crm.activity',
-        string='Next Activity Id'
-    )
+    )    
     team_id = fields.Many2one(
         comodel_name='crm.team',
         string='Team Id'
