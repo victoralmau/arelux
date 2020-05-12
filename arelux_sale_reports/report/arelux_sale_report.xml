@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="arelux_sale_report_pdf"
+        model="arelux.sale.report"
+        string="Arelux Sale Report (PDF)"
+        report_type="qweb-pdf"
+        name="arelux_sale_reports.arelux_sale_report_pdf_template"
+        file="arelux_sale_report.pdf"
+    />
+    <template id="arelux_sale_report_pdf_template">        
+        <t t-name="arelux.sale.report">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <br/>
+                            <h3 t-field="doc.name"/>
+                            <p></p>
+                            <span t-field="doc.date_from"/>
+                            <span t-field="doc.date_to"/>
+                            <br/>
+                            <t t-if="doc.show_in_table_format==True">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th t-foreach="doc.get_table_info_metrics()[0]" t-as="info_metric">
+                                                <t t-esc="info_metric['name']"/>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="doc.get_table_info()[0]" t-as="item_table">
+                                            <td>
+                                                <t t-esc="item_table['user_name']"/>
+                                            </td>
+                                            <t t-foreach="item_table['metrics']" t-as="metric">
+                                                <td>
+                                                    <t t-if="metric['response_result_value']=='count'">
+                                                        <t t-esc="metric['value']"/>    
+                                                    </t>
+                                                    <t t-if="metric['response_result_value']=='percent'">
+                                                        <t t-esc="metric['value']"/>%    
+                                                    </t>
+                                                    <t t-if="metric['response_result_value']=='amount_untaxed'">
+                                                        <t t-esc="metric['value']" t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+                                                    </t>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td><b>TOTAL</b></td>
+                                            <td t-foreach="doc.get_table_info_total()[0]" t-as="info_total">
+                                                <t t-if="info_total['response_result_value']=='count'">
+                                                    <b><t t-esc="info_total['value']"/></b>    
+                                                </t>
+                                                <t t-if="info_total['response_result_value']=='percent'">
+                                                    <b><t t-esc="info_total['value']"/>%</b>    
+                                                </t>
+                                                <t t-if="info_total['response_result_value']=='amount_untaxed'">
+                                                    <b><t t-esc="info_total['value']" t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/></b>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </t>
+                            <t t-foreach="doc.report_line" t-as="report_line_item">
+                                <t t-if="report_line_item.show_in_table_format==False">
+                                    <t t-if="report_line_item.response_type=='sum'">
+                                        <p>
+                                            <b><span t-field="report_line_item.arelux_sale_report_type_id"/></b>:
+                                            <span t-field="report_line_item.response_result_value" t-options="{widget: monetary, 'display_currency': doc.currency_id}"/>    
+                                        </p>
+                                    </t>
+                                    <t t-if="report_line_item.response_type=='count'">
+                                        <p>
+                                            <b><span t-field="report_line_item.arelux_sale_report_type_id"/></b>:
+                                            <span t-field="report_line_item.response_result_value"/>    
+                                        </p>
+                                    </t>
+                                    <t t-if="report_line_item.response_type=='percent'">
+                                        <p>
+                                            <b><span t-field="report_line_item.arelux_sale_report_type_id"/></b>:
+                                            <span t-field="report_line_item.response_result_value"/>%    
+                                        </p>
+                                    </t>
+                                    <t t-if="report_line_item.response_type=='list_by_user_id'">
+                                        <p>
+                                            <b><span t-field="report_line_item.arelux_sale_report_type_id"/></b>
+                                            
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Comercial</th>
+                                                        <t t-if="report_line_item.response_result_value=='count'">
+                                                            <th>Total</th>
+                                                        </t>
+                                                        <t t-if="report_line_item.response_result_value=='amount_untaxed'">
+                                                            <th>Importe</th>
+                                                        </t>                                                    
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="report_line_item.user_line" t-as="user_line">
+                                                        <tr>
+                                                            <td><span t-field="user_line.user_id.name" /></td>                                                        
+                                                            <td>
+                                                                <t t-if="report_line_item.response_result_value=='count'">
+                                                                    <span t-field="user_line.count" />
+                                                                </t>
+                                                                <t t-if="report_line_item.response_result_value=='amount_untaxed'">
+                                                                    <span t-field="user_line.amount_untaxed" />
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>                                                                                                                        
+                                        </p>
+                                    </t>
+                                    <t t-if="report_line_item.response_type=='list_sale_orders'">
+                                        <p>
+                                            <b><span t-field="report_line_item.arelux_sale_report_type_id"/></b>
+                                        </p>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Pto</th>
+                                                    <th>Cliente</th>
+                                                    <th>Comercial</th>
+                                                    <th>BI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="report_line_item.sale_order_line" t-as="sale_order_line">
+                                                    <tr>
+                                                        <td><span t-field="sale_order_line.sale_order_id.name"/></td>
+                                                        <td><span t-field="sale_order_line.sale_order_id.partner_id.name"/></td>
+                                                        <td><span t-field="sale_order_line.sale_order_id.user_id.name"/></td>
+                                                        <td><span t-field="sale_order_line.sale_order_id.amount_untaxed"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </t>
+                                    <t t-if="report_line_item.response_type=='line_break'">
+                                        <p style="page-break-before:always;"> </p>
+                                        <br/>
+                                    </t>                                    
+                                </t>                                                                                                                                                                                        
+                            </t>                                                                        
+                            <div class="oe_structure"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </t>    
+    </template>    
+</odoo>
