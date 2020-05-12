@@ -7,6 +7,7 @@ Addons
 ----------------
 nombre | version
 --- | ---
+[arelux_account_invoice_auto_send_mail](arelux_account_invoice_auto_send_mail/) | 12.0.1.0.0
 [arelux_automation](arelux_automation/) | 12.0.1.0.0
 [arelux_contact_form_submission](arelux_contact_form_submission/) | 12.0.1.0.0
 [arelux_datalake](arelux_datalake/) | 12.0.1.0.0
