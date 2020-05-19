@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import hr_department
 from . import sage_actividad
 from . import sage_subactividad

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import arelux_sale_report
 from . import arelux_sale_report_line
 from . import arelux_sale_report_line_user
