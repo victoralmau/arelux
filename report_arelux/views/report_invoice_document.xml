@@ -226,7 +226,7 @@
                 <t t-if="o.type=='out_invoice'">
                     <t t-if="o.state=='open'">
                         <t t-if="o.payment_mode_id.id>0">
-                            <t t-if="o.payment_mode_id.payment_method_id.mandate_required==False">
+                            <t t-if="o.payment_mode_id.show_payment_method_id_journal_ids_in_pdf==True">
                                 <div class="acc_numbers" style="margin-top:30px;">
                                     <p style="text-decoration:underline;">Números de Cuenta a favor de TodoCesped/Arelux</p>
                                     <ul style="padding-left: 20px;">
