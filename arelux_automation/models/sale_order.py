@@ -18,6 +18,11 @@ class SaleOrder(models.Model):
     def action_send_sms_automatic(self, sms_template_id=False, need_check_date_order_send_sms=True):
         res = super(SaleOrder, self).action_send_sms_automatic(sms_template_id, need_check_date_order_send_sms)
         return True
+
+    @api.one
+    def action_generate_sale_order_link_tracker(self):
+        res = super(SaleOrder, self).action_generate_sale_order_link_tracker()
+        return True
         
     @api.one    
     def automation_proces(self, params):
@@ -102,6 +107,7 @@ class SaleOrder(models.Model):
             })                    
         #send_sms
         if 'sms_template_id' in params:
+            self.action_generate_sale_order_link_tracker()#Fix generate link-tracker
             self.action_send_sms_automatic(int(params['sms_template_id']), True)
         #update crm.lead stage_id
         if 'lead_stage_id' in params:
