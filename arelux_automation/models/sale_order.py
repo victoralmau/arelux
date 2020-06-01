@@ -354,9 +354,8 @@ class SaleOrder(models.Model):
         arelux_automation_tc_part_repaso_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_repaso_mail_template_id'))        
         current_date = datetime.today()
         shipping_expedition_date = current_date + relativedelta(days=-4)
-        #leads
-        total_items = 0
-        crm_lead_ids = self.env['crm.lead'].search(
+        #crm_lead
+        crm_lead_ids = self.env['crm.lead'].sudo().search(
             [
                 ('type', '=', 'opportunity'),
                 ('active', '=', True),
@@ -364,61 +363,82 @@ class SaleOrder(models.Model):
                 ('probability', '<', 100),
                 ('ar_qt_activity_type', '=', 'todocesped'),
                 ('ar_qt_customer_type', '=', 'particular'),
-                ('stage_id', '=', 2)                
-             ]
+                ('stage_id', '=', 2)
+            ]
         )
-        #quizas limitar la consulta a 1000 puesto que si devuelve como ahora 11800 no dara tiempo en 30 minutos de odoo.conf
         if len(crm_lead_ids)>0:
-            for crm_lead_id in crm_lead_ids:
-                #sale.order
-                sale_order_ids = self.env['sale.order'].search(
+            #sale_order
+            _logger.info('crm_lead_ids')
+            _logger.info(crm_lead_ids.ids)
+            sale_order_ids = self.env['sale.order'].sudo().search(
+                [
+                    ('opportunity_id', 'in', crm_lead_ids.ids),
+                    ('claim', '=', False),
+                    ('amount_total', '=', 0),
+                    ('carrier_id.carrier_type', '=', 'nacex')
+                ]
+            )
+            if len(sale_order_ids)>0:
+                #stock.picking
+                _logger.info('sale_order_ids')
+                _logger.info(sale_order_ids.ids)
+                stock_picking_ids = self.env['stock.picking'].sudo().search(
                     [
-                        ('opportunity_id', '=', crm_lead_id.id),
-                        ('claim', '=', False),
-                        ('amount_total', '=', 0),
-                        ('carrier_id.carrier_type', '=', 'nacex')                                        
-                     ]
+                        ('order_id', 'in', sale_order_ids.ids),
+                        ('state', '=', 'done'),
+                        ('carrier_id.carrier_type', '=', 'nacex'),
+                        ('shipping_expedition_id', '!=', False),
+                        ('shipping_expedition_id.state', '=', 'delivered'),
+                        ('shipping_expedition_id.date', '<=', shipping_expedition_date.strftime("%Y-%m-%d"))
+                    ]
                 )
-                if len(sale_order_ids)>0:
-                    sale_order_id = sale_order_ids[0]
-                    #stock.picking (shipping.expedition)
-                    stock_picking_ids = self.env['stock.picking'].search(
+                _logger.info('stock_picking_ids')
+                _logger.info(stock_picking_ids.ids)
+                if len(stock_picking_ids)>0:
+                    lead_ids = []
+                    for stock_picking_id in stock_picking_ids:
+                        if stock_picking_id.sale_order_id.id>0:
+                            if stock_picking_id.sale_order_id.opportunity_id.id>0:
+                                if stock_picking_id.sale_order_id.opportunity_id.id not in lead_ids:
+                                    lead_ids.append(int(stock_picking_id.sale_order_id.opportunity_id.id))
+                    #sale_order (with_sent_item)
+                    sale_order_ids_operations = self.env['sale.order'].sudo().search(
                         [
-                            ('origin', '=', sale_order_id.name),
-                            ('state', '=', 'done'),
-                            ('carrier_id.carrier_type', '=', 'nacex'),
-                            ('shipping_expedition_id', '!=', False),
-                            ('shipping_expedition_id.state', '=', 'delivered'),
-                            ('shipping_expedition_id.date', '<=', shipping_expedition_date.strftime("%Y-%m-%d"))                            
+                            ('opportunity_id', 'in', lead_ids),
+                            ('claim', '=', False),
+                            ('amount_total', '>', 0),
+                            ('state', '=', 'sent')
                         ]
                     )
-                    if len(stock_picking_ids)>0:
-                        #search opposite sale.order
-                        sale_order_ids_operations = self.env['sale.order'].search(
+                    if len(sale_order_ids_operations)>0:
+                        crm_lead_ids_operations = self.env['crm.lead'].sudo().search(
                             [
-                                ('opportunity_id', '=', crm_lead_id.id),
-                                ('claim', '=', False),
-                                ('amount_total', '>', 0),
-                                ('state', '=', 'sent')                                        
-                             ]
+                                ('id', 'in', sale_order_ids_operations.mapped('opportunity_id').ids)
+                            ]
                         )
-                        if len(sale_order_ids_operations)>0:
-                            sale_order_id_operations = sale_order_ids_operations[0]
-                            #send_mail (sale.order)
-                            #change state_id (opportunity_id)
-                            _logger.info('Operaciones del presupuesto '+str(sale_order_id_operations.name))
-                            #automation_proces
-                            '''
-                            sale_order_id_operations.automation_proces({
-                                'action_log': 'repaso_mail',
-                                'mail_template_id': arelux_automation_tc_part_repaso_mail_template_id,
-                                'lead_stage_id': 3#Repaso
-                            })
-                            '''
-                            #total_items
-                            total_items += 1
-        #log total_items
-        _logger.info('Total items aplicados '+str(total_items))                            
+                        _logger.info('Total items aplicados '+str(len(crm_lead_ids_operations)))
+                        for crm_lead_id in crm_lead_ids_operations:
+                            sale_order_ids_operations = self.env['sale.order'].sudo().search(
+                                [
+                                    ('opportunity_id', '=', crm_lead_id.id),
+                                    ('claim', '=', False),
+                                    ('amount_total', '>', 0),
+                                    ('state', '=', 'sent')
+                                ]
+                            )
+                            if len(sale_order_ids_operations) > 0:
+                                sale_order_id_operations = sale_order_ids_operations[0]
+                                # send_mail (sale.order)
+                                # change state_id (opportunity_id)
+                                _logger.info('Operaciones del presupuesto ' + str(sale_order_id_operations.name))
+                                # automation_proces
+                                '''
+                                sale_order_id_operations.automation_proces({
+                                    'action_log': 'repaso_mail',
+                                    'mail_template_id': arelux_automation_tc_part_repaso_mail_template_id,
+                                    'lead_stage_id': 3#Repaso
+                                })
+                                '''
     
     @api.one
     def action_sale_order_mail2(self, template_id=False):
