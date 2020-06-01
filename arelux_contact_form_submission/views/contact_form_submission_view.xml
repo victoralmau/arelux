@@ -34,6 +34,8 @@
                             <field name="tracking_cookie_uuid"/>
                             <field name="tracking_user_uuid"/>
                             <field name="tracking_session_uuid"/>
+                            <field name="sessionAdGroupCF7"/>
+                            <field name="sessionAdSetCF7"/>
                             <field name="partner_id" options='{"no_create": True, "no_create_edit": True}'/>
                             <field name="lead_id" options='{"no_create": True, "no_create_edit": True}'/>
                         </group>

@@ -125,6 +125,12 @@ class ContactFormSubmission(models.Model):
     tracking_session_uuid = fields.Char(
         string='Tracking Session Uuid'
     )
+    sessionAdGroupCF7 = fields.Char(
+        string='sessionAdGroupCF7'
+    )
+    sessionAdSetCF7 = fields.Char(
+        string='sessionAdSetCF7'
+    )
     #final
     partner_id = fields.Many2one(
         comodel_name='res.partner',
@@ -340,6 +346,12 @@ class ContactFormSubmission(models.Model):
                 #tracking_session_uuid
                 if self.tracking_session_uuid!=False:
                     crm_lead_vals['tracking_session_uuid'] = str(self.tracking_session_uuid)
+                #sessionAdGroupCF7
+                if self.sessionAdGroupCF7 != False:
+                    crm_lead_vals['sessionAdGroupCF7'] = str(self.sessionAdGroupCF7)
+                #sessionAdSetCF7
+                if self.sessionAdSetCF7 != False:
+                    crm_lead_vals['sessionAdSetCF7'] = str(self.sessionAdSetCF7)
                 # create_real
                 crm_lead_obj = self.env['crm.lead'].sudo(self.create_uid.id).create(crm_lead_vals)
                 self.lead_id = crm_lead_obj.id
