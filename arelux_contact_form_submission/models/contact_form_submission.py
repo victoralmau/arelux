@@ -614,7 +614,7 @@ class ContactFormSubmission(models.Model):
                         #params
                         contact_form_submission_vals = {}
                         #params_need_check_str
-                        params_need_check_str = ['name', 'email', 'description', 'odoo_lang', 'phone', 'mobile', 'odoo_ar_qt_activity_type', 'odoo_ar_qt_activity_type', 'tracking_profile_uuid', 'tracking_cookie_uuid', 'tracking_user_uuid', 'tracking_session_uuid']
+                        params_need_check_str = ['name', 'email', 'description', 'odoo_lang', 'phone', 'mobile', 'odoo_ar_qt_activity_type', 'odoo_ar_qt_activity_type', 'tracking_profile_uuid', 'tracking_cookie_uuid', 'tracking_user_uuid', 'tracking_session_uuid', 'sessionAdGroupCF7', 'sessionAdSetCF7']
                         for param_need_check_str in params_need_check_str:
                             if param_need_check_str in message_body:
                                 if message_body[param_need_check_str] != '':
