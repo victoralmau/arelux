@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="waste_remove_product_form_view" model="ir.ui.view">
+            <field name="name">Producto retirada de residuo</field>
+            <field name="model">waste.remove.product</field>
+            <field name="arch" type="xml">
+                <form string="Producto retirada de residuos">                    
+                    <sheet string="child">                        
+                        <group>
+                            <field name="name" required="True"/>                            
+                            <field name="uom" required="True"/>                                                                                 
+                        </group>
+                    </sheet>                    
+                </form>                
+            </field>
+        </record>                           
+        <record id="waste_remove_product_tree" model="ir.ui.view">
+            <field name="name">Producto retiradas de residuos</field>
+            <field name="model">waste.remove.product</field>            
+            <field name="arch" type="xml">
+                <tree string="Producto retiradas de residuos">
+                    <field name="name"/>
+                    <field name="uom"/>                                        
+                </tree>
+            </field>            
+        </record>                
+        <record model="ir.actions.act_window" id="waste_remove_product_action">
+            <field name="name">Producto retiradas de residuos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">waste.remove.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="waste_remove_product_tree"/>
+        </record>                        
+    </data>
+</odoo>

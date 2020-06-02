@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_autongenerate_maintenance_installation_next_month" forcecreate="True" model="ir.cron">
+        <field name="name">Cron Autogenerate Maintenance Installation Next Month</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_maintenance_installation"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_autongenerate_maintenance_installation_next_month()</field>
+    </record>
+</odoo>

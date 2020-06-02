@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="waste_remove_detail_form_view" model="ir.ui.view">
+            <field name="name">Detalle retirada de residuo</field>
+            <field name="model">waste.remove.detail</field>
+            <field name="arch" type="xml">
+                <form string="Detalle retirada de residuos">                    
+                    <sheet string="child">                        
+                        <group>
+                            <field name="waste_remove_id" invisible="1"/>
+                            <field name="waste_remove_product_id" required="True" options='{"no_create": True, "no_create_edit": True}'/>
+                            <field name="quantity" required="True"/>                                                                                 
+                        </group>
+                    </sheet>                    
+                </form>                
+            </field>
+        </record>                           
+        <record id="waste_remove_detail_tree" model="ir.ui.view">
+            <field name="name">Detalle retiradas de residuos</field>
+            <field name="model">waste.remove.detail</field>            
+            <field name="arch" type="xml">
+                <tree string="Detalle retiradas de residuos">
+                    <field name="waste_remove_id"/>
+                    <field name="waste_remove_product_id"/>
+                    <field name="quantity"/>                                        
+                </tree>
+            </field>            
+        </record>                
+        <record model="ir.actions.act_window" id="waste_remove_detail_action">
+            <field name="name">Detalle retiradas de residuos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">waste.remove.detail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="waste_remove_detail_tree"/>
+        </record>                        
+    </data>
+</odoo>
