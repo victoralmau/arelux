@@ -1,4 +1,4 @@
-<openerp>
+<odoo>
     <data noupdate="1">        
         <record id="cron_autongenerate_maintenance_installation_next_month" model="ir.cron">
             <field name="name">Cron Autogenerate Maintenance Installation Next Month</field>
@@ -12,4 +12,4 @@
             <field name="args" eval="" />
         </record>                                      
     </data>
-</openerp>
+</odoo>

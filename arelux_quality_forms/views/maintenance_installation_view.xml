@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
     <data>
         <record id="maintenance_installation_form_view" model="ir.ui.view">
             <field name="name">Mantenimiento instalacion</field>
@@ -12,10 +12,10 @@
                     <sheet string="child">                        
                         <group>
                             <field name="date" required="True"/>                            
-                            <field name="maintenance_installation_need_check_id" required="True"/>
+                            <field name="maintenance_installation_need_check_id" required="True" options='{"no_create": True, "no_create_edit": True}'/>
                             <field name="incidence"/>
                             <field name="solution"/>
-                            <field name="user_id"/>
+                            <field name="user_id" options='{"no_create": True, "no_create_edit": True}'/>
                             <field name="close_measurement"/>                                                                                                             
                         </group>
                     </sheet>                    
@@ -43,4 +43,4 @@
             <field name="view_id" ref="maintenance_installation_tree"/>
         </record>                        
     </data>
-</openerp>
+</odoo>

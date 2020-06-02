@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
     <data>
         <record id="maintenance_installation_need_check_form_view" model="ir.ui.view">
             <field name="name">Accion a revisar mantenimiento inst</field>
@@ -58,4 +58,4 @@
             <field name="view_id" ref="maintenance_installation_need_check_tree"/>
         </record>                        
     </data>
-</openerp>
+</odoo>
