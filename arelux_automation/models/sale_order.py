@@ -172,6 +172,7 @@ class SaleOrder(models.Model):
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_both
                     
                     #send_sms
+                    sale_order_id.action_generate_sale_order_link_tracker()  # Fix generate link-tracker
                     sale_order_id.action_send_sms_automatic(arelux_automation_tc_prof_sale_orders_sms_template_id, True)
                     #save_log
                     automation_log_vals = {                    
