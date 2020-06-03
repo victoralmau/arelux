@@ -457,89 +457,99 @@ class ContactFormSubmission(models.Model):
         sale_order_template_ids = self.env['sale.order.template'].search([('id', '=', id)])
         if len(sale_order_template_ids)>0:
             sale_order_template_id = sale_order_template_ids[0]
-            #vals
-            sale_order_vals = {
-                'partner_id': self.lead_id.partner_id.id,
-                'medium_id': self.lead_id.medium_id.id,
-                'source_id': self.lead_id.source_id.id,
-                'utm_website_id': self.lead_id.utm_website_id.id,
-                'partner_invoice_id': self.lead_id.partner_id.id,
-                'partner_shipping_id': self.lead_id.partner_id.id,
-                'sale_order_template_id': sale_order_template_id.id,
-                'opportunity_id': self.lead_id.id,
-                'team_id': self.lead_id.team_id.id,
-                'ar_qt_activity_type': str(self.lead_id.ar_qt_activity_type),
-                'ar_qt_customer_type': str(self.lead_id.ar_qt_customer_type),
-                'carrier_id': sale_order_template_id.delivery_carrier_id.id,
-                'require_payment': sale_order_template_id.require_payment,
-                'state': 'draft'
-            }
-            # fix user_id
-            sale_order_vals['user_id'] = 0
-            if self.lead_id.user_id.id>0:
-                sale_order_vals['user_id'] = self.lead_id.user_id.id
-            #tracking_profile_uuid
-            if self.lead_id.tracking_profile_uuid!=False:
-                sale_order_vals['tracking_profile_uuid'] = str(self.lead_id.tracking_profile_uuid)
-            # tracking_cookie_uuid
-            if self.lead_id.tracking_cookie_uuid != False:
-                sale_order_vals['tracking_cookie_uuid'] = str(self.lead_id.tracking_cookie_uuid)
-            # tracking_user_uuid
-            if self.lead_id.tracking_user_uuid != False:
-                sale_order_vals['tracking_user_uuid'] = str(self.lead_id.tracking_user_uuid)
-            # tracking_session_uuid
-            if self.lead_id.tracking_session_uuid != False:
-                sale_order_vals['tracking_session_uuid'] = str(self.lead_id.tracking_session_uuid)
-            # sale_order_template_line_ids
-            if len(sale_order_template_id.sale_order_template_line_ids) > 0:
-                sale_order_vals['order_line'] = []
-                for sale_order_template_line_id in sale_order_template_id.sale_order_template_line_ids:
-                    data_sale_order_line = {
-                        'name': str(sale_order_template_line_id.name),
-                        'product_id': sale_order_template_line_id.product_id.id,
-                        'product_uom': sale_order_template_line_id.product_uom_id.id,
-                        'product_uom_qty': sale_order_template_line_id.product_uom_qty,
-                        'discount': sale_order_template_line_id.discount,
-                    }
-                    # fix
-                    if sale_order_template_id.id == 3:  # Pto especial, cambiamos cosas
-                        data_sale_order_line['product_uom_qty'] = self.m2
-                        # product_id
-                        if sale_order_template_line_id.product_id.id == 73:  # Articulo extra
-                            data_sale_order_line['product_uom_qty'] = 1
-                        elif sale_order_template_line_id.product_id.id == 63:  # Banda autoadhesiva
-                            data_sale_order_line['product_uom_qty'] = 1
-                            if self.m2 > 40:
-                                data_sale_order_line['product_uom_qty'] = int((self.m2 / 40))
-                        elif sale_order_template_line_id.product_id.id == 71:  # Clavos
-                            data_sale_order_line['product_uom_qty'] = 1
-                            if self.m2 > 50:
-                                data_sale_order_line['product_uom_qty'] = int((self.m2 / 50))
-                    # append
-                    sale_order_vals['order_line'].append((0, 0, data_sale_order_line))
-            # sale_order_template_option_ids
-            if len(sale_order_template_id.sale_order_template_option_ids) > 0:
-                sale_order_vals['options'] = []
-                for sale_order_template_option_id in sale_order_template_id.sale_order_template_option_ids:
-                    data_sale_order_option = {
-                        'name': str(sale_order_template_option_id.name),
-                        'product_id': sale_order_template_option_id.product_id.id,
-                        'discount': sale_order_template_option_id.discount,
-                        'price_unit': sale_order_template_option_id.price_unit,
-                        'uom_id': sale_order_template_option_id.uom_id.id,
-                        'quantity': sale_order_template_option_id.quantity,
-                    }
-                    #append
-                    sale_order_vals['options'].append((0, 0, data_sale_order_option))
-            # create
-            if self.lead_id.user_id.id > 0:
-                sale_order_obj = self.env['sale.order'].sudo(self.lead_id.user_id.id).create(sale_order_vals)
-            else:
-                sale_order_obj = self.env['sale.order'].sudo(self.create_uid.id).create(sale_order_vals)
-            # mail_followers_check (remove=True, add=True)
-            self.mail_followers_check('sale.order', sale_order_obj.id, True, True)
-            #return
-            return sale_order_obj
+            # find previously
+            sale_order_ids = self.env['sale.order'].sudo().search(
+                [
+                    ('ar_qt_activity_type', '=', str(self.lead_id.ar_qt_customer_type)),
+                    ('ar_qt_customer_type', '=', str(self.lead_id.ar_qt_customer_type)),
+                    ('opportunity_id', '=', self.lead_id.id),
+                    ('template_id', '=', sale_quote_template_id.id)
+                ]
+            )
+            if len(sale_order_ids) == 0:
+                #vals
+                sale_order_vals = {
+                    'partner_id': self.lead_id.partner_id.id,
+                    'medium_id': self.lead_id.medium_id.id,
+                    'source_id': self.lead_id.source_id.id,
+                    'utm_website_id': self.lead_id.utm_website_id.id,
+                    'partner_invoice_id': self.lead_id.partner_id.id,
+                    'partner_shipping_id': self.lead_id.partner_id.id,
+                    'sale_order_template_id': sale_order_template_id.id,
+                    'opportunity_id': self.lead_id.id,
+                    'team_id': self.lead_id.team_id.id,
+                    'ar_qt_activity_type': str(self.lead_id.ar_qt_activity_type),
+                    'ar_qt_customer_type': str(self.lead_id.ar_qt_customer_type),
+                    'carrier_id': sale_order_template_id.delivery_carrier_id.id,
+                    'require_payment': sale_order_template_id.require_payment,
+                    'state': 'draft'
+                }
+                # fix user_id
+                sale_order_vals['user_id'] = 0
+                if self.lead_id.user_id.id>0:
+                    sale_order_vals['user_id'] = self.lead_id.user_id.id
+                #tracking_profile_uuid
+                if self.lead_id.tracking_profile_uuid!=False:
+                    sale_order_vals['tracking_profile_uuid'] = str(self.lead_id.tracking_profile_uuid)
+                # tracking_cookie_uuid
+                if self.lead_id.tracking_cookie_uuid != False:
+                    sale_order_vals['tracking_cookie_uuid'] = str(self.lead_id.tracking_cookie_uuid)
+                # tracking_user_uuid
+                if self.lead_id.tracking_user_uuid != False:
+                    sale_order_vals['tracking_user_uuid'] = str(self.lead_id.tracking_user_uuid)
+                # tracking_session_uuid
+                if self.lead_id.tracking_session_uuid != False:
+                    sale_order_vals['tracking_session_uuid'] = str(self.lead_id.tracking_session_uuid)
+                # sale_order_template_line_ids
+                if len(sale_order_template_id.sale_order_template_line_ids) > 0:
+                    sale_order_vals['order_line'] = []
+                    for sale_order_template_line_id in sale_order_template_id.sale_order_template_line_ids:
+                        data_sale_order_line = {
+                            'name': str(sale_order_template_line_id.name),
+                            'product_id': sale_order_template_line_id.product_id.id,
+                            'product_uom': sale_order_template_line_id.product_uom_id.id,
+                            'product_uom_qty': sale_order_template_line_id.product_uom_qty,
+                            'discount': sale_order_template_line_id.discount,
+                        }
+                        # fix
+                        if sale_order_template_id.id == 3:  # Pto especial, cambiamos cosas
+                            data_sale_order_line['product_uom_qty'] = self.m2
+                            # product_id
+                            if sale_order_template_line_id.product_id.id == 73:  # Articulo extra
+                                data_sale_order_line['product_uom_qty'] = 1
+                            elif sale_order_template_line_id.product_id.id == 63:  # Banda autoadhesiva
+                                data_sale_order_line['product_uom_qty'] = 1
+                                if self.m2 > 40:
+                                    data_sale_order_line['product_uom_qty'] = int((self.m2 / 40))
+                            elif sale_order_template_line_id.product_id.id == 71:  # Clavos
+                                data_sale_order_line['product_uom_qty'] = 1
+                                if self.m2 > 50:
+                                    data_sale_order_line['product_uom_qty'] = int((self.m2 / 50))
+                        # append
+                        sale_order_vals['order_line'].append((0, 0, data_sale_order_line))
+                # sale_order_template_option_ids
+                if len(sale_order_template_id.sale_order_template_option_ids) > 0:
+                    sale_order_vals['options'] = []
+                    for sale_order_template_option_id in sale_order_template_id.sale_order_template_option_ids:
+                        data_sale_order_option = {
+                            'name': str(sale_order_template_option_id.name),
+                            'product_id': sale_order_template_option_id.product_id.id,
+                            'discount': sale_order_template_option_id.discount,
+                            'price_unit': sale_order_template_option_id.price_unit,
+                            'uom_id': sale_order_template_option_id.uom_id.id,
+                            'quantity': sale_order_template_option_id.quantity,
+                        }
+                        #append
+                        sale_order_vals['options'].append((0, 0, data_sale_order_option))
+                # create
+                if self.lead_id.user_id.id > 0:
+                    sale_order_obj = self.env['sale.order'].sudo(self.lead_id.user_id.id).create(sale_order_vals)
+                else:
+                    sale_order_obj = self.env['sale.order'].sudo(self.create_uid.id).create(sale_order_vals)
+                # mail_followers_check (remove=True, add=True)
+                self.mail_followers_check('sale.order', sale_order_obj.id, True, True)
+                #return
+                return sale_order_obj
 
     @api.model
     def create(self, values):
