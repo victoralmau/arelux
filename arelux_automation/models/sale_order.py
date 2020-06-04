@@ -109,6 +109,14 @@ class SaleOrder(models.Model):
         if 'sms_template_id' in params:
             self.action_generate_sale_order_link_tracker()#Fix generate link-tracker
             self.action_send_sms_automatic(int(params['sms_template_id']), True)
+            # save_log
+            automation_log_vals = {
+                'model': 'sale.order',
+                'res_id': self.id,
+                'category': 'sale_order',
+                'action': 'send_sms_done'
+            }
+            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
         #update crm.lead stage_id
         if 'lead_stage_id' in params:
             self.opportunity_id.stage_id = int(params['lead_stage_id'])
@@ -195,11 +203,11 @@ class SaleOrder(models.Model):
                     sale_order_id.action_generate_sale_order_link_tracker()  # Fix generate link-tracker
                     sale_order_id.action_send_sms_automatic(arelux_automation_tc_prof_sale_orders_sms_template_id, True)
                     #save_log
-                    automation_log_vals = {                    
+                    automation_log_vals = {
                         'model': 'sale.order',
                         'res_id': sale_order_id.id,
                         'category': 'sale_order',
-                        'action': 'send_sms_done',                                                                                                                                                                                           
+                        'action': 'send_sms_done',
                     }
                     automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
                                 
