@@ -11,13 +11,10 @@ class MaintenanceInstallationNeedCheck(models.Model):
     name = fields.Char(        
         string='Cuestion'
     )
-    job = fields.Selection(
-        selection=[
-            ('nodriza_manager','Encargado Nodriza'), 
-            ('logistic_operator','Operario logistica')                          
-        ],
-        string='Puesto'
-    )    
+    quality_team_id = fields.Many2one(
+        comodel_name='quality.team',
+        string='Equipo de calidad'
+    )
     month_01 = fields.Boolean(        
         string='Enero'
     )

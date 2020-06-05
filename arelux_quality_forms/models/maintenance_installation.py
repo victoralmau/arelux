@@ -57,13 +57,6 @@ class MaintenanceInstallation(models.Model):
 
     @api.model
     def maintenance_installation_generate(self, year, month):
-        job_user_ids = {
-            'nodriza_manager': int(self.env['ir.config_parameter'].sudo().get_param(
-                'maintenance_installation_job_nodriza_manager_user_id')),
-            'logistic_operator': int(self.env['ir.config_parameter'].sudo().get_param(
-                'maintenance_installation_job_logistic_operator_user_id'))
-        }
-
         maintenance_installation_need_check_ids = self.env['maintenance.installation.need.check'].search(
             [
                 ('month_' + str(month), '=', True)
@@ -73,21 +66,21 @@ class MaintenanceInstallation(models.Model):
             date_next_month_item = str(year) + '-' + str(month) + '-01'
 
             for maintenance_installation_need_check_id in maintenance_installation_need_check_ids:
-                maintenance_installation_ids = self.env['maintenance.installation'].search(
-                    [
-                        ('date', '=', date_next_month_item),
-                        ('maintenance_installation_need_check_id', '=', maintenance_installation_need_check_id.id)
-                    ]
-                )
-                if len(maintenance_installation_ids) == 0:
-                    maintenance_installation_vals = {
-                        'date': date_next_month_item,
-                        'maintenance_installation_need_check_id': maintenance_installation_need_check_id.id,
-                        'user_id': job_user_ids[maintenance_installation_need_check_id.job],
-                        'state': 'draft'
-                    }
-                    maintenance_installation_obj = self.env['maintenance.installation'].sudo().create(
-                        maintenance_installation_vals)
+                if maintenance_installation_need_check_id.quality_team_id.user_id.id>0:
+                    maintenance_installation_ids = self.env['maintenance.installation'].search(
+                        [
+                            ('date', '=', date_next_month_item),
+                            ('maintenance_installation_need_check_id', '=', maintenance_installation_need_check_id.id)
+                        ]
+                    )
+                    if len(maintenance_installation_ids) == 0:
+                        maintenance_installation_vals = {
+                            'date': date_next_month_item,
+                            'maintenance_installation_need_check_id': maintenance_installation_need_check_id.id,
+                            'user_id': maintenance_installation_need_check_id.quality_team_id.user_id.id,
+                            'state': 'draft'
+                        }
+                        maintenance_installation_obj = self.env['maintenance.installation'].sudo().create(maintenance_installation_vals)
 
     @api.model
     def cron_autongenerate_maintenance_installation_next_month(self):
