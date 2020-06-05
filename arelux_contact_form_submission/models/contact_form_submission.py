@@ -94,8 +94,13 @@ class ContactFormSubmission(models.Model):
     date_deadline = fields.Integer(
         string='Date Deadline'
     )
-    date_action = fields.Integer(
-        string='Date action'
+    mail_activity_type_id = fields.Many2one(
+        comodel_name='mail.activity.type',
+        string='Next Activity Id',
+        domain=[('res_model_id.model', '=', 'crm.lead')]
+    )
+    mail_activity_date_deadline = fields.Integer(
+        string='Fecha actividad'
     )
     medium_id = fields.Many2one(
         comodel_name='utm.medium',
@@ -355,6 +360,28 @@ class ContactFormSubmission(models.Model):
                 # create_real
                 crm_lead_obj = self.env['crm.lead'].sudo(self.create_uid.id).create(crm_lead_vals)
                 self.lead_id = crm_lead_obj.id
+                #operations
+                if self.lead_id.id>0:
+                    # mail_activity_type_id
+                    if self.mail_activity_type_id.id > 0 and self.mail_activity_date_deadline > 0:
+                        if self.lead_id.user_id.id>0:
+                            date_deadline_new = current_date + relativedelta(days=self.mail_activity_date_deadline)
+                            #search
+                            mail_activity_ids = self.env['mail.activity'].sudo().search(
+                                [
+                                    ('activity_type_id', '=', self.mail_activity_type_id.id),
+                                    ('date_deadline', '=', date_deadline_new.strftime("%Y-%m-%d")),
+                                    ('res_id', '=', self.lead_id.id)
+                                ]
+                            )
+                            if len(mail_activity_ids)==0:
+                                mail_activity_vals = {
+                                    'activity_type_id': self.mail_activity_type_id.id,
+                                    'date_deadline': date_deadline_new.strftime("%Y-%m-%d"),
+                                    'user_id': self.lead_id.user_id.id,
+                                    'res_id': self.lead_id.id
+                                }
+                                mail_activity_obj = self.env['mail.activity'].sudo(self.create_uid.id).create(mail_activity_vals)
                 # mail_followers_check (remove=True, add=False)
                 self.mail_followers_check('crm.lead', self.lead_id.id, False, True)
                 #partner_id (fix)
