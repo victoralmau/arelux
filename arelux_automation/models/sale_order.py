@@ -32,7 +32,11 @@ class SaleOrder(models.Model):
         '''
         params = {
             'action_log': 'custom_17_18_19_enero_2020',
-            'user_id': 1,            
+            'user_id': 1,
+            'mail_activity': True,
+            'mail_activity_type_id': 3,
+            'mail_activity_date_deadline': '2020-01-01',
+            'mail_activity_summary': 'Revisar flujo automatico',            
             'mail_template_id': 133
             'sms_template_id': 1,
             'lead_stage_id': 2
@@ -68,7 +72,43 @@ class SaleOrder(models.Model):
                     if self.partner_id.user_id.id==0:
                         self.partner_id.user_id = user_id_random
                 else:                        
-                    self.user_id.id = user_id_random        
+                    self.user_id.id = user_id_random
+        # mail_activity
+        if 'mail_activity' in params:
+            if params['mail_activity'] == True:
+                if self.user_id.id > 0:
+                    # search
+                    mail_activity_ids = self.env['mail.activity'].sudo().search(
+                        [
+                            ('activity_type_id', '=', params['mail_activity_type_id']),
+                            ('date_deadline', '=', params['next_activity_date_action'].strftime("%Y-%m-%d")),
+                            ('res_model_id.model', '=', 'sale.order'),
+                            ('res_id', '=', self.id)
+                        ]
+                    )
+                    if len(mail_activity_ids) == 0:
+                        #search
+                        ir_model_ids = self.env['ir.model'].sudo().search([('model', '=', 'sale.order')])
+                        if len(ir_model_ids)>0:
+                            ir_model_id = ir_model_ids[0]
+                            # create
+                            mail_activity_vals = {
+                                'activity_type_id': params['mail_activity_type_id'],
+                                'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d"),
+                                'user_id': self.user_id.id,
+                                'summary': str(params['mail_activity_summary']),
+                                'res_model_id': ir_model_id.id,
+                                'res_id': self.id
+                            }
+                            mail_activity_obj = self.env['mail.activity'].sudo(self.create_uid.id).create(mail_activity_vals)
+                            # save_log
+                            automation_log_vals = {
+                                'model': 'sale.prder',
+                                'res_id': self.opportunity_id.id,
+                                'category': 'sale_order',
+                                'action': 'mail_activity_type_id_' + str(params['mail_activity_type_id']),
+                            }
+                            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
         #send_mail
         if 'mail_template_id' in params:
             self.action_send_mail_with_template_id(int(params['mail_template_id']))

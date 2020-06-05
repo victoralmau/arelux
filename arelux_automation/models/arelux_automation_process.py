@@ -71,7 +71,20 @@ class AreluxAutomationProcess(models.Model):
     )
     lead_m2_to = fields.Integer(
         string='Lead M2 hasta'
-    )    
+    )
+    mail_activity = fields.Boolean(
+        string='Actividad'
+    )
+    mail_activity_type_id = fields.Many2one(
+        comodel_name='mail.activity.type',
+        string='Tipo actividad'
+    )
+    mail_activity_date_deadline_days = fields.Integer(
+        string='Dias fin actividad'
+    )
+    mail_activity_summary = fields.Char(
+        string='Resument actividad'
+    )
     mail_template_id = fields.Many2one(
         comodel_name='mail.template',
         string='Plantilla'
@@ -130,7 +143,21 @@ class AreluxAutomationProcess(models.Model):
                 # mail_template_id
                 if obj.mail_template_id.id == 0:
                     allow_calculate = False
-                    raise Warning("Es necesario definir una plantilla de email")                
+                    raise Warning("Es necesario definir una plantilla de email")
+                # mail_activity
+                if obj.mail_activity == True:
+                    # mail_activity_type_id
+                    if obj.mail_activity_type_id.id == 0:
+                        allow_calculate = False
+                        raise Warning("Es necesario definir un tipo de actividad")
+                    # mail_activity_date_deadline_days
+                    if obj.mail_activity_date_deadline_days == 0:
+                        allow_calculate = False
+                        raise Warning("Es necesario definir dias para la actividad")
+                    # mail_activity_summary
+                    if obj.mail_activity_summary == False:
+                        allow_calculate = False
+                        raise Warning("Es necesario definir un resumen de la actividad")
                 # lead_m2_to
                 if obj.model=='sale.order':
                     if obj.lead_m2_to == 0:
@@ -185,7 +212,17 @@ class AreluxAutomationProcess(models.Model):
                     raise Warning("Es necesario que exista algun registro para poder ejecutar la accion")
                 else:
                     #update
-                    obj.state = 'in_progress'                    
+                    obj.state = 'in_progress'
+                    # mail_activity
+                    if obj.mail_activity == True:
+                        current_date = datetime.now(pytz.timezone('Europe/Madrid'))
+                        mail_activity_date_deadline_action = current_date + relativedelta(days=obj.mail_activity_date_deadline_days)
+                        mail_activity_date_deadline_action_weekday = mail_activity_date_deadline_action.weekday()
+                        # prevent saturday and sunday
+                        if mail_activity_date_deadline_action_weekday == 5:  # saturday
+                            mail_activity_date_deadline_action = mail_activity_date_deadline_action + relativedelta(days=2)
+                        elif mail_activity_date_deadline_action_weekday == 6:  # sunday
+                            mail_activity_date_deadline_action = mail_activity_date_deadline_action + relativedelta(days=1)
                     # user_ids
                     user_ids = []
                     for user_id in obj.user_ids:
@@ -205,8 +242,14 @@ class AreluxAutomationProcess(models.Model):
                             automation_proces_vals = {
                                 'action_log': 'arelux_automation_process_' + str(obj.id),
                                 'user_id': user_id_random,
+                                'mail_activity': obj.mail_activity,
                                 'mail_template_id': obj.mail_template_id.id
-                            }                            
+                            }
+                            # mail_activity
+                            if obj.mail_activity == True:
+                                automation_proces_vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
+                                automation_proces_vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
+                                automation_proces_vals['mail_activity_summary'] = obj.mail_activity_summary
                             #lead_stage_id
                             if obj.stage_id.id>0:
                                 automation_proces_vals['lead_stage_id'] = obj.stage_id.id
@@ -228,8 +271,14 @@ class AreluxAutomationProcess(models.Model):
                             automation_proces_vals = {
                                 'action_log': 'arelux_automation_process_'+str(obj.id),
                                 'user_id': user_id_random,
+                                'mail_activity': obj.mail_activity,
                                 'mail_template_id': obj.mail_template_id.id
-                            }                            
+                            }
+                            # mail_activity
+                            if obj.mail_activity == True:
+                                automation_proces_vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
+                                automation_proces_vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
+                                automation_proces_vals['mail_activity_summary'] = obj.mail_activity_summary
                             #sms_template_id
                             if obj.sms_template_id.id>0:
                                 automation_proces_vals['sms_template_id'] = obj.sms_template_id.id
