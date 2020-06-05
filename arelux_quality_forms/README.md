@@ -65,4 +65,8 @@ Se crea un apartado de "Calidad" con los siguientes elementos del menu:
 
 ## Crones
 
-### Cron Autogenerate Maintenance Installation Next Month (Pendiente)
+### Cron Autogenerate Maintenance Installation Next Month
+Genera todos los mantenimientos de instalaciones respecto al mes actual
+
+### Cron Autogenerate Maintenance Installation All this year
+Genera todos los mantenimientos de instalaciones respecto a todos los meses del año actual
