@@ -4,7 +4,8 @@
         <menuitem
             action="quality_forms_action" 
             name="Calidad" 
-            id="menuitem_quality_forms" 
+            id="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_user,arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="121" 
         />
         <menuitem
@@ -12,6 +13,7 @@
             name="Retiradas de residuos" 
             id="menu_quality_forms_action"             
             parent="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="10" 
         />
         <menuitem
@@ -19,6 +21,7 @@
             name="Simulacros" 
             id="menu_fire_drill_action"             
             parent="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="20" 
         />
         <menuitem
@@ -26,12 +29,14 @@
             name="Mantenimiento instalaciones" 
             id="menu_maintenance_installation_action"             
             parent="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_user,arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="30" 
         />        
         <menuitem 
             name="Configuracion" 
             id="menu_quality_forms_config"             
             parent="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="90" 
         />
         <menuitem
@@ -39,6 +44,7 @@
             name="Decisiones de simulacro" 
             id="menu_fire_drill_decision_action"             
             parent="menu_quality_forms_config"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="10" 
         />
         <menuitem
@@ -46,6 +52,7 @@
             name="Acciones a revisar mant. instalaciones" 
             id="menu_maintenance_installation_need_check_action"             
             parent="menu_quality_forms_config"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="11" 
         />
         <menuitem
@@ -53,6 +60,7 @@
             name="Productos retiradas de residuos" 
             id="menu_waste_remove_product_action"             
             parent="menu_quality_forms_config"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="12" 
         />
         <menuitem
@@ -60,6 +68,7 @@
             name="Detalle retiradas de residuos" 
             id="menu_waste_remove_detail_action"             
             parent="menu_quality_forms_config"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="13" 
         />                                                                                                
     </data>
