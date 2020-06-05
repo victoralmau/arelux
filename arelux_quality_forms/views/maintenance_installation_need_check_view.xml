@@ -9,7 +9,7 @@
                     <sheet string="child">                        
                         <group>
                             <field name="name" required="True"/>                            
-                            <field name="job" required="True"/>
+                            <field name="quality_team_id" required="True" options='{"no_create": True, "no_create_edit": True}'/>
                             <field name="month_01"/>
                             <field name="month_02"/>
                             <field name="month_03"/>
@@ -33,7 +33,7 @@
             <field name="arch" type="xml">
                 <tree string="Acciones a revisar mantenimiento inst">
                     <field name="name"/>
-                    <field name="job"/>
+                    <field name="quality_team_id"/>
                     <field name="month_01"/>
                     <field name="month_02"/>
                     <field name="month_03"/>

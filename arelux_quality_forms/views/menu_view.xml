@@ -70,6 +70,14 @@
             parent="menu_quality_forms_config"
             groups="arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="13" 
-        />                                                                                                
+        />
+        <menuitem
+            action="quality_team_action"
+            name="Equipos de calidad"
+            id="menu_quality_team_action"
+            parent="menu_quality_forms_config"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
+            sequence="13"
+        />
     </data>
 </odoo>
