@@ -370,7 +370,7 @@ class ContactFormSubmission(models.Model):
                             mail_activity_ids = self.env['mail.activity'].sudo().search(
                                 [
                                     ('activity_type_id', '=', self.mail_activity_type_id.id),
-                                    ('date_deadline', '=', date_deadline_new.strftime("%Y-%m-%d")),
+                                    ('date_deadline', '=', date_deadline_new.strftime("%Y-%m-%d %H:%M:%S")),
                                     ('res_model_id.model', '=', 'crm.lead'),
                                     ('res_id', '=', self.lead_id.id)
                                 ]
@@ -383,7 +383,7 @@ class ContactFormSubmission(models.Model):
                                     #create
                                     mail_activity_vals = {
                                         'activity_type_id': self.mail_activity_type_id.id,
-                                        'date_deadline': date_deadline_new.strftime("%Y-%m-%d"),
+                                        'date_deadline': date_deadline_new.strftime("%Y-%m-%d %H:%M:%S"),
                                         'user_id': self.lead_id.user_id.id,
                                         'res_model_id': ir_model_id.id,
                                         'res_id': self.lead_id.id

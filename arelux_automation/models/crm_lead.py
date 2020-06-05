@@ -64,7 +64,7 @@ class CrmLead(models.Model):
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
                         [
                             ('activity_type_id', '=', params['mail_activity_type_id']),
-                            ('date_deadline', '=', params['next_activity_date_action'].strftime("%Y-%m-%d")),
+                            ('date_deadline', '=', params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S")),
                             ('res_model_id.model', '=', 'crm.lead'),
                             ('res_id', '=', self.id)
                         ]
@@ -77,7 +77,7 @@ class CrmLead(models.Model):
                             #create
                             mail_activity_vals = {
                                 'activity_type_id': params['mail_activity_type_id'],
-                                'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d"),
+                                'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S"),
                                 'user_id': self.user_id.id,
                                 'summary': str(params['mail_activity_summary']),
                                 'res_model_id': ir_model_id.id,
