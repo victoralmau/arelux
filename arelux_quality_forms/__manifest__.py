@@ -8,11 +8,11 @@
     'license': 'AGPL-3',
     'depends': ['base'],
     'data': [
+        'security/security.xml',
         'data/waste_remove_product.xml',
         'data/maintenance_installation_need_check_data.xml',
         'data/ir_configparameter_data.xml',
         'data/ir_cron.xml',
-        'security/ir.model.access.csv',
         'views/fire_drill_view.xml',
         'views/fire_drill_decision_view.xml',
         'views/maintenance_installation_view.xml',

@@ -1,0 +1,71 @@
+<odoo>
+    <record id="group_arelux_quality_forms_user" model="res.groups">
+        <field name="name">Calidad / Usuario</field>
+    </record>
+    <record id="group_arelux_quality_forms_admin" model="res.groups">
+        <field name="name">Calidad / Administrador</field>
+    </record>
+    <record id="maintenance_installation_user" model="ir.rule">
+        <field name="name">Maintenance Installation Usuario</field>
+        <field name="model_id" ref="arelux_quality_forms.model_maintenance_installation"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="maintenance_installation_admin" model="ir.rule">
+        <field name="name">Maintenance Installation Admin</field>
+        <field name="model_id" ref="arelux_quality_forms.model_maintenance_installation"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="maintenance_installation_need_check_user" model="ir.rule">
+        <field name="name">Maintenance Installation Need Check Usuario</field>
+        <field name="model_id" ref="arelux_quality_forms.model_maintenance_installation_need_check"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="maintenance_installation_need_check_admin" model="ir.rule">
+        <field name="name">Maintenance Installation Need Check Admin</field>
+        <field name="model_id" ref="arelux_quality_forms.model_maintenance_installation_need_check"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="fire_drill_decision_admin" model="ir.rule">
+        <field name="name">Fire Drill Decision Admin</field>
+        <field name="model_id" ref="arelux_quality_forms.model_fire_drill_decision"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="waste_remove_detail_admin" model="ir.rule">
+        <field name="name">Waste Remove Detail Admin</field>
+        <field name="model_id" ref="arelux_quality_forms.model_waste_remove_detail"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="waste_remove_product_admin" model="ir.rule">
+        <field name="name">Waste Remove Product Admin</field>
+        <field name="model_id" ref="arelux_quality_forms.model_waste_remove_product"/>
+        <field name="groups" eval="[(4, ref('arelux_quality_forms.group_arelux_quality_forms_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1" />
+    </record>
+</odoo>
