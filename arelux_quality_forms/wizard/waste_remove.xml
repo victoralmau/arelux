@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_waste_remove" model="ir.ui.view">
+        <field name="model">wizard.waste.remove</field>
+        <field name="arch" type="xml">
+            <form string="Mantenimiento instalaciones">
+                <group>
+                    <field name="date_from"></field>
+                    <field name="date_to"></field>
+                </group>
+                <footer>
+                    <button name="check_report" string="Generar PDF" type="object" default_focus="1" class="oe_highlight" />
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_wizard_waste_remove" model="ir.actions.act_window">
+        <field name="name">Retirada de residuos</field>
+        <field name="res_model">wizard.waste.remove</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="wizard_waste_remove"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem
+        action="action_wizard_waste_remove"
+        id="menu_action_wizard_waste_remove"
+        name="Retirada de residuos"
+        parent="menu_quality_forms_report" />
+    <report
+         id="action_report_waste_remove_items"
+         model="wizard.waste.remove"
+         string="Retirada de residuos"
+         report_type="qweb-pdf"
+         name="arelux_quality_forms.waste_remove_items"
+         file="retirada_residuos.pdf"
+         attachment_use="True"
+    />
+</odoo>

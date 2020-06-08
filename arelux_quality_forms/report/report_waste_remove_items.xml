@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="waste_remove_items">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <t t-set="waste_remove_product_ids" t-value="o.get_waste_remove_product_ids()" />
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Fecha</th>
+                                    <th rowspan="2">Retirado por</th>
+                                    <th rowspan="2">Firma</th>
+                                    <th rowspan="2">Destino</th>
+                                    <th colspan="7" style="text-align:center;">Producto y cantidad</th>
+                                </tr>
+                                <tr>
+                                    <t t-foreach="o.get_waste_remove_product_ids()" t-as="waste_remove_product_id">
+                                       <th><span t-esc="waste_remove_product_id.name" /></th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.get_waste_remove_items()" t-as="waste_remove_id">
+                                    <td><span t-esc="waste_remove_id['date']"/></td>
+                                    <td><span t-esc="waste_remove_id['retired_by_name']"/></td>
+                                    <td><span t-esc="waste_remove_id['sign_by_name']"/></td>
+                                    <td><span t-esc="waste_remove_id['destination']"/></td>
+                                    <t t-foreach="waste_remove_id['waste_remove_product_ids']" t-as="waste_remove_product_id">
+                                        <t t-if="waste_remove_product_id['with_detail']==True">
+                                            <td><span t-esc="waste_remove_product_id['quantity']" /> <span t-esc="waste_remove_product_id['uom']" /></td>
+                                        </t>
+                                        <t t-if="waste_remove_product_id['with_detail']==False">
+                                            <td></td>
+                                        </t>
+                                    </t>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>TOTAL</td>
+                                    <td t-foreach="o.get_waste_remove_total()" t-as="waste_remove_total_item">
+                                        <t t-if="waste_remove_total_item['with_details']==True">
+                                            <span t-esc="waste_remove_total_item['quantity']" /> <span t-esc="waste_remove_total_item['uom']" />
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
