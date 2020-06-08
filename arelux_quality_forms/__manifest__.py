@@ -22,6 +22,8 @@
         'views/waste_remove_detail_view.xml',
         'views/waste_remove_product_view.xml',
         'views/menu_view.xml',
+        'wizard/maintenance_installation.xml',
+        'report/report_maintenance_installations.xml',
     ],
     'installable': True,
     'auto_install': False,    

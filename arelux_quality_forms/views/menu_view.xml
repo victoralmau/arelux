@@ -31,7 +31,14 @@
             parent="menuitem_quality_forms"
             groups="arelux_quality_forms.group_arelux_quality_forms_user,arelux_quality_forms.group_arelux_quality_forms_admin"
             sequence="30" 
-        />        
+        />
+        <menuitem
+            name="Informes"
+            id="menu_quality_forms_report"
+            parent="menuitem_quality_forms"
+            groups="arelux_quality_forms.group_arelux_quality_forms_admin"
+            sequence="80"
+        />
         <menuitem 
             name="Configuracion" 
             id="menu_quality_forms_config"             
