@@ -5,8 +5,8 @@ from odoo.exceptions import UserError
 import logging
 _logger = logging.getLogger(__name__)
 
-class ReportMaintenanceInstallations(models.AbstractModel):
-    _name = 'report.arelux_quality_forms.report_maintenance_installations'
+class ReportMaintenanceInstallationItems(models.AbstractModel):
+    _name = 'report.arelux_quality_forms.maintenance_installation_items'
 
     @api.model
     def render_html(self, docids, data=None):
@@ -18,4 +18,4 @@ class ReportMaintenanceInstallations(models.AbstractModel):
             'doc_model': self.model,
             'docs': docs,
         }
-        return self.env['report'].render('arelux_quality_forms.report_maintenance_installations', docargs)
+        return self.env['report'].render('arelux_quality_forms.maintenance_installation_items', docargs)

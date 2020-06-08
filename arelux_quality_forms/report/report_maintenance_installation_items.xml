@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_maintenance_installations">
+    <template id="maintenance_installation_items">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="report.external_layout">
@@ -162,12 +162,12 @@
                             </thead>
                             <tbody>
                                 <tr t-foreach="o.get_maintenance_installations_with_incidence()" t-as="maintenance_installation_with_incidence">
-                                    <td><span t-esc="maintenance_installation_with_incidence['date']" /></td>
-                                    <td><span t-esc="maintenance_installation_with_incidence['incidence']" /></td>
-                                    <td><span t-esc="maintenance_installation_with_incidence['solution']" /></td>
-                                    <td><span t-esc="maintenance_installation_with_incidence['user_id_name']" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence.date" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence.incidence" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence.solution" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence.user_id.name" /></td>
                                     <td></td>
-                                    <td><span t-esc="maintenance_installation_with_incidence['close_measurement']" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence.close_measurement" /></td>
                                 </tr>
                             </tbody>
                         </table>

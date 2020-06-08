@@ -5,7 +5,7 @@ from odoo.exceptions import Warning
 import logging
 _logger = logging.getLogger(__name__)
 
-class WizardAccountInvoiceLineCommission(models.TransientModel):
+class WizardMaintenanceInstallation(models.TransientModel):
     _name = 'wizard.maintenance.installation'
     _description = 'Wizard Maintenance Installation'
 
@@ -18,25 +18,12 @@ class WizardAccountInvoiceLineCommission(models.TransientModel):
     def get_maintenance_installations_with_incidence(self):
         date_from = str(self.year)+'-01-01'
         date_to = str(self.year) + '-12-31'
-        items = []
-        maintenance_installation_ids = self.env['maintenance.installation'].sudo().search([
+        return self.env['maintenance.installation'].sudo().search([
             ('state', '=', 'done'),
             ('date', '>=', date_from),
             ('date', '<=', date_to),
             ('incidence', '!=', False)
         ])
-        if len(maintenance_installation_ids)>0:
-            for maintenance_installation_id in maintenance_installation_ids:
-                items.append({
-                    'date': maintenance_installation_id.date,
-                    'user_id_name': maintenance_installation_id.user_id.name,
-                    'incidence': str(maintenance_installation_id.incidence),
-                    'solution': str(maintenance_installation_id.solution),
-                    'date_done': maintenance_installation_id.date_done,
-                    'close_measurement': maintenance_installation_id.close_measurement
-                })
-        #return
-        return items
 
     @api.model
     def need_check_items(self):
@@ -83,4 +70,4 @@ class WizardAccountInvoiceLineCommission(models.TransientModel):
         return self._print_report(data)
 
     def _print_report(self, data):
-        return self.env['report'].get_action(self, 'arelux_quality_forms.report_maintenance_installations', data=data)
+        return self.env['report'].get_action(self, 'arelux_quality_forms.maintenance_installation_items', data=data)

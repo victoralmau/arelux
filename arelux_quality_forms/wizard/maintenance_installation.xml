@@ -29,12 +29,12 @@
         name="Mantenimiento instalaciones"
         parent="menu_quality_forms_report" />
     <report
-         id="action_report_maintenance_installations"
+         id="action_report_maintenance_installation_items"
          model="wizard.maintenance.installation"
-         string="Mantenimiento instalaciones reporte"
+         string="Mantenimiento instalaciones"
          report_type="qweb-pdf"
-         name="arelux_quality_forms.report_maintenance_installations"
-         file="mantenimiento_reclamaciones.pdf"
+         name="arelux_quality_forms.maintenance_installation_items"
+         file="mantenimiento_instalaciones.pdf"
          attachment_use="True"
     />
 </odoo>
