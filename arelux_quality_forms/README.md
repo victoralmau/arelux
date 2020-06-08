@@ -5,6 +5,14 @@ El módulo contiene el desarrollo implementar los formularios de calidad e Infor
 maintenance_installation_job_nodriza_manager_user_id
 maintenance_installation_job_logistic_operator_user_id
 ``` 
+## Informes
+Se recomienda cambiar el formato del papel de los reportes a A4 Apaisado (Landscape) para una correcta visualización.
+
+### Mantenimiento de instalaciones
+Filtrando por año obtendremos un PDF todos los mantenimientos de instalaciones Hechos por fecha del año completo
+
+### Retirada de residuos
+Filtrando por fecha desde y hasta obtendremos un PDF todas las retiradas de residuos realizadas.
 
 ### maintenance.installation.need.check
 id | name | job
