@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_maintenance_installations">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Puesto</th>
+                                    <th rowspan="2">Cuestion a Chequear</th>
+                                    <th colspan="12" style="text-align:center;">Frecuencia</th>
+                                </tr>
+                                <tr>
+                                    <t t-foreach="range(1, 13)" t-as="item_range">
+                                        <t t-set="month_name" t-value="''" />
+                                        <t t-if="item_range==1">
+                                            <t t-set="month_name" t-value="'Enero'" />
+                                        </t>
+                                        <t t-if="item_range==2">
+                                            <t t-set="month_name" t-value="'Febrero'" />
+                                        </t>
+                                        <t t-if="item_range==3">
+                                            <t t-set="month_name" t-value="'Marzo'" />
+                                        </t>
+                                        <t t-if="item_range==4">
+                                            <t t-set="month_name" t-value="'Abril'" />
+                                        </t>
+                                        <t t-if="item_range==5">
+                                            <t t-set="month_name" t-value="'Mayo'" />
+                                        </t>
+                                        <t t-if="item_range==6">
+                                            <t t-set="month_name" t-value="'Junio'" />
+                                        </t>
+                                        <t t-if="item_range==7">
+                                            <t t-set="month_name" t-value="'Julio'" />
+                                        </t>
+                                        <t t-if="item_range==8">
+                                            <t t-set="month_name" t-value="'Agosto'" />
+                                        </t>
+                                        <t t-if="item_range==9">
+                                            <t t-set="month_name" t-value="'Septiembre'" />
+                                        </t>
+                                        <t t-if="item_range==10">
+                                            <t t-set="month_name" t-value="'Octubre'" />
+                                        </t>
+                                        <t t-if="item_range==11">
+                                            <t t-set="month_name" t-value="'Noviembre'" />
+                                        </t>
+                                        <t t-if="item_range==12">
+                                            <t t-set="month_name" t-value="'Diciembre'" />
+                                        </t>
+                                        <th><span t-esc="month_name" /></th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.need_check_items()" t-as="need_check_item">
+                                    <td t-esc="need_check_item['quality_team_id_name']"/>
+                                    <td t-esc="need_check_item['name']"/>
+                                    <!--Enero!-->
+                                    <t t-if="need_check_item['month_01']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_01']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_01']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Febrero!-->
+                                    <t t-if="need_check_item['month_02']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_02']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_02']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Marzo!-->
+                                    <t t-if="need_check_item['month_03']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_03']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_03']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Abril!-->
+                                    <t t-if="need_check_item['month_04']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_04']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_04']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Mayo!-->
+                                    <t t-if="need_check_item['month_05']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_05']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_05']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Junio!-->
+                                    <t t-if="need_check_item['month_06']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_06']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_06']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Julio!-->
+                                    <t t-if="need_check_item['month_07']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_07']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_07']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Agosto!-->
+                                    <t t-if="need_check_item['month_08']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_08']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_08']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Septiembre!-->
+                                    <t t-if="need_check_item['month_09']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_09']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_09']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Octubre!-->
+                                    <t t-if="need_check_item['month_10']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_10']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_10']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Noviembre!-->
+                                    <t t-if="need_check_item['month_11']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_11']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_11']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                                    <!--Diciembre!-->
+                                    <t t-if="need_check_item['month_12']['need_check']==True">
+                                        <td class="total_items_done" style="text-align:center;"><t t-if="need_check_item['month_12']['total_items_done']>0"><i class="fa fa-check" aria-hidden="true"></i></t></td>
+                                    </t>
+                                    <t t-if="need_check_item['month_12']['need_check']==False">
+                                        <td class="need_check_ko" style="background: black;"></td>
+                                    </t>
+                               </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <p>Se realizarán los mantenimientos marcados en blanco. El operario que realiza el mantenimiento deberá firmar en el recuadro correspondiente en señal de su realización</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Incidencia</th>
+                                    <th>Solucion</th>
+                                    <th>Responsable</th>
+                                    <th>Plazo</th>
+                                    <th>Cierre incidencia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.get_maintenance_installations_with_incidence()" t-as="maintenance_installation_with_incidence">
+                                    <td><span t-esc="maintenance_installation_with_incidence['date']" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence['incidence']" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence['solution']" /></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence['user_id_name']" /></td>
+                                    <td></td>
+                                    <td><span t-esc="maintenance_installation_with_incidence['close_measurement']" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

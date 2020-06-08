@@ -97,7 +97,7 @@ class MaintenanceInstallation(models.Model):
         current_date = datetime.today()
         current_date_year = current_date.strftime("%Y")
         #operations
-        for month_item in range(1, 12):
+        for month_item in range(1, 13):
             #fix
             if len(str(month_item))==1:
                 month_item = '0'+str(month_item)

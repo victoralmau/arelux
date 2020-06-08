@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_maintenance_installation" model="ir.ui.view">
+        <field name="model">wizard.maintenance.installation</field>
+        <field name="arch" type="xml">
+            <form string="Mantenimiento instalaciones">
+                <group>
+                    <field name="year"></field>
+                </group>
+                <footer>
+                    <button name="check_report" string="Generar PDF" type="object" default_focus="1" class="oe_highlight" />
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_wizard_maintenance_installation" model="ir.actions.act_window">
+        <field name="name">Mantenimiento instalaciones</field>
+        <field name="res_model">wizard.maintenance.installation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="wizard_maintenance_installation"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem
+        action="action_wizard_maintenance_installation"
+        id="menu_action_wizard_maintenance_installation"
+        name="Mantenimiento instalaciones"
+        parent="menu_quality_forms_report" />
+    <report
+         id="action_report_maintenance_installations"
+         model="wizard.maintenance.installation"
+         string="Mantenimiento instalaciones reporte"
+         report_type="qweb-pdf"
+         name="arelux_quality_forms.report_maintenance_installations"
+         file="mantenimiento_reclamaciones.pdf"
+         attachment_use="True"
+    />
+</odoo>
