@@ -32,37 +32,39 @@ class AccountInvoice(models.Model):
         return_prepare_refund['ar_qt_activity_type'] = invoice.ar_qt_activity_type
         return_prepare_refund['ar_qt_customer_type'] = invoice.ar_qt_customer_type
         return return_prepare_refund    
-    
+
     @api.multi
     def action_invoice_open(self):
+        #action
         return_account_invoice = super(AccountInvoice, self).action_invoice_open()
-        
-        if self.ar_qt_customer_type==False:
-            self.ar_qt_customer_type = self.partner_id.ar_qt_customer_type
-        
-        if self.ar_qt_activity_type==False:
-            if self.partner_id.ar_qt_activity_type=='both':
-                self.ar_qt_activity_type = 'todocesped'
-            else:
-                self.ar_qt_activity_type = self.partner_id.ar_qt_activity_type        
-        
-        if self.origin!=False:
-            origins = self.origin.split(',')
-            sale_order_ids = self.env['sale.order'].search([('name', '=', origins[0])])
-                        
-            find_sale_order_ids = False
-            if len(sale_order_ids)>0:                                                        
-                for sale_order_id in sale_order_ids:
-                    self.ar_qt_activity_type = sale_order_id.ar_qt_activity_type
-                    self.ar_qt_customer_type = sale_order_id.ar_qt_customer_type
-                    
-                    find_sale_order_ids = True
-                
-            if find_sale_order_ids==False:
-                account_invoice_ids = self.env['account.invoice'].search([('number', '=', origins[0]),('type', '=', 'out_invoice')])
-                if len(account_invoice_ids)>0:
-                    for account_invoice_id in account_invoice_ids:
-                        self.ar_qt_activity_type = account_invoice_id.ar_qt_activity_type
-                        self.ar_qt_customer_type = account_invoice_id.ar_qt_customer_type                
-                
-        return return_account_invoice                
+        #operations
+        for item in self:
+            if item.ar_qt_customer_type==False:
+                item.ar_qt_customer_type = item.partner_id.ar_qt_customer_type
+
+            if item.ar_qt_activity_type==False:
+                if item.partner_id.ar_qt_activity_type=='both':
+                    item.ar_qt_activity_type = 'todocesped'
+                else:
+                    item.ar_qt_activity_type = item.partner_id.ar_qt_activity_type
+
+            if item.origin!=False:
+                origins = item.origin.split(',')
+                sale_order_ids = self.env['sale.order'].sudo().search([('name', '=', origins[0])])
+
+                find_sale_order_ids = False
+                if len(sale_order_ids)>0:
+                    for sale_order_id in sale_order_ids:
+                        item.ar_qt_activity_type = sale_order_id.ar_qt_activity_type
+                        item.ar_qt_customer_type = sale_order_id.ar_qt_customer_type
+
+                        find_sale_order_ids = True
+
+                if find_sale_order_ids==False:
+                    account_invoice_ids = self.env['account.invoice'].sudo().search([('number', '=', origins[0]),('type', '=', 'out_invoice')])
+                    if len(account_invoice_ids)>0:
+                        for account_invoice_id in account_invoice_ids:
+                            item.ar_qt_activity_type = account_invoice_id.ar_qt_activity_type
+                            item.ar_qt_customer_type = account_invoice_id.ar_qt_customer_type
+        #return
+        return return_account_invoice
