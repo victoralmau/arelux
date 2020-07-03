@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 
 import logging
@@ -13,16 +14,16 @@ class AreluxSaleReportType(models.Model):
     )
     custom_type = fields.Selection(
         selection=[
-            ('sale_order_done_amount_untaxed','Ventas (Base Imponible)'),#Ventas € (Base imponible) 
-            ('sale_order_done_count','Ventas (Cuenta)'),#Ventas pedidos (Nº de pedidos)
+            ('sale_order_done_amount_untaxed','Ventas (Base Imponible)'),#Ventas ï¿½ (Base imponible) 
+            ('sale_order_done_count','Ventas (Cuenta)'),#Ventas pedidos (Nï¿½ de pedidos)
             ('sale_order_ticket_medio','Ventas (Ticket medio)'),#Ticket medio (dividir los dos datos anteriores)
             ('sale_order_sent_count','Ptos realizados (Cuenta)'),#Presupuestos realizados (excluyendo los de muestras)
-            ('sale_order_done_muestras','Muestras enviadas (Cuenta)'),#Muestras enviadas (presus de importe 0€ confirmados en esa semana)
+            ('sale_order_done_muestras','Muestras enviadas (Cuenta)'),#Muestras enviadas (presus de importe 0ï¿½ confirmados en esa semana)
             ('ratio_muestras','Ratio muestras'),#Ratio muestras: (muestras enviadas/presupuestos realizados)
             ('ratio_calidad','Ratio calidad'),#Ratio de calidad: (pedidos confirmados/presupuestos realizados)
-            ('res_partner_potencial_count','Contactos potenciales (Cuenta)'),#Nuevos pots (clientes nuevos creados por cada comercial, aqui también aparecerá como comercial el webservice que serán los que entren por formularios)
-            ('cartera_actual_activa_count','Cartera Actual activa (Cuenta)'),#Cartera actual activa (Nº clientes con alguna compra en 2019)
-            ('cartera_actual_count','Cartera Actual (Cuenta)'),#Cartera actual (Nº de clientes prof. de TC asignados a cada comercial)
+            ('res_partner_potencial_count','Contactos potenciales (Cuenta)'),#Nuevos pots (clientes nuevos creados por cada comercial, aqui tambiï¿½n aparecerï¿½ como comercial el webservice que serï¿½n los que entren por formularios)
+            ('cartera_actual_activa_count','Cartera Actual activa (Cuenta)'),#Cartera actual activa (Nï¿½ clientes con alguna compra en 2019)
+            ('cartera_actual_count','Cartera Actual (Cuenta)'),#Cartera actual (Nï¿½ de clientes prof. de TC asignados a cada comercial)
             ('nuevos_clientes_con_ventas','Nuevos clientes con ventas'),#Nuevos clientes con ventas (clientes que han comprado la primera vez esa semana)
             ('line_break','Salto de linea'),#Salto de linea
         ],
