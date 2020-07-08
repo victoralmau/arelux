@@ -186,14 +186,14 @@ class ResPartner(models.Model):
     @api.model
     def create(self, values):
         record = super(ResPartner, self).create(values)
-        #operations                        
+        #operations
         if record.parent_id.id>0:
             if record.parent_id.ar_qt_activity_type!=False:
                 record.ar_qt_activity_type = record.parent_id.ar_qt_activity_type
 
             if record.parent_id.ar_qt_customer_type!=False:
                 record.ar_qt_customer_type = record.parent_id.ar_qt_customer_type                
-        #return                
+        #return
         return record                                                                              
     
     @api.multi    

@@ -93,7 +93,12 @@ class ResBetterZip(models.Model):
     
     def get_weather_station_uuids(self, country_code):
         weather_station_uuids = []
-        res_better_zip_ids = self.env['res.better.zip'].search([('country_id.code', '=', country_code),('weather_station_uuid', '!=', False)])
+        res_better_zip_ids = self.env['res.better.zip'].search(
+            [
+                ('country_id.code', '=', country_code),
+                ('weather_station_uuid', '!=', False)
+            ]
+        )
         if len(res_better_zip_ids)>0:
             for res_better_zip_id in res_better_zip_ids:
                 weather_station_uuid = str(res_better_zip_id.weather_station_uuid)
@@ -161,7 +166,7 @@ class ResBetterZip(models.Model):
                     #all_years
                     for year in years:
                         for month in months:
-                            #define                
+                            #define
                             date_from = str(year)+'-'+str(month)+'-01'
                             date_to = datetime(int(year), int(month), 1) + relativedelta(months=1, days=-1)
                             date_to = date_to.strftime("%Y-%m-%d")

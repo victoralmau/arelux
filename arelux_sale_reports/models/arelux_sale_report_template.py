@@ -123,7 +123,7 @@ class AreluxSaleReportTemplate(models.Model):
                                     ('partner_id', '=', mail_followers_vals['partner_id'])
                                 ]
                             )
-                            if len(mail_follower_ids_item)==0:#Prevent exist                            
+                            if len(mail_follower_ids_item)==0:#Prevent exist
                                 mail_followers_obj = self.env['mail.followers'].create(mail_followers_vals)
                             else:
                                 if mail_followers_vals['partner_id']==3:
@@ -133,5 +133,4 @@ class AreluxSaleReportTemplate(models.Model):
                     #fix generate_value_lines
                     arelux_sale_report_obj.change_state_to_generate()
                     #auto_send_mail_item
-                    arelux_sale_report_obj.action_send_mail()                                     
-                                                             
+                    arelux_sale_report_obj.action_send_mail()

@@ -439,7 +439,7 @@ class AreluxSaleReportLine(models.Model):
             #fix response_result_value
             return_values['response_result_value'] = 'count'                
             #remove_all
-            self.remove_all_user_line()                                               
+            self.remove_all_user_line()
             #creates
             if len(res_partner_ids)>0:
                 for res_user_id, res_user in res_users.items():
@@ -491,7 +491,7 @@ class AreluxSaleReportLine(models.Model):
                                 res_users[user_id]['name'] = res_partner_id.user_id.name
                         #sum
                         res_users[user_id]['count'] += 1
-                #fix response_result_value                    
+                #fix response_result_value
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(res_partner_ids)
                 #remove_all
@@ -549,7 +549,7 @@ class AreluxSaleReportLine(models.Model):
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(res_partner_ids)                    
                 #remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 #creates
                 if len(res_partner_ids)>0:
                     for res_user_id, res_user in res_users.items():
@@ -582,7 +582,7 @@ class AreluxSaleReportLine(models.Model):
                 for sale_order_id in sale_order_ids:
                     if sale_order_id.partner_id.id not in res_partner_ids:
                         res_partner_ids.append(sale_order_id.partner_id.id)                
-            #sale_orders with filters and partner_id not in                                        
+            #sale_orders with filters and partner_id not in
             search_filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('claim', '=', False),
@@ -631,7 +631,7 @@ class AreluxSaleReportLine(models.Model):
                     return_values_sale_order_sent_count = self._get_line_info_real('sale_order_sent_count')[0]
                     
                     self.response_type = 'percent'
-                    ratio_muestras = 0                
+                    ratio_muestras = 0
                     
                     if return_values_sale_order_done_muestras['count']>0 and return_values_sale_order_sent_count['count']>0:
                         ratio_muestras = (float(return_values_sale_order_done_muestras['count'])/float(return_values_sale_order_sent_count['count']))*100  
@@ -670,5 +670,5 @@ class AreluxSaleReportLine(models.Model):
                 self.response_type = return_values['response_type']
                 self.response_result_value = return_values['response_result_value']
                                                                                                        
-        #_logger.info(response)                        
-        #return response                                                    
+        #_logger.info(response)
+        #return response

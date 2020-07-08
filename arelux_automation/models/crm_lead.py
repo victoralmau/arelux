@@ -213,7 +213,7 @@ class CrmLead(models.Model):
                                     crm_lead_id.date_action = tomorrow_date.strftime("%Y-%m-%d")
                                     crm_lead_id.title_action = 'Email potencial'
                         else:
-                            #Auto-create lead                                                        
+                            #Auto-create lead
                             crm_lead_vals = {
                                 'active': True,                                
                                 'type': 'opportunity',
@@ -305,7 +305,7 @@ class CrmLead(models.Model):
                                     crm_lead_id.date_action = tomorrow_date.strftime("%Y-%m-%d")
                                     crm_lead_id.title_action = 'Llamada potencial activo'
                         else:
-                            #Auto-create lead                                                        
+                            #Auto-create lead
                             crm_lead_vals = {
                                 'active': True,                                
                                 'type': 'opportunity',
