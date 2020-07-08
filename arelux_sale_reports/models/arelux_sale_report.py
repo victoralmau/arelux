@@ -128,14 +128,14 @@ class AreluxSaleReport(models.Model):
                             'response_result_value': report_line_item.response_result_value,
                             'custom_type': report_line_item.arelux_sale_report_type_id.custom_type,                            
                         }
-                    #value_user                                         
+                    #value_user
                     if report_line_item.response_result_value=='count':
                         value_user = user_line.count
                     elif report_line_item.response_result_value=='percent':
                         value_user = user_line.percent
                     else:
                         value_user = user_line.amount_untaxed                    
-                    #metrics append                              
+                    #metrics append
                     table_info[user_line.user_id.id]['metrics'].append({
                         'position': report_line_item.position,
                         'name': report_line_item.arelux_sale_report_type_id.name,
@@ -145,7 +145,7 @@ class AreluxSaleReport(models.Model):
                     })
                     #metrics_add
                     table_info[user_line.user_id.id]['metrics_add'].append(report_line_item.position) 
-        #fix fill all users                                                                    
+        #fix fill all users
         for table_info_key in table_info:
             table_info_item = table_info[table_info_key]
                         
@@ -196,7 +196,7 @@ class AreluxSaleReport(models.Model):
                         'value': 0                            
                     }
                     for user_line in report_line_item.user_line:
-                        #value_user                                         
+                        #value_user
                         if report_line_item.response_result_value=='count':
                             value_user = user_line.count
                         else:
@@ -250,13 +250,13 @@ class AreluxSaleReport(models.Model):
                     denominador_by_user_id = {}
                     
                     if report_line_item.arelux_sale_report_type_id.custom_type=='ratio_muestras':                                                
-                        #numerador                        
+                        #numerador
                         arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search([('arelux_sale_report_id', '=', self.id),('arelux_sale_report_type_id.custom_type', '=', 'sale_order_done_muestras')])
                         if len(arelux_sale_report_line_ids)>0:
                             arelux_sale_report_line_id = arelux_sale_report_line_ids[0]
                             for user_line in arelux_sale_report_line_id.user_line:
                                 numerador_by_user_id[user_line.user_id.id] = user_line.count
-                        #denominador                        
+                        #denominador
                         arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search([('arelux_sale_report_id', '=', self.id),('arelux_sale_report_type_id.custom_type', '=', 'sale_order_sent_count')])
                         if len(arelux_sale_report_line_ids)>0:
                             arelux_sale_report_line_id = arelux_sale_report_line_ids[0]

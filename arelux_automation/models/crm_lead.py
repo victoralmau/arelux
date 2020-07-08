@@ -120,7 +120,7 @@ class CrmLead(models.Model):
     def action_send_mail_with_template_id(self, template_id=False):
         if template_id!=False:
             mail_template_item = self.env['mail.template'].browse(template_id)
-            mail_compose_message_vals = {                    
+            mail_compose_message_vals = {
                 'author_id': 1,
                 'record_name': self.name,                                                                                                                                                                                           
             }
@@ -222,7 +222,7 @@ class CrmLead(models.Model):
                              ]
                         )
                         if len(crm_lead_ids)==0:                            
-                            #Auto-create lead                                                        
+                            #Auto-create lead
                             crm_lead_vals = {
                                 'active': True,                                
                                 'type': 'opportunity',
@@ -300,7 +300,7 @@ class CrmLead(models.Model):
                              ]
                         )
                         if len(crm_lead_ids)==0:                            
-                            #Auto-create lead                                                        
+                            #Auto-create lead
                             crm_lead_vals = {
                                 'active': True,                                
                                 'type': 'opportunity',

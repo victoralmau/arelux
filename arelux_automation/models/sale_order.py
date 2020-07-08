@@ -56,7 +56,7 @@ class SaleOrder(models.Model):
         if 'user_id' in params:
             if self.user_id.id==0:            
                 user_id_random = int(params['user_id'])
-                #check_user_id crm_lead (write event and function user_id change in crm_lead, sale_orders and res_partner if need)    
+                #check_user_id crm_lead (write event and function user_id change in crm_lead, sale_orders and res_partner if need)
                 if self.opportunity_id.user_id.id==0:
                     self.opportunity_id.write({
                         'user_id': user_id_random

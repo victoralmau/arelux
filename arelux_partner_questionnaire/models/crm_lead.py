@@ -171,5 +171,5 @@ class CrmLead(models.Model):
         if allow_write==True:                                      
             return_object = super(CrmLead, self).write(vals)
             self.fix_copy_custom_field_sale_orders(True)                                                                                                                            
-            #return                                                                                
+            #return
             return return_object                                        
