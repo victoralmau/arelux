@@ -9,7 +9,6 @@ nombre | version
 --- | ---
 [arelux_automation](arelux_automation/) | 10.0.1.0.0
 [arelux_contact_form_submission](arelux_contact_form_submission/) | 10.0.1.0.0
-[arelux_datalake](arelux_datalake/) | 10.0.1.0.0
 [arelux_installer](arelux_installer/) | 10.0.1.0.0
 [arelux_partner_questionnaire](arelux_partner_questionnaire/) | 10.0.1.0.0
 [arelux_quality_forms](arelux_quality_forms/) | 10.0.1.0.0
