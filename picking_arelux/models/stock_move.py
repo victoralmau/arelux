@@ -22,8 +22,8 @@ class StockMove(models.Model):
         self.name = self.product_id.name
         
         if self.picking_id.id>0:            
-            if self.picking_id.order_id.id>0:
-                for order_line in self.picking_id.order_id.order_line:
+            if self.picking_id.sale_id.id>0:
+                for order_line in self.picking_id.sale_id.order_line:
                     if order_line.product_id.id==self.product_id.id:
                         self.name = order_line.name
             elif self.picking_id.purchase_id.id>0:
