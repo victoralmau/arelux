@@ -394,7 +394,7 @@ class SaleOrder(models.Model):
                 _logger.info(sale_order_ids.ids)
                 stock_picking_ids = self.env['stock.picking'].sudo().search(
                     [
-                        ('order_id', 'in', sale_order_ids.ids),
+                        ('sale_id', 'in', sale_order_ids.ids),
                         ('state', '=', 'done'),
                         ('carrier_id.carrier_type', '=', 'nacex'),
                         ('shipping_expedition_id', '!=', False),
@@ -407,10 +407,10 @@ class SaleOrder(models.Model):
                 if len(stock_picking_ids)>0:
                     lead_ids = []
                     for stock_picking_id in stock_picking_ids:
-                        if stock_picking_id.sale_order_id.id>0:
-                            if stock_picking_id.sale_order_id.opportunity_id.id>0:
-                                if stock_picking_id.sale_order_id.opportunity_id.id not in lead_ids:
-                                    lead_ids.append(int(stock_picking_id.sale_order_id.opportunity_id.id))
+                        if stock_picking_id.sale_id.id>0:
+                            if stock_picking_id.sale_id.opportunity_id.id>0:
+                                if stock_picking_id.sale_id.opportunity_id.id not in lead_ids:
+                                    lead_ids.append(int(stock_picking_id.sale_id.opportunity_id.id))
                     #sale_order (with_sent_item)
                     sale_order_ids_operations = self.env['sale.order'].sudo().search(
                         [
