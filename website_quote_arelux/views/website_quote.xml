@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <template id="website_quote_arelux_so_quotation_content" name="website_quote_arelux_so_quotation_content" customize_show="True" inherit_id="website_quote.so_quotation_content" priority="20">
+        <!--Reemplazar introduction!-->
+        <xpath expr="//div[@id='introduction']" position="replace">
+            <h1>
+                <t t-if="quotation.template_id.id!=13">
+                    <t t-if="quotation.state in ('draft','sent','cancel')">Tu presupuesto</t>
+                    <t t-if="quotation.state not in ('draft','sent','cancel')">Tu pedido</t>
+                </t>
+                <t t-if="quotation.template_id.id==13">
+                    <t t-if="quotation.state in ('draft','sent','cancel')">Your Quotation</t>
+                    <t t-if="quotation.state not in ('draft','sent','cancel')">Your Order</t>
+                </t>
+                <em t-esc="quotation.name"/>
+                <small t-field="quotation.state"/>
+                <div t-ignore="true" class="pull-right css_editable_mode_hidden hidden-print">
+                   <ul class="list-inline">
+                      <li groups="sales_team.group_sale_salesman">
+                        <a t-if="quotation.state not in ('manual')" class="btn btn-info" t-att-href="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (quotation._name, quotation.id, action)">Edit Quote</a>
+                        <a t-if="quotation.state in ('manual')" class=" btn btn-info" t-att-href="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (quotation._name, quotation.id, action)">Back to Sale Order</a>
+                      </li>
+                      <li>
+                         <t t-if="quotation.template_id.id!=13">
+                            <a class="btn btn-info" target="_blank" t-att-href="'/quote/%s/%s' % (quotation.id,quotation.access_token)+'?pdf=True'">Imprimir</a>
+                         </t>
+                         <t t-if="quotation.template_id.id==13">
+                             <a class="btn btn-info" target="_blank" t-att-href="'/quote/%s/%s' % (quotation.id,quotation.access_token)+'?pdf=True'">Print</a>
+                         </t>
+                      </li>
+                   </ul>
+                </div>
+            </h1>
+        </xpath>
+        <!--Reemplazar bloque contacto user_id con campos personalizados!-->
+        <xpath expr="/t[1]/div[1]/div[2]/div[1]/div[1]" position="replace">
+            <div class="col-sm-7 col-xs-7">
+                <div t-if="quotation.user_id">
+                   <div>
+                        <span t-field="quotation.user_id.name"/>
+                   </div>
+                   <div t-if="quotation.user_id.commercial_phone">
+                       <i class="fa fa-phone"></i>
+                       <span t-field="quotation.user_id.commercial_phone"/>
+                   </div>
+                   <div>
+                       <i class="fa fa-envelope"></i>
+                       <span t-field="quotation.user_id.commercial_email"/>
+                   </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <template id="website_quote_arelux_so_quotation" name="website_quote_arelux_so_quotation" customize_show="True" inherit_id="website_quote.so_quotation" priority="20">
+        <!--Reemplazar quotation_toolbar!-->
+        <xpath expr="//div[@id='quotation_toolbar']" position="replace">
+            <div class="text-center hidden-print mt16 mb16" id="quotation_toolbar" t-if="quotation.state in ('draft', 'sent', 'waiting_date')">
+                <a class="btn btn-info" type="submit" href="#discussion">
+                    <t t-if="quotation.template_id.id!=13">                                  
+                        <i class="fa fa-comment"/> Comentar
+                    </t>
+                    <t t-if="quotation.template_id.id==13">                                  
+                        <i class="fa fa-comment"/> Feedback
+                    </t>
+                </a>
+            </div>
+        </xpath>
+        <!--Reemplazar bs-sidebar!-->
+        <xpath expr="//div[@class='bs-sidebar']/div[@class='text-center']" position="replace">
+            <t t-if="quotation.show_pay_button == True">
+                <t t-if="acquirers">
+                    <div class="text-center" style="padding: 10px">
+                        <t t-if="quotation.payment_acquirer_type_amount_paid == 'partial'">                                            
+                            <a class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalacceptpartial" data-oe-id="1279" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/a[2]">
+                                <i class="fa fa-check"></i> Pagar
+                            </a>
+                        </t>
+                        <t t-if="quotation.payment_acquirer_type_amount_paid == 'total'">                    
+                            <a class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalaccept" data-oe-id="1279" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/a[2]">
+                                <i class="fa fa-check"></i> Pagar
+                            </a>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+        <!--Add Modal modalaccept!-->
+        <!--
+        <xpath expr="/t[1]/t[1]/body[1]/div[1]/div[2]/div[2]/div[8]/div[2]/div[2]/p[1]" position="after">
+            <div>
+                <p>Creo que NO hay que usar el modal modalacceptpartial</p>
+                <p>Opcion A: Ahora solo tendras que pagar XXXXX importe (el definido en un nuevo campo estilo payment_acquirer_type_amount_paid_amount) por el comercial, en el payment_acquirer.py de addon de ceca habria que modificar el importe para que pille el del nuevo campo del pedido</p>
+                <p>Opcion B: En el ceca.xml del addon de ceca, colocar en el propio formulario un campo con el importe que el usuario quiera pagar (habra que validarlo en el payment_acquirer.py para revisar importes imposibles)</p>
+            </div>
+        </xpath>
+        !-->
+        <!--Transacciones!-->
+        <xpath expr="//section[@id='discussion']" position="after">
+            <section id="payment_transactions" class="container" t-if="quotation.payment_transaction_ids">
+               <h2 class="page-header">Transacciones</h2>
+               <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Importe</th>
+                            <th>Fecha</th>
+                            <th>Modo de pago</th>
+                            <th>Estado</th>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        <t t-foreach="quotation.payment_transaction_ids" t-as="payment_transaction_id">                        
+                            <tr>
+                                <td><span t-field="payment_transaction_id.amount" t-options='{"widget": "monetary","display_currency": payment_transaction_id.currency_id}' /></td>
+                                <td><span t-field="payment_transaction_id.date_validate" /></td>
+                                <td><span t-field="payment_transaction_id.acquirer_id.name" /></td>
+                                <td><span t-field="payment_transaction_id.state" /></td>
+                            </tr>
+                        </t>
+                    </tbody>
+               </table>
+           </section>
+        </xpath>
+        <!--Texto inferior!-->
+        <xpath expr="//section[@id='discussion']" position="before">
+            <section class="s_image_text">
+                <div class="container">
+                    <div class="row">
+                        <div class="mt32 mb32 col-md-12">
+                            <img class="img img-responsive center-block mb16" src="/website_quote_arelux/static/src/img/quote_logos.jpg" />
+                        </div>
+                    </div>
+                </div>
+            </section>              
+            <t t-if="quotation.template_id.id!=13 and quotation.template_id.id!=12">
+                <p>Si quieres realizar tú mismo/a la instalación del césped artificial, desde <b>TodoCESPED</b> ponemos a tu disposición nuestra <a href="https://www.todocesped.es/instalacion-cesped-artificial/guia-instalacion-cesped-artificial/" target="_blank"><b>Guía de Instalación</b></a>, en la que encontrarás las explicaciones paso a paso para colocarlo sobre tierra, hormigón, cemento y baldosa.</p>
+            </t>
+            <t t-if="quotation.template_id.id==13">
+                <p>If you prefer to do the installation yourself, we will give you all the information and instructions needed to perform it properly.</p>
+            </t>
+            <br/><br/>
+            <t t-if="quotation.amount_total>0">
+                <t t-if="quotation.claim==False">
+                    <t t-if="quotation.payment_mode_id.id>0">
+                        <t t-if="quotation.payment_mode_id.show_payment_method_id_journal_ids_in_pdf==True">
+                            <div class="acc_numbers" style="margin-top:30px;">
+                                <p style="text-decoration:underline;">Números de Cuenta a favor de TodoCesped/Arelux</p>
+                                <ul style="padding-left: 20px;">
+                                    <t t-if="quotation.payment_mode_id.bank_account_link=='fixed'">
+                                        <li><span t-field="quotation.payment_mode_id.fixed_journal_id.bank_account_id.bank_id.public_name" />: <span t-field="quotation.payment_mode_id.fixed_journal_id.bank_account_id.acc_number" /></li>
+                                    </t>
+                                    <t t-if="quotation.payment_mode_id.bank_account_link=='variable'">
+                                        <t t-foreach="quotation.payment_mode_id.variable_journal_ids" t-as="journal_id">
+                                            <li><span t-field="journal_id.bank_account_id.bank_id.public_name" />: <span t-field="journal_id.bank_account_id.acc_number" /></li>
+                                        </t>
+                                    </t>
+                                </ul>
+                                <br/>
+                                <p>Rogamos indiquen nombre y número de pedido. <b><span t-field="quotation.name" /></b></p>
+                                <p>Para mayor rapidez en la gestión de su pedido, remita el justificante de la transferencia a su comercial.</p>
+                            </div>
+                        </t>
+                    </t>
+                </t>                        
+            </t>
+        </xpath>
+        <!--H1 discussion!-->
+        <xpath expr="//section[@id='discussion']/h1" position="replace">
+            <t t-if="quotation.template_id.id!=13">
+                <h1 class="page-header">Historial</h1>
+            </t>
+            <t t-if="quotation.template_id.id==13">
+                <h1 class="page-header">History</h1>
+            </t>
+        </xpath>
+    </template>            
+    <template id="website_quote_arelux_pricing" name="website_quote_arelux_pricing" customize_show="True" inherit_id="website_quote.pricing">
+        <!--Terminos y condiciones before!-->
+        <xpath expr="//section[@id='quote']" position="before">
+            <section id="terms_custom" class="container" t-if="quotation.note">
+               <h2 class="page-header">Términos y condiciones</h2>
+               <p t-field="quotation.note"/>
+           </section>
+        </xpath>
+        <!--Terminos y condiciones replace empty!-->
+        <xpath expr="//section[@id='terms']" position="replace"></xpath>
+        <!--Tu presupuesto!-->
+        <xpath expr="//h1[@class='page-header']" position="replace">
+            <t t-if="quotation.template_id.id!=13">
+                <h1 class="page-header">Tu presupuesto</h1>
+              <p>A continuación te presentamos tu presupuesto personalizado. Lo hemos adaptado a tus necesidades en función de la información que nos has facilitado</p>
+            </t>
+            <t t-if="quotation.template_id.id==13">
+                <h1 class="page-header">Your quotation</h1>
+                <p>Your personalised quotation is given below. It has been adapted to your needs and requirements, according to all the information you have given us.  </p>
+            </t>
+        </xpath>
+        <!--Subtotal!-->
+        <xpath expr="//table/tbody/t[2]/tr[1]" position="replace">
+            <t t-if="quotation.show_total == True">
+                <tr>
+                    <td></td><td></td><td></td>
+                    <td class="text-right"><strong>Subtotal:</strong></td>
+                    <td class="text-right">
+                        <strong data-id="total_amount" t-field="quotation.amount_untaxed" t-options='{"widget": "monetary","display_currency": quotation.pricelist_id.currency_id}'/>
+                    </td>
+                    <td></td>
+                </tr>
+            </t>
+        </xpath>
+        <!--Total!-->
+        <xpath expr="//table/tbody/t[2]/tr[2]" position="replace">
+            <t t-if="quotation.show_total == True">
+                <tr>
+                    <td></td><td></td><td></td>
+                    <td class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right">
+                        <strong data-id="total_amount" t-field="quotation.amount_total" t-options='{"widget": "monetary","display_currency": quotation.pricelist_id.currency_id}'/>
+                    </td>
+                    <td></td>
+                </tr>
+            </t>
+        </xpath>
+        <!--Impuestos!-->
+        <xpath expr="//table/tbody/t[last()]/tr[last()]" position="replace">
+            <t t-if="quotation.show_total == True">
+                <tr>
+                    <td></td><td></td><td></td>
+                    <t t-if="quotation.template_id.id!=13">
+                        <td class="text-right">Impuestos:</td>
+                    </t>
+                    <t t-if="quotation.template_id.id==13">
+                        <td class="text-right">Taxes:</td>
+                    </t>
+                    <td class="text-right">
+                        <span data-id="total_amount" t-field="quotation.amount_tax" t-options='{"widget": "monetary","display_currency": quotation.pricelist_id.currency_id}'/>
+                    </td>
+                    <td></td>
+                </tr>
+            </t>
+        </xpath>
+        <!--Texto inferior!-->
+        <xpath expr="//table" position="after">
+            <t t-if="quotation.template_id.id!=13">
+                <t t-if="quotation.show_total == False">
+                    <p>*IVA 21% no incluido</p>
+                </t>
+                <p>*Portes gratuitos en Península en pedidos superiores a 150€. Resto de zonas a consultar.</p>
+                <p>Portes incluidos en entregas a pie de calle.</p>
+            </t>
+            <t t-if="quotation.template_id.id==13">
+                <t t-if="quotation.show_total == False">
+                    <p>*VAT not included</p>
+                </t>
+                <p>*Delivery is completely free in those orders over 150 € done in the Peninsula. Delivery prices from other areas should be consulted.</p>
+                <p>TransportShipping costs are included in ground-floor deliveries. In case the customer wants the order to be given in a specific place or floor, it should be requested to the commercial who is managing the purchase when accepting the order. It will mean an extra charge on behalf of the customer.</p>
+            </t>
+        </xpath>
+        <!--Eliminar columna impuestos!-->
+        <xpath expr="//table/thead/tr/th[3]" position="replace"></xpath>
+        <xpath expr="//table/tbody/t[1]/t[2]/tr/td[3]" position="replace"></xpath>
+        <!--Modificar columna cantidad!-->
+        <xpath expr="//table/tbody/t[1]/t[2]/tr/td[2]" position="replace">
+            <td>
+               <div id="quote_qty">
+                   <span t-field="line.product_uom_qty"/>
+               </div>
+           </td>
+        </xpath>
+    </template>            
+</odoo>

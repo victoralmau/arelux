@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">        
+        <record id="tpv_payment_mode_id_show_pay_button" model="ir.config_parameter">
+            <field name="key">tpv_payment_mode_id_show_pay_button</field>
+            <field name="value">1</field>
+        </record>                            
+    </data>
+</openerp>
