@@ -1,0 +1,15 @@
+<openerp>
+    <data noupdate="1">
+        <record id="cron_res_partners_fix_customer" model="ir.cron">
+            <field name="name">Res partner fix customer</field>
+            <field name="active" eval="False" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model" eval="'res.partner'" />
+            <field name="function" eval="'cron_res_partners_fix_customer'" />
+            <field name="args" eval="" />
+        </record>                                
+    </data>
+</openerp>
