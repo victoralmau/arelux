@@ -21,11 +21,11 @@ class StockPicking(models.Model):
         store=False
     )
 
-    @api.one
+    @api.multi
+    @api.depends('sale_id')
     def _compute_confirmation_date_order(self):
         for item in self:
-            if item.sale_id.id>0:
-                item.confirmation_date_order = item.sale_id.confirmation_date
+            item.confirmation_date_order = item.sale_id.confirmation_date
     
     @api.model
     def fields_view_get(self, view_id=None, view_type='tree', toolbar=False, submenu=False):        
