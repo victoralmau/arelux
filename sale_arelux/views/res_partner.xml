@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_arelux_view_partner_tree" model="ir.ui.view">
+        <field name="name">sale_arelux_view_partner_tree</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="property_product_pricelist"/>                 
+            </field>            
+        </field>
+    </record>
+    <record id="custom_action_sale_order_draft_partner" model="ir.actions.act_window">        
+        <field name="name">Presupuestos</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('claim', '=', False), '|', '&amp;', ('state', 'in', ('sale','done')), ('amount_total', '=', 0), '&amp;', ('state', 'in', ('draft','sent')), ('amount_total', '>', 0)]</field>
+    </record>
+    <record id="custom_action_sale_order_sale_partner" model="ir.actions.act_window">
+        <field name="name">Pedidos de venta</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','in',('sale','done')),('claim', '=', False),('amount_total', '>', 0)]</field>
+    </record>    
+    <record id="sale_arelux_view_partner_form" model="ir.ui.view">
+        <field name="name">sale_arelux_view_partner_form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority" eval="17"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" type="action" name="%(sale_arelux.custom_action_sale_order_sale_partner)d" attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd" context="{'search_default_partner_id': active_id}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value"><field name="sale_order_sale_sum" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                        <span class="o_stat_text">Ventas</span>
+                    </div>
+                </button>
+                <button class="oe_stat_button" type="action" name="%(sale_arelux.custom_action_sale_order_draft_partner)d" attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd" context="{'search_default_partner_id': active_id}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value"><field name="sale_order_pto_count"/></span>
+                        <span class="o_stat_text">Ptos</span>
+                    </div>
+                </button>                                                              
+            </div>
+        </field>
+    </record>                
+</odoo>
