@@ -24,6 +24,7 @@ class StockPicking(models.Model):
     @api.multi
     @api.depends('sale_id')
     def _compute_confirmation_date_order(self):
+        _logger.info('_compute_confirmation_date_order')
         for item in self:
             item.confirmation_date_order = item.sale_id.confirmation_date
     
