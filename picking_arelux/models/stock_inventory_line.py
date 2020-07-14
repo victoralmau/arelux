@@ -11,7 +11,7 @@ class StockInventoryLine(models.Model):
         store=False
     )
     
-    @api.one        
+    @api.one
     def _get_prod_lot_id_ref(self):
         for line in self:                              
             line.prod_lot_id_ref = line.prod_lot_id.ref                                                                                                                   

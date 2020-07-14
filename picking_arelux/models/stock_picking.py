@@ -15,6 +15,17 @@ class StockPicking(models.Model):
         comodel_name='account.invoice',
         string='Factura devolucion'
     )
+    confirmation_date_order = fields.Datetime(
+        string='Confirmation date order',
+        compute='_compute_confirmation_date_order',
+        store=False
+    )
+
+    @api.one
+    def _compute_confirmation_date_order(self):
+        for item in self:
+            if item.sale_id.id>0:
+                item.confirmation_date_order = item.sale_id.confirmation_date
     
     @api.model
     def fields_view_get(self, view_id=None, view_type='tree', toolbar=False, submenu=False):        
