@@ -104,13 +104,13 @@
                             <t t-if="o.total_cashondelivery>0">
                                  <t t-if="o.order_id">
                                      <t t-set="price_unit_line" t-value="0"/>
-                                     <t t-foreach="o.order_id.order_line" t-as="line">
+                                     <t t-foreach="o.sale_id.order_line" t-as="line">
                                          <t t-if="line.product_id.id==move.product_id.id">
                                              <t t-set="price_unit_line" t-value="line.price_subtotal"/>        
                                          </t>
                                      </t>
                                      <t t-if="price_unit_line>0">
-                                         <span t-esc="price_unit_line" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                         <span t-esc="price_unit_line" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.sale_id.currency_id}"/>
                                      </t>
                                  </t>
                             </t>
@@ -124,14 +124,14 @@
                            <div class="row" style="padding-bottom:5px;">
                                <div class="col-xs-8">Base imponible</div>
                                <div class="col-xs-4" style="text-align:right;">
-                                   <span t-field="o.order_id.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   <span t-field="o.sale_id.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.sale_id.currency_id}"/>
                                </div>
                            </div>
                            <div class="row" style="padding-bottom:5px;">
                                <!--<div class="col-xs-8">Iva</div>!-->
                                <div class="col-xs-8">
                                    <t t-set="order_taxes" t-value="[]"/>
-                                   <t t-foreach="o.order_id.order_line" t-as="l">
+                                   <t t-foreach="o.sale_id.order_line" t-as="l">
                                        <t t-foreach="l.tax_id" t-as="tax">
                                            <t t-set="order_taxes" t-value="list(set([tax.description]))"/>
                                        </t>
@@ -141,13 +141,13 @@
                                    </t>
                                 </div>
                                <div class="col-xs-4" style="text-align:right;">
-                                   <span t-field="o.order_id.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   <span t-field="o.sale_id.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.sale_id.currency_id}"/>
                                </div>
                            </div>
                            <div name="total" class="row" t-att-style="'border: 1px solid '+custom_color_4+';'">
                                <div class="col-xs-8" t-att-style="'background:'+custom_color_4+';color:white;font-weight:bold;'">Total</div>
                                <div class="col-xs-4" style="text-align:right;font-weight:bold;">
-                                   <span t-field="o.order_id.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                   <span t-field="o.sale_id.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.sale_id.currency_id}"/>
                                </div>
                            </div>
                        </div>
@@ -165,7 +165,7 @@
                             <div class="row" style="padding:5px 0px;">
                                 <div class="col-xs-6" style="margin-left: 15px;font-weight:bold;">CANTIDAD A ABONAR</div>
                                 <div class="col-xs-4" style="text-align: right;font-weight: bold;font-size: 15px;">
-                                    <span t-field="o.total_cashondelivery" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.order_id.currency_id}"/>
+                                    <span t-field="o.total_cashondelivery" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.sale_id.currency_id}"/>
                                 </div>
                             </div>
                         </t>
