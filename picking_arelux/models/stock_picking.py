@@ -202,7 +202,7 @@ class StockPicking(models.Model):
                                                     'price_unit': round(account_invoice_line_vals['price_unit'],4),
                                                     'price_subtotal': round(price_subtotal,4),
                                                 })
-                                            #compute_taxes                                                                                    
+                                            #compute_taxes
                                             account_invoice_obj.compute_taxes()
                                             account_invoice_obj.action_invoice_open()
                                             #update_stock_picking
