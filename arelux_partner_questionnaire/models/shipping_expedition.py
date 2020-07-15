@@ -9,35 +9,12 @@ class ShippingExpedition(models.Model):
     _inherit = 'shipping.expedition'
         
     ar_qt_activity_type = fields.Selection(
-        [
-            ('todocesped', 'Todocesped'),
-            ('arelux', 'Arelux'),
-            ('evert', 'Evert'),                  
-        ],
-        size=15, 
-        string='Tipo de actividad'
+        related='picking_id.ar_qt_activity_type',
+        string='Tipo de actividad',
+        readonly=True
     )
     ar_qt_customer_type = fields.Selection(
-        [
-            ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ],        
+        related='picking_id.ar_qt_customer_type',
         string='Tipo de cliente',
+        readonly=True
     )
-    
-    @api.model
-    def create(self, vals):
-        return_shipping_expedition = super(ShippingExpedition, self).create(vals)
-        
-        return_shipping_expedition.ar_qt_activity_type = 'todocesped'
-        return_shipping_expedition.ar_qt_customer_type = 'particular'
-        
-        if return_shipping_expedition.picking_id.id>0:
-            if return_shipping_expedition.picking_id.ar_qt_activity_type!=False:
-                if return_shipping_expedition.picking_id.ar_qt_activity_type!='both':
-                    return_shipping_expedition.ar_qt_activity_type = return_shipping_expedition.picking_id.ar_qt_activity_type
-                    
-            if return_shipping_expedition.picking_id.ar_qt_customer_type!=False:
-                return_shipping_expedition.ar_qt_customer_type = return_shipping_expedition.picking_id.ar_qt_customer_type
-                                                        
-        return return_shipping_expedition                                                                           

@@ -78,7 +78,7 @@ class StockPicking(models.Model):
                                             stock_quant_quantity_sum += stock_quant_id.qty
                                                                                                                         
                                     pack_lot_id.lot_id.product_qty_store = stock_quant_quantity_sum 
-        #return            
+        #return
         return return_super
         
     @api.one    
@@ -202,7 +202,7 @@ class StockPicking(models.Model):
                                                     'price_unit': round(account_invoice_line_vals['price_unit'],4),
                                                     'price_subtotal': round(price_subtotal,4),
                                                 })
-                                            #compute_taxes                                                                                    
+                                            #compute_taxes
                                             account_invoice_obj.compute_taxes()
                                             account_invoice_obj.action_invoice_open()
                                             #update_stock_picking
