@@ -47,14 +47,12 @@
                             </div>
                         </div>
                         <div class="col-xs-5 col-xs-offset-3" style="text-align:center;">
-                            <img src="/report_arelux/static/src/img/arelux_logo.png" style="height:60px;margin-top: 10px;" /><br/>
-                            <img src="/report_arelux/static/src/img/logos_empresas_grises.png" style="width: 70%;margin-top: 30px;" />
+                            <img src="/report_arelux/static/src/img/nodrizatech_logo.png" style="height:60px;margin-top: 10px;" /><br/>
                         </div>
                     </t>
                     <t t-else="">
                         <div class="col-xs-4">
-                            <img src="/report_arelux/static/src/img/grupo_arelux.png" style="height: 70px;" /><br/>
-                            <img src="/report_arelux/static/src/img/logos_empresas_grises.png" style="width: 100%;margin-top: 20px;" />
+                            <img src="/report_arelux/static/src/img/nodrizatech_logo.png" style="height: 70px;" /><br/>
                         </div>
                         <div class="col-xs-5 col-xs-offset-3"></div>
                     </t>
