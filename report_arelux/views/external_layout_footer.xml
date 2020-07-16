@@ -78,7 +78,7 @@
                         </ul>
                         <t t-if="doc_model=='account.invoice'">
                             <div class="infi_mercantil" style="border-top:1px solid white;">
-                                <p>Inscrito en Registro Mercantil de Zaragoza al Tomo 3542, Folio 4, Seccion 8, Hoja Z-44463</p>
+                                <p>Registro Mercantil Tomo 3542 , Folio 7, Sección 8, Hoja Z 44463, I/A 7</p>
                             </div>
                         </t>
                         <ul t-if="not company.custom_footer" name="financial_infos"></ul>
