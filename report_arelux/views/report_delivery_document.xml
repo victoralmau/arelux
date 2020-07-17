@@ -102,7 +102,7 @@
                        </div>
                         <div class="col-xs-2" style="text-align:right;padding-left:0px;">
                             <t t-if="o.total_cashondelivery>0">
-                                 <t t-if="o.order_id">
+                                 <t t-if="o.sale_id">
                                      <t t-set="price_unit_line" t-value="0"/>
                                      <t t-foreach="o.sale_id.order_line" t-as="line">
                                          <t t-if="line.product_id.id==move.product_id.id">
