@@ -48,4 +48,4 @@ class SaleOrder(models.Model):
             'api_token': api_token
         }
         _logger.info(slack_message_vals)
-        slack_message_obj = self.env['slack.message'].sudo().create(slack_message_vals) 
+        slack_message_obj = self.env['slack.message'].sudo().create(slack_message_vals)
