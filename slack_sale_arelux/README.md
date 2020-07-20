@@ -10,4 +10,6 @@ slack_bot_user_oauth_access_token_arelux
 ```
 slack_sale_order_confirm_todocesped
 slack_sale_order_confirm_arelux
+slack_sale_order_confirm_with_claim_todocesped
+slack_sale_order_confirm_with_claim_arelux
 ``` 
