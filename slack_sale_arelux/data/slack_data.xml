@@ -8,6 +8,14 @@
         <record model="ir.config_parameter" id="slack_sale_order_confirm_arelux">
             <field name="key">slack_sale_order_confirm_arelux</field>
             <field name="value">#log_odoo_dev</field>
-        </record>                
+        </record>
+        <record model="ir.config_parameter" id="slack_sale_order_confirm_with_claim_todocesped">
+            <field name="key">slack_sale_order_confirm_with_claim_todocesped</field>
+            <field name="value">#log_odoo_dev</field>
+        </record>
+        <record model="ir.config_parameter" id="slack_sale_order_confirm_with_claim_arelux">
+            <field name="key">slack_sale_order_confirm_with_claim_arelux</field>
+            <field name="value">#log_odoo_dev</field>
+        </record>
     </data>
 </odoo>
