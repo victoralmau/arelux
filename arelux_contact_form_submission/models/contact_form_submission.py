@@ -550,7 +550,7 @@ class ContactFormSubmission(models.Model):
                         if sale_order_template_id.id == 3:  # Pto especial, cambiamos cosas
                             data_sale_order_line['product_uom_qty'] = self.m2
                             # product_id
-                            if sale_order_template_line_id.product_id.id == 73:  # Articulo extra
+                            if sale_order_template_line_id.product_id.id in [70, 73]:  # Articulo extra o Cepillo
                                 data_sale_order_line['product_uom_qty'] = 1
                             elif sale_order_template_line_id.product_id.id == 63:  # Banda autoadhesiva
                                 data_sale_order_line['product_uom_qty'] = 1
