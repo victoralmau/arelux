@@ -51,6 +51,10 @@
         <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter" />
         <field name="priority" eval="20"/>                
         <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="phone"/>
+                <field name="mobile"/>
+            </field>
             <filter name="activities_today" position="replace">
                 <filter string="Today activities" name="today" domain="[('date_action', '>=', context_today().strftime('%Y-%m-%d 00:00:00')),('date_action', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
                 <filter string="This week activities" name="this_week" domain="['&amp;', ('date_action', '>=', context_today().strftime('%Y-%m-%d 00:00:00')),('date_action', '&lt;=', (context_today()+datetime.timedelta(days=7)).strftime('%Y-%m-%d 23:59:59'))]"/>
@@ -68,6 +72,10 @@
         <field name="inherit_id" ref="crm.view_crm_case_leads_filter" />
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="phone"/>
+                <field name="mobile"/>
+            </field>
             <filter name="assigned_to_me" position="before">
                 <separator/>
                 <filter string="With next activity" name="with_date_action" domain="[('date_action','!=',False)]"/>
