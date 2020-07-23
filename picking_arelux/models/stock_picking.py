@@ -116,24 +116,24 @@ class StockPicking(models.Model):
                     )
                     if len(stock_picking_ids_get)>0:
                         stock_picking_id_origin = stock_picking_ids_get[0] 
-                        if stock_picking_id_origin.order_id.id>0:                                                        
+                        if stock_picking_id_origin.sale_id.id>0:
                             #check exist crm_claim (not need generate account.invoice automatic)
                             need_create_out_invoice = True
                             crm_claim_ids_get = self.env['crm.claim'].search(
                                 [
                                     ('active', '=', True),
-                                    ('model_ref_id', '=', 'sale.order,'+str(stock_picking_id_origin.order_id.id))                                    
+                                    ('model_ref_id', '=', 'sale.order,'+str(stock_picking_id_origin.sale_id.id))
                                 ]
                             )                            
                             if len(crm_claim_ids_get)>0:
                                 need_create_out_invoice = False                            
                             
                             if need_create_out_invoice==True:
-                                if stock_picking_id_origin.order_id.invoice_status=='invoiced':
-                                    if len(stock_picking_id_origin.order_id.invoice_ids)>0:
+                                if stock_picking_id_origin.sale_id.invoice_status=='invoiced':
+                                    if len(stock_picking_id_origin.sale_id.invoice_ids)>0:
                                         #invoice_id
                                         invoice_id = False
-                                        for invoice_id_get in stock_picking_id_origin.order_id.invoice_ids:
+                                        for invoice_id_get in stock_picking_id_origin.sale_id.invoice_ids:
                                             if invoice_id_get.type=='out_invoice':
                                                 invoice_id = invoice_id_get                                                                        
                                         #contionue
