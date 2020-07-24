@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, fields, models
 from odoo.exceptions import Warning
 
@@ -11,7 +11,7 @@ class WizardMaintenanceInstallation(models.TransientModel):
     _description = 'Wizard Maintenance Installation'
 
     year = fields.Integer(
-        string='Año',
+        string='Year',
         required=True
     )
 
@@ -32,7 +32,7 @@ class WizardMaintenanceInstallation(models.TransientModel):
         maintenance_installation_need_check_ids = self.env['maintenance.installation.need.check'].sudo().search([
             ('id', '>', 0)
         ])
-        if len(maintenance_installation_need_check_ids) > 0:
+        if maintenance_installation_need_check_ids:
             for maintenance_installation_need_check_id in maintenance_installation_need_check_ids:
                 need_check_item = {
                     'name': str(maintenance_installation_need_check_id.name),
@@ -47,7 +47,7 @@ class WizardMaintenanceInstallation(models.TransientModel):
                     month_key = 'month_' + str(month_item)
                     if month_key in maintenance_installation_need_check_id:
                         # date_item
-                        date_item = str(self.year) + '-' + str(month_item) + '-01'
+                        date_item = '%s-%s-01' % (self.year, month_item)
                         # get_total
                         maintenance_installation_need_check_ids = self.env['maintenance.installation'].sudo().search([
                             ('state', '=', 'done'),
@@ -61,7 +61,7 @@ class WizardMaintenanceInstallation(models.TransientModel):
                         }
                 # append
                 need_check_items.append(need_check_item)
-        #return
+        # return
         return need_check_items
 
     @api.multi

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+
     <record id="cron_automation_todocesped_profesional" forcecreate="True" model="ir.cron">
         <field name="name">Automation Todocesped Profesional</field>
         <field name="active" eval="False"/>
@@ -12,6 +13,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_automation_todocesped_profesional()</field>
     </record>
+
     <record id="cron_automation_todocesped_particular_sale_orders" forcecreate="True" model="ir.cron">
         <field name="name">Automation Todocesped Particular Sale Orders</field>
         <field name="active" eval="False"/>
@@ -24,6 +26,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_automation_todocesped_particular_sale_orders()</field>
     </record>
+
     <record id="cron_automation_todocesped_particular_sale_orders_mail2" forcecreate="True" model="ir.cron">
         <field name="name">Automation Todocesped Particular Sale Orders Mail 2</field>
         <field name="active" eval="False"/>
@@ -36,6 +39,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_automation_todocesped_particular_sale_orders_mail2()</field>
     </record>
+
     <record id="cron_automation_profesional_sale_orders_sens_sms" forcecreate="True" model="ir.cron">
         <field name="name">Automation Profesional Sale Orders Send SMS</field>
         <field name="active" eval="False"/>
@@ -48,6 +52,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_automation_profesional_sale_orders_sens_sms()</field>
     </record>
+
     <record id="cron_automation_todocesped_particular_repaso_mail" forcecreate="True" model="ir.cron">
         <field name="name">Automation Todocesped Particular Repaso Mail</field>
         <field name="active" eval="False"/>
@@ -60,4 +65,5 @@
         <field name="state">code</field>
         <field name="code">model.cron_automation_todocesped_particular_repaso_mail()</field>
     </record>
+
 </odoo>

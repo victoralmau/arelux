@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import Warning
 
 from dateutil.relativedelta import relativedelta
@@ -17,20 +16,20 @@ class AreluxAutomationProcess(models.Model):
 
     model = fields.Selection(
         selection=[
-            ('crm.lead', 'Iniactiva / Oportunidad'),
-            ('sale.order', 'Presupuestos')
+            ('crm.lead', 'Lead / Opportunity'),
+            ('sale.order', 'Sale')
         ],
         default='sale.order',
-        string='Modelo'
+        string='Model'
     )
     lead_type = fields.Selection(
         selection=[
             ('none', 'Ninguno'),
-            ('lead', 'Iniactiva'),
-            ('opportunity', 'Flujo de ventas')
+            ('lead', 'Lead'),
+            ('opportunity', 'Opportunity')
         ],
         default='none',
-        string='Tipo de lead'
+        string='Lead type'
     )
     ar_qt_activity_type = fields.Selection(
         [
@@ -40,7 +39,7 @@ class AreluxAutomationProcess(models.Model):
         ],
         default='todocesped',
         size=15,
-        string='Tipo de actividad'
+        string='Activity type'
     )
 
     ar_qt_activity_type_upper = fields.Char(
@@ -58,62 +57,77 @@ class AreluxAutomationProcess(models.Model):
             ('profesional', 'Profesional'),
         ],
         default='particular',
-        string='Tipo de cliente',
+        string='Customer type',
     )
-    user_ids = fields.Many2many('res.users', column1='user_id', column2='arelux_automation_process_id', string='User Ids')
+    user_ids = fields.Many2many(
+        'res.users',
+        column1='user_id',
+        column2='arelux_automation_process_id',
+        string='Users'
+    )
     create_date_from = fields.Datetime(
-        string='Fecha desde'
+        string='Date from'
     )
     create_date_to = fields.Datetime(
-        string='Fecha hasta'
+        string='Date to'
     )
     lead_m2_from = fields.Integer(
-        string='Lead M2 desde'
+        string='Lead M2 from'
     )
     lead_m2_to = fields.Integer(
-        string='Lead M2 hasta'
+        string='Lead M2 to'
     )
     mail_activity = fields.Boolean(
-        string='Actividad'
+        string='Activity'
     )
     mail_activity_type_id = fields.Many2one(
         comodel_name='mail.activity.type',
-        string='Tipo actividad'
+        string='Activity type'
     )
     mail_activity_date_deadline_days = fields.Integer(
-        string='Dias fin actividad'
+        string='Activity date deadline days'
     )
     mail_activity_summary = fields.Char(
-        string='Resument actividad'
+        string='Activity summary'
     )
     mail_template_id = fields.Many2one(
         comodel_name='mail.template',
-        string='Plantilla'
+        string='Template id'
     )
     sms_template_id = fields.Many2one(
         comodel_name='sms.template',
-        string='Sms Plantilla'
+        string='Sms template'
     )
     stage_id = fields.Many2one(
         comodel_name='crm.stage',
-        string='Etapa lead'
+        string='Stage'
     )
     state = fields.Selection(
         [
-            ('draft', 'Borrador'),
-            ('calculate', 'Calculado'),
-            ('in_progress', 'En progreso'),
-            ('done', 'Hecho')
+            ('draft', 'Draft'),
+            ('calculate', 'Calculate'),
+            ('in_progress', 'In progress'),
+            ('done', 'Done')
         ],
         size=15,
         default='draft',
-        string='Estado'
+        string='State'
     )
-    crm_lead_ids = fields.Many2many('crm.lead', column1='crm_lead_id', column2='arelux_automation_process_id', string='Crm Lead Ids')
-    sale_order_ids = fields.Many2many('sale.order', column1='sale_order_id', column2='arelux_automation_process_id', string='Sale Order Ids')
+    crm_lead_ids = fields.Many2many(
+        'crm.lead',
+        column1='crm_lead_id',
+        column2='arelux_automation_process_id',
+        string='Crm Lead Ids'
+    )
+    sale_order_ids = fields.Many2many(
+        'sale.order',
+        column1='sale_order_id',
+        column2='arelux_automation_process_id',
+        string='Sale Order Ids'
+    )
     total_records = fields.Integer(
         compute='_get_total_records',
-        string='Total registros',
+        string='Total records',
         store=False
     )
 
@@ -121,52 +135,52 @@ class AreluxAutomationProcess(models.Model):
     def _get_total_records(self):
         for obj in self:
             obj.total_records = 0
-            if obj.model=='crm.lead':
+            if obj.model == 'crm.lead':
                 obj.total_records = len(obj.crm_lead_ids)
-            elif obj.model=='sale.order':
+            elif obj.model == 'sale.order':
                 obj.total_records = len(obj.sale_order_ids)
 
     @api.multi
     def action_calculate(self):
         for obj in self:
-            if obj.state=='draft':
-                #checks
+            if obj.state == 'draft':
+                # checks
                 allow_calculate = True
                 # user_ids
                 if len(obj.user_ids) == 0:
                     allow_calculate = False
-                    raise Warning("Es necesario definir al menos usuario para la asignacion")
+                    raise Warning(_('It is necessary to define at least user for the assignment'))
                 # lead_type
-                if obj.model=='crm.lead':
+                if obj.model == 'crm.lead':
                     if obj.lead_type == 'none':
                         allow_calculate = False
-                        raise Warning("Es necesario definir un tipo de lead")
+                        raise Warning(_('It is necessary to define a type of lead'))
                 # mail_template_id
                 if obj.mail_template_id.id == 0:
                     allow_calculate = False
-                    raise Warning("Es necesario definir una plantilla de email")
+                    raise Warning(_('It is necessary to define an email template'))
                 # mail_activity
-                if obj.mail_activity == True:
+                if obj.mail_activity:
                     # mail_activity_type_id
                     if obj.mail_activity_type_id.id == 0:
                         allow_calculate = False
-                        raise Warning("Es necesario definir un tipo de actividad")
+                        raise Warning(_('It is necessary to define an activity type'))
                     # mail_activity_date_deadline_days
                     if obj.mail_activity_date_deadline_days == 0:
                         allow_calculate = False
-                        raise Warning("Es necesario definir dias para la actividad")
+                        raise Warning(_('It is necessary to define days for the activity'))
                     # mail_activity_summary
-                    if obj.mail_activity_summary == False:
+                    if not obj.mail_activity_summary:
                         allow_calculate = False
-                        raise Warning("Es necesario definir un resumen de la actividad")
+                        raise Warning(_('It is necessary to define a summary of the activity'))
                 # lead_m2_to
-                if obj.model=='sale.order':
+                if obj.model == 'sale.order':
                     if obj.lead_m2_to == 0:
                         allow_calculate = False
-                        raise Warning("Es necesario definir un Lead m2 hasta mayor de 0")
-                #operations_real
-                if allow_calculate==True:
-                    #by_model
+                        raise Warning(_('It is necessary to define a Lead m2 up to greater than 0'))
+                # operations_real
+                if allow_calculate:
+                    # by_model
                     if obj.model == 'crm.lead':
                         obj.crm_lead_ids = self.env['crm.lead'].search(
                             [
@@ -200,7 +214,7 @@ class AreluxAutomationProcess(models.Model):
                                 ('opportunity_id.lead_m2', '<=', obj.lead_m2_to)
                             ]
                         )
-                    #update
+                    # update
                     obj.state = 'calculate'
 
         return True
@@ -208,14 +222,14 @@ class AreluxAutomationProcess(models.Model):
     @api.multi
     def action_run(self):
         for obj in self:
-            if obj.state=='calculate':
-                if obj.total_records==0:
-                    raise Warning("Es necesario que exista algun registro para poder ejecutar la accion")
+            if obj.state == 'calculate':
+                if obj.total_records == 0:
+                    raise Warning(_('It is necessary that there is a registry to be able to execute the action'))
                 else:
-                    #update
+                    # update
                     obj.state = 'in_progress'
                     # mail_activity
-                    if obj.mail_activity == True:
+                    if obj.mail_activity:
                         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
                         mail_activity_date_deadline_action = current_date + relativedelta(days=obj.mail_activity_date_deadline_days)
                         mail_activity_date_deadline_action_weekday = mail_activity_date_deadline_action.weekday()
@@ -231,8 +245,8 @@ class AreluxAutomationProcess(models.Model):
                     # logger
                     _logger.info('Total')
                     _logger.info(obj.total_records)
-                    #operations
-                    if obj.model=='crm.lead':
+                    # operations
+                    if obj.model == 'crm.lead':
                         # operations
                         count = 0
                         for crm_lead_id in obj.crm_lead_ids:
@@ -240,65 +254,75 @@ class AreluxAutomationProcess(models.Model):
                             # user_id_random
                             user_id_random = int(random.choice(user_ids))
                             # automation_proces_vals
-                            automation_proces_vals = {
+                            vals = {
                                 'action_log': 'arelux_automation_process_' + str(obj.id),
                                 'user_id': user_id_random,
                                 'mail_activity': obj.mail_activity,
                                 'mail_template_id': obj.mail_template_id.id
                             }
                             # mail_activity
-                            if obj.mail_activity == True:
-                                automation_proces_vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
-                                automation_proces_vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
-                                automation_proces_vals['mail_activity_summary'] = obj.mail_activity_summary
-                            #lead_stage_id
-                            if obj.stage_id.id>0:
-                                automation_proces_vals['lead_stage_id'] = obj.stage_id.id
-                            #automation_proces
-                            crm_lead_id.automation_proces(automation_proces_vals)
+                            if obj.mail_activity:
+                                vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
+                                vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
+                                vals['mail_activity_summary'] = obj.mail_activity_summary
+                            # lead_stage_id
+                            if obj.stage_id:
+                                vals['lead_stage_id'] = obj.stage_id.id
+                            # automation_proces
+                            crm_lead_id.automation_proces(vals)
                             # logger_percent
                             percent = (float(count) / float(obj.total_records)) * 100
                             percent = "{0:.2f}".format(percent)
-                            _logger.info(str(percent) + '% (' + str(count) + '/' + str(obj.total_records) + ')')
+                            _logger.info('%s%s (%s/%s)' % (
+                                percent,
+                                '%',
+                                count,
+                                obj.total_records
+                            ))
 
                     elif obj.model == 'sale.order':
-                        #operations
+                        # operations
                         count = 0
                         for sale_order_id in obj.sale_order_ids:
                             count += 1
                             # user_id_random
                             user_id_random = int(random.choice(user_ids))
-                            #automation_proces_vals
-                            automation_proces_vals = {
+                            # automation_proces_vals
+                            vals = {
                                 'action_log': 'arelux_automation_process_'+str(obj.id),
                                 'user_id': user_id_random,
                                 'mail_activity': obj.mail_activity,
                                 'mail_template_id': obj.mail_template_id.id
                             }
                             # mail_activity
-                            if obj.mail_activity == True:
-                                automation_proces_vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
-                                automation_proces_vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
-                                automation_proces_vals['mail_activity_summary'] = obj.mail_activity_summary
-                            #sms_template_id
-                            if obj.sms_template_id.id>0:
-                                automation_proces_vals['sms_template_id'] = obj.sms_template_id.id
-                            #lead_stage_id
-                            if obj.stage_id.id>0:
-                                automation_proces_vals['lead_stage_id'] = obj.stage_id.id
+                            if obj.mail_activity:
+                                vals['mail_activity_type_id'] = obj.mail_activity_type_id.id
+                                vals['mail_activity_date_deadline'] = mail_activity_date_deadline_action
+                                vals['mail_activity_summary'] = obj.mail_activity_summary
+                            # sms_template_id
+                            if obj.sms_template_id:
+                                vals['sms_template_id'] = obj.sms_template_id.id
+                            # lead_stage_id
+                            if obj.stage_id:
+                                vals['lead_stage_id'] = obj.stage_id.id
                             # automation_proces
-                            sale_order_id.automation_proces(automation_proces_vals)
+                            sale_order_id.automation_proces(vals)
                             # logger_percent
                             percent = (float(count) / float(obj.total_records)) * 100
                             percent = "{0:.2f}".format(percent)
-                            _logger.info(str(percent) + '% (' + str(count) + '/' + str(obj.total_records) + ')')
-                    #update
+                            _logger.info('%s%s (%s/%s)' % (
+                                percent,
+                                '%',
+                                count,
+                                obj.total_records
+                            ))
+                    # update
                     obj.state = 'done'
         return True
 
     @api.multi
     def action_change_to_draft(self):
         for obj in self:
-            if obj.state=='calculate':
+            if obj.state == 'calculate':
                 obj.state = 'draft'
         return True

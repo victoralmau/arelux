@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="quality_team_data_1" model="quality.team">
         <field name="id">1</field>
         <field name="name">Encargado Nodriza</field>
         <field name="user_id">1</field>
     </record>
+
     <record id="quality_team_data_2" model="quality.team">
         <field name="id">2</field>
         <field name="name">Operario logistica</field>
         <field name="user_id">1</field>
     </record>
+
 </odoo>

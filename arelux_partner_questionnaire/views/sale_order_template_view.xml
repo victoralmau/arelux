@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>     
+<odoo>
+
     <record id="arelux_partner_questionnaire_sale_order_template_view_tree" model="ir.ui.view">
         <field name="name">arelux_partner_questionnaire_sale_order_template_view_tree</field>
         <field name="model">sale.order.template</field>
@@ -11,6 +12,7 @@
             </field>                                    
         </field>
     </record>
+
     <record id="arelux_partner_questionnaire_sale_order_template_view_form" model="ir.ui.view">
         <field name="name">arelux_partner_questionnaire_sale_order_template_view_form</field>
         <field name="model">sale.order.template</field>
@@ -21,5 +23,6 @@
                 <field name="ar_qt_activity_type"/>                                                
             </field>                                    
         </field>
-    </record>     
+    </record>
+
 </odoo>

@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, fields
+from odoo import api, models, fields, _
 from odoo.exceptions import Warning, ValidationError
 
 import re
@@ -21,19 +20,19 @@ class ResPartner(models.Model):
     @api.one
     def write(self, vals):
         allow_write = True
-        #check_dni
-        if self.type=='contact' and self.parent_id.id==0:
+        # check_dni
+        if self.type == 'contact' and self.parent_id.id == 0:
             if 'vat' in vals:
-                if vals['vat']!=False:       
-                    vals['vat'] = vals['vat'].strip().replace(' ', '').upper()#force to uppercase and remove spaces
+                if vals['vat']:
+                    vals['vat'] = vals['vat'].strip().replace(' ', '').upper()# force to uppercase and remove spaces
                 
-                    if self.country_id.id > 0 and self.country_id.code=='ES':
+                    if self.country_id and self.country_id.code == 'ES':
                         if '-' in vals['vat']:
                             allow_write = False
-                            raise Warning("El NIF no permite el caracter '-'") 
+                            raise Warning(_('The NIF does not allow the character -'))
                     
-                    if allow_write==True:                                
-                        if self.supplier==True:
+                    if allow_write:
+                        if self.supplier:
                             res_partner_ids = self.env['res.partner'].search(
                                 [
                                     ('id', 'not in', (1, str(self.id))),
@@ -54,19 +53,19 @@ class ResPartner(models.Model):
                                  ]
                             )
                         
-                        if len(res_partner_ids)>0:
+                        if res_partner_ids:
                             allow_write = False
-                            raise Warning("El NIF ya existe para otro contacto")                                                    
-        #check_email
-        if allow_write==True:
+                            raise Warning(_('The NIF already exists for another contact'))
+        # check_email
+        if allow_write:
             if 'email' in vals:
-                if vals['email']!='':
+                if vals['email'] != '':
                     match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', vals['email'])
                     if match == None:
                         allow_write = False
-                        raise ValidationError('Email incorrecto')
-        #return                             
-        if allow_write==True:                        
+                        raise ValidationError(_('Email incorrect'))
+        # return
+        if allow_write:
             return super(ResPartner, self).write(vals)
     
     @api.model    

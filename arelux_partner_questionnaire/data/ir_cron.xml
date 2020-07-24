@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+
     <record id="cron_arelux_partner_qt_generate_customer_type" forcecreate="True" model="ir.cron">
         <field name="name">Arelux - Generar tipo cliente</field>
         <field name="active" eval="True"/>
@@ -12,6 +13,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_action_generate_customer_type()</field>
     </record>
+
     <record id="cron_action_generate_ar_qt_todocesped_pf_customer_type" forcecreate="True" model="ir.cron">
         <field name="name">Leads - Generar ar_qt_todocesped_pf_customer_type</field>
         <field name="active" eval="False"/>
@@ -24,4 +26,5 @@
         <field name="state">code</field>
         <field name="code">model.cron_action_generate_ar_qt_todocesped_pf_customer_type()</field>
     </record>
+
 </odoo>

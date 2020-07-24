@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
-import logging
-_logger = logging.getLogger(__name__)
 
 class AreluxSaleReportTemplate(models.Model):
     _name = 'arelux.sale.report.template'
@@ -46,25 +42,34 @@ class AreluxSaleReportTemplate(models.Model):
         string='Order way',
         default='asc'
     )
-    report_template_line = fields.One2many('arelux.sale.report.template.line', 'arelux_sale_report_template_id', string='Report Template Lines', copy=True)
-    
+    report_template_line = fields.One2many(
+        'arelux.sale.report.template.line',
+        'arelux_sale_report_template_id',
+        string='Report Template Lines',
+        copy=True
+    )
+
     @api.model    
     def cron_generate_automatic_arelux_sale_report(self):
         current_date = datetime.today()
         
-        arelux_sale_report_template_ids = self.env['arelux.sale.report.template'].search([('active', '=', True)])
-        if len(arelux_sale_report_template_ids)>0:
+        arelux_sale_report_template_ids = self.env['arelux.sale.report.template'].search(
+            [
+                ('active', '=', True)
+            ]
+        )
+        if arelux_sale_report_template_ids:
             for arelux_sale_report_template_id in arelux_sale_report_template_ids:
-                if arelux_sale_report_template_id.custom_type=='daily':
+                if arelux_sale_report_template_id.custom_type == 'daily':
                     start_date = current_date + relativedelta(days=1)
                     end_date = start_date
-                elif arelux_sale_report_template_id.custom_type=='weekly':
+                elif arelux_sale_report_template_id.custom_type == 'weekly':
                     start_date = current_date + relativedelta(days=-7)
                     end_date = start_date + relativedelta(days=6)                
-                elif arelux_sale_report_template_id.custom_type=='monthly':
+                elif arelux_sale_report_template_id.custom_type == 'monthly':
                     start_date = datetime(current_date.year, current_date.month, 1) + relativedelta(months=-1)
                     end_date = start_date + relativedelta(months=1, days=-1)
-                elif arelux_sale_report_template_id.custom_type=='annual':
+                elif arelux_sale_report_template_id.custom_type == 'annual':
                     start_date = datetime(current_date.year, 1, 1) + relativedelta(years=-1)
                     end_date = datetime(start_date.year, 12, 31)
                     
@@ -75,8 +80,8 @@ class AreluxSaleReportTemplate(models.Model):
                         ('date_to', '=', end_date.strftime("%Y-%m-%d"))
                     ]
                 )
-                if len(arelux_sale_report_ids)==0:
-                    arelux_sale_report_vals = {
+                if len(arelux_sale_report_ids) == 0:
+                    vals = {
                         'name': arelux_sale_report_template_id.name,
                         'arelux_sale_report_template_id': arelux_sale_report_template_id.id,
                         'date_from': start_date.strftime("%Y-%m-%d"),
@@ -86,10 +91,10 @@ class AreluxSaleReportTemplate(models.Model):
                         'order_by': arelux_sale_report_template_id.order_by,
                         'order_way': arelux_sale_report_template_id.order_way                                                                       
                     }
-                    arelux_sale_report_obj = self.env['arelux.sale.report'].sudo().create(arelux_sale_report_vals)
-                    #lines
+                    arelux_sale_report_obj = self.env['arelux.sale.report'].sudo().create(vals)
+                    # lines
                     for report_template_line in arelux_sale_report_template_id.report_template_line:
-                        arelux_sale_report_line_vals = {
+                        line_vals = {
                             'arelux_sale_report_id': arelux_sale_report_obj.id,
                             'arelux_sale_report_type_id': report_template_line.arelux_sale_report_type_id.id,
                             'position': report_template_line.position,
@@ -99,7 +104,7 @@ class AreluxSaleReportTemplate(models.Model):
                             'group_by_user': report_template_line.group_by_user,
                             'show_in_table_format': report_template_line.show_in_table_format                                                                                                                                                           
                         }
-                        arelux_sale_report_line_obj = self.env['arelux.sale.report.line'].sudo().create(arelux_sale_report_line_vals)
+                        self.env['arelux.sale.report.line'].sudo().create(line_vals)
                     #mail_followers
                     mail_follower_ids = self.env['mail.followers'].search(
                         [
@@ -107,7 +112,7 @@ class AreluxSaleReportTemplate(models.Model):
                             ('res_id', '=', arelux_sale_report_template_id.id)
                         ]
                     )
-                    if len(mail_follower_ids)>0:
+                    if mail_follower_ids:
                         for mail_follower_id in mail_follower_ids:                            
                             mail_followers_vals = {
                                 'res_id': arelux_sale_report_obj.id,
@@ -123,14 +128,13 @@ class AreluxSaleReportTemplate(models.Model):
                                     ('partner_id', '=', mail_followers_vals['partner_id'])
                                 ]
                             )
-                            if len(mail_follower_ids_item)==0:#Prevent exist
+                            if len(mail_follower_ids_item) == 0:# Prevent exist
                                 mail_followers_obj = self.env['mail.followers'].create(mail_followers_vals)
                             else:
-                                if mail_followers_vals['partner_id']==3:
+                                if mail_followers_vals['partner_id'] == 3:
                                     mail_follower_id_item = mail_follower_ids_item[0]
                                     mail_follower_id_item.unlink()
-                                    
-                    #fix generate_value_lines
+                    # fix generate_value_lines
                     arelux_sale_report_obj.change_state_to_generate()
-                    #auto_send_mail_item
+                    # auto_send_mail_item
                     arelux_sale_report_obj.action_send_mail()

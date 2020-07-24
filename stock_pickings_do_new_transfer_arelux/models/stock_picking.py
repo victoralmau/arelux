@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, exceptions, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import api, models
+
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
@@ -19,6 +17,6 @@ class StockPicking(models.Model):
                 ('shipping_expedition_id', '!=', False)
             ]
         )
-        if stock_picking_ids!=False:                
+        if stock_picking_ids:
             for stock_picking_id in stock_picking_ids:
                 stock_picking_id.do_transfer()

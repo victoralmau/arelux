@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 from odoo.exceptions import Warning
@@ -49,72 +48,75 @@ class CrmLead(models.Model):
     @api.onchange('partner_id')
     def change_partner_id(self):
         return_item = super(CrmLead, self)._onchange_partner_id()
-        #operations
-        if self._origin.id==0 and self.partner_id.id>0:
-            #ar_qt_activity_type
-            if self.partner_id.ar_qt_activity_type!=False:
+        # operations
+        if self._origin.id == 0 and self.partner_id:
+            # ar_qt_activity_type
+            if self.partner_id.ar_qt_activity_type:
                 self.ar_qt_activity_type = 'todocesped'
-                #check both
-                if self.partner_id.ar_qt_activity_type!='both':
+                # check both
+                if self.partner_id.ar_qt_activity_type != 'both':
                     self.ar_qt_activity_type = self.partner_id.ar_qt_activity_type
-            #ar_qt_customer_type                
-            if self.partner_id.ar_qt_customer_type!=False:
+            # ar_qt_customer_type
+            if self.partner_id.ar_qt_customer_type:
                 self.ar_qt_customer_type = self.partner_id.ar_qt_customer_type
-        #return
+        # return
         return return_item                         
                     
     @api.onchange('user_id')
     def change_user_id(self):
         return_item = super(CrmLead, self)._onchange_user_id()
-        #operations
-        if self._origin.id>0 and self.user_id.id>0:
+        # operations
+        if self._origin and self.user_id:
             self.fix_copy_custom_field_sale_orders(True)
-            #partner_id
-            if self.partner_id.id!=False:
-                #ar_qt_activity_type
-                if self.partner_id.ar_qt_activity_type==False:
+            # partner_id
+            if self.partner_id.id:
+                # ar_qt_activity_type
+                if not self.partner_id.ar_qt_activity_type:
                     self.partner_id.ar_qt_activity_type = self.ar_qt_activity_type
-                #ar_qt_customer_type
-                if self.partner_id.ar_qt_customer_type==False:
+                # ar_qt_customer_type
+                if not self.partner_id.ar_qt_customer_type:
                     self.partner_id.ar_qt_customer_type = self.ar_qt_customer_type
-        #return
+        # return
         return return_item
         
     @api.one
     def fix_copy_custom_field_sale_orders(self, update_user_id=True):                    
-        sale_order_ids = self.env['sale.order'].search([('opportunity_id', '=', self.id)])
-        if sale_order_ids!=False:
+        sale_order_ids = self.env['sale.order'].search(
+            [
+                ('opportunity_id', '=', self.id)
+            ]
+        )
+        if sale_order_ids:
             for sale_order in sale_order_ids:
-                if sale_order.id>0:
-                    #update sqls prevent mail.message
-                    if sale_order.state=='draft' or sale_order.state=='sent':
-                        if self.user_id.id>0 and update_user_id==True:
-                            self.env.cr.execute("UPDATE sale_order SET user_id = "+str(self.user_id.id)+" WHERE id = "+str(sale_order.id))
-                        
-                        if self.team_id.id>0:                   
-                            self.env.cr.execute("UPDATE sale_order SET team_id = "+str(self.team_id.id)+" WHERE id = "+str(sale_order.id))
-                    #ar_qt_activity_type
-                    if self.ar_qt_activity_type!=False:
-                        if self.ar_qt_activity_type!='both':
-                            sale_order.ar_qt_activity_type = self.ar_qt_activity_type
-                        else:
-                            sale_order.ar_qt_activity_type = 'todocesped'                                                                      
-                    #ar_qt_customer_type
-                    if self.ar_qt_customer_type!=False:
-                        sale_order.ar_qt_customer_type = self.ar_qt_customer_type
+                # update sqls prevent mail.message
+                if sale_order.state in ['draft', 'sent']:
+                    if self.user_id and update_user_id:
+                        self.env.cr.execute("UPDATE sale_order SET user_id = "+str(self.user_id.id)+" WHERE id = "+str(sale_order.id))
+
+                    if self.team_id:
+                        self.env.cr.execute("UPDATE sale_order SET team_id = "+str(self.team_id.id)+" WHERE id = "+str(sale_order.id))
+                # ar_qt_activity_type
+                if self.ar_qt_activity_type:
+                    if self.ar_qt_activity_type != 'both':
+                        sale_order.ar_qt_activity_type = self.ar_qt_activity_type
+                    else:
+                        sale_order.ar_qt_activity_type = 'todocesped'
+                # ar_qt_customer_type
+                if self.ar_qt_customer_type:
+                    sale_order.ar_qt_customer_type = self.ar_qt_customer_type
                         
     @api.model
     def create(self, values):
         allow_create = True
-        #ar_qt_activity_type
+        # ar_qt_activity_type
         if 'ar_qt_activity_type' not in values:
             values['ar_qt_activity_type'] = 'todocesped'
-        #ar_qt_customer_type
+        # ar_qt_customer_type
         if 'ar_qt_customer_type' not in values:
             values['ar_qt_customer_type'] = 'particular'                                    
-        #prevent duplicate
+        # prevent duplicate
         if 'partner_id' in values:
-            if values['partner_id']!=False:        
+            if values['partner_id']:
                 sale_quote_template_obj = self.env['crm.lead'].search(
                     [
                         ('active', '=', True),
@@ -124,32 +126,36 @@ class CrmLead(models.Model):
                         ('probability', '<', 100),                
                     ]
                 )
-                if len(sale_quote_template_obj)>0:
+                if sale_quote_template_obj:
                     allow_create = False
                     raise Warning("No se puede crear otro flujo para el mismo contacto, tipo de actividad y tipo de cliente si ya existe uno abierto")
-        #operations
-        if allow_create==True:    
+        # operations
+        if allow_create:
             return_object = super(CrmLead, self).create(values)
-            #fix change team_id
-            if self.user_id.id>0:
-                crm_team_ids = self.env['crm.team'].search([('ar_qt_activity_type', '=', self.ar_qt_activity_type)])
-                if crm_team_ids!=False:
+            # fix change team_id
+            if self.user_id:
+                crm_team_ids = self.env['crm.team'].search(
+                    [
+                        ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
+                    ]
+                )
+                if crm_team_ids:
                     team_modify = False
                     for crm_team_id in crm_team_ids:                                                    
-                        if crm_team_id.ar_qt_customer_type!=False and crm_team_id.ar_qt_customer_type==self.ar_qt_customer_type:
+                        if crm_team_id.ar_qt_customer_type and crm_team_id.ar_qt_customer_type == self.ar_qt_customer_type:
                             self.team_id = crm_team_id.id
                             team_modify = True
                         else:
-                            if team_modify==False:
+                            if not team_modify:
                                 self.team_id = crm_team_id.id                                                                                                               
-            #return
+            # return
             return return_object                                            
     
     @api.multi
     def write(self, vals):                              
         allow_write = True
         if self.id>0:
-            #check imposible team_id
+            # check imposible team_id
             if 'team_id' in vals:
                 team_id_obj = self.env['crm.team'].browse(vals['team_id'])
                 
@@ -161,15 +167,15 @@ class CrmLead(models.Model):
                 if 'ar_qt_customer_type' in vals:
                     ar_qt_customer_type_check = vals['ar_qt_customer_type']
                 
-                if team_id_obj.ar_qt_activity_type!=False and team_id_obj.ar_qt_activity_type!=ar_qt_activity_type_check:
+                if team_id_obj.ar_qt_activity_type and team_id_obj.ar_qt_activity_type != ar_qt_activity_type_check:
                     allow_write = False
                     raise Warning("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de actividad")
-                elif team_id_obj.ar_qt_activity_type!=False and team_id_obj.ar_qt_customer_type!=False and team_id_obj.ar_qt_customer_type!=ar_qt_customer_type_check:
+                elif team_id_obj.ar_qt_activity_type and team_id_obj.ar_qt_customer_type and team_id_obj.ar_qt_customer_type != ar_qt_customer_type_check:
                     allow_write = False
                     raise Warning("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de cliente")
-        #allow_write
-        if allow_write==True:                                      
+        # allow_write
+        if allow_write:
             return_object = super(CrmLead, self).write(vals)
             self.fix_copy_custom_field_sale_orders(True)                                                                                                                            
-            #return
+            # return
             return return_object                                        

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>   
+<odoo>
+
     <record id="res_partner_reason_buy_1" model="res.partner.reason.buy">
         <field name="id">1</field>
         <field name="name">Prevención / Anticiparse a los problemas (humedades, filtraciones)</field>
@@ -8,6 +9,7 @@
         <field name="position">0</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_reason_buy_2" model="res.partner.reason.buy">
         <field name="id">2</field>
         <field name="name">Problema puntual (filtraciones, humedades, etc).</field>
@@ -16,6 +18,7 @@
         <field name="position">1</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_reason_buy_3" model="res.partner.reason.buy">
         <field name="id">3</field>
         <field name="name">Reforma o rehabilitación</field>
@@ -24,6 +27,7 @@
         <field name="position">2</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_reason_buy_4" model="res.partner.reason.buy">
         <field name="id">4</field>
         <field name="name">Otro</field>
@@ -32,4 +36,5 @@
         <field name="position">3</field>
         <field name="other">True</field>
     </record>
+
 </odoo>

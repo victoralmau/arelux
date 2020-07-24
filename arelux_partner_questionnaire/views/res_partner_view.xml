@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="res_partner_filter_arelux_partner_questionnaire" model="ir.ui.view">
         <field name="name">res_partner_filter_arelux_partner_questionnaire</field>
         <field name="model">res.partner</field>
@@ -17,6 +18,7 @@
             </filter>                                                                                                                
         </field>
     </record>
+
     <record id="view_partner_arelux_tree" model="ir.ui.view">
         <field name="name">Add partner extra fields</field>
         <field name="model">res.partner</field>
@@ -29,6 +31,7 @@
             </field>            
         </field>
     </record>
+
     <record id="res_partner_view_arelux_partner_questionnaire" model="ir.ui.view">
         <field name="name">res.partner.view.arelux_partner_questionnaire</field>
         <field name="model">res.partner</field>
@@ -155,51 +158,61 @@
             </page>
         </field>
     </record>
+
     <record id="partner_type_surface_action" model="ir.actions.act_window">
         <field name="name">Tipos de superficie</field>
         <field name="res_model">res.partner.type.surface</field>
         <field name="view_mode">tree,form</field>                
     </record>
+
     <record id="partner_reason_install_action" model="ir.actions.act_window">
         <field name="name">Razones instalacion</field>
         <field name="res_model">res.partner.reason.install</field>
         <field name="view_mode">tree,form</field>                
     </record>
+
     <record id="partner_specific_segment_action" model="ir.actions.act_window">
         <field name="name">Segmentos especificos</field>
         <field name="res_model">res.partner.specific.segment</field>
         <field name="view_mode">tree,form</field>                
     </record>
+
     <record id="partner_stock_capacity_action" model="ir.actions.act_window">
         <field name="name">Capacidad stock</field>
         <field name="res_model">res.partner.stock.capacity</field>
         <field name="view_mode">tree,form</field>                
     </record>
+
     <record id="partner_type_customer_sale_action" model="ir.actions.act_window">
         <field name="name">Tipo clientes venden</field>
         <field name="res_model">res.partner.type.customer.sale</field>
         <field name="view_mode">tree,form</field>                
-    </record>        
+    </record>
+
     <record id="partner_contact_form_action" model="ir.actions.act_window">
         <field name="name">Formas de contacto</field>
         <field name="res_model">res.partner.contact.form</field>
         <field name="view_mode">tree,form</field>                
-    </record>        
+    </record>
+
     <record id="partner_valuation_thing_action" model="ir.actions.act_window">
         <field name="name">Cosas a valorar</field>
         <field name="res_model">res.partner.valuation.thing</field>
         <field name="view_mode">tree,form</field>                
     </record>
+
     <record id="partner_qualification_product_action" model="ir.actions.act_window">
         <field name="name">Qualification Prodduct</field>
         <field name="res_model">res.partner.qualification.product</field>
         <field name="view_mode">tree,form</field>                
-    </record>    
+    </record>
+
     <record id="partner_reason_buy_action" model="ir.actions.act_window">
         <field name="name">Razones comprar</field>
         <field name="res_model">res.partner.reason.buy</field>
         <field name="view_mode">tree,form</field>                
-    </record>      
+    </record>
+
     <menuitem 
         id="menu_odoo_arelux_partner_questionnaire" 
         name="Arelux Partner Questionnaire"

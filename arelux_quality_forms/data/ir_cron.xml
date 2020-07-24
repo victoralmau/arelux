@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+
     <record id="cron_autongenerate_maintenance_installation_next_month" forcecreate="True" model="ir.cron">
         <field name="name">Cron Autogenerate Maintenance Installation Next Month</field>
         <field name="active" eval="False"/>
@@ -12,6 +13,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_autongenerate_maintenance_installation_next_month()</field>
     </record>
+
     <record id="cron_autongenerate_maintenance_installation_all_this_year" forcecreate="True" model="ir.cron">
         <field name="name">Cron Autogenerate Maintenance Installation All This Year</field>
         <field name="active" eval="False"/>
@@ -24,4 +26,5 @@
         <field name="state">code</field>
         <field name="code">model.cron_autongenerate_maintenance_installation_all_this_year()</field>
     </record>
+
 </odoo>

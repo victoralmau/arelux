@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 _logger = logging.getLogger(__name__)
 
-from openerp import api, models, fields
+from openerp import api, models
 from openerp.exceptions import Warning
 
 from dateutil.relativedelta import relativedelta
@@ -43,41 +42,41 @@ class SaleOrder(models.Model):
             'lead_stage_id': 2
         }
         '''
-        #special_log
+        # special_log
         if 'action_log' in params:
-            automation_log_vals = {                    
+            vals = {
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
                 'action': str(params['action_log']),                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
-        #check_user_id sale_order
+            self.env['automation.log'].sudo().create(vals)
+        # check_user_id sale_order
         if 'user_id' in params:
-            if self.user_id.id==0:            
+            if self.user_id.id == 0:
                 user_id_random = int(params['user_id'])
-                #check_user_id crm_lead (write event and function user_id change in crm_lead, sale_orders and res_partner if need)
-                if self.opportunity_id.user_id.id==0:
+                # check_user_id crm_lead (write event and function user_id change in crm_lead, sale_orders and res_partner if need)
+                if self.opportunity_id.user_id.id == 0:
                     self.opportunity_id.write({
                         'user_id': user_id_random
                     })
-                    #save_log
-                    automation_log_vals = {                    
+                    # save_log
+                    vals = {
                         'model': 'crm.lead',
                         'res_id': self.opportunity_id.id,
                         'category': 'crm_lead',
                         'action': 'asign_user_id',                                                                                                                                                                                           
                     }
-                    automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
-                    #fix change user_id res.partner
-                    if self.partner_id.user_id.id==0:
+                    self.env['automation.log'].sudo().create(vals)
+                    # fix change user_id res.partner
+                    if self.partner_id.user_id.id == 0:
                         self.partner_id.user_id = user_id_random
                 else:                        
                     self.user_id.id = user_id_random
         # mail_activity
         if 'mail_activity' in params:
-            if params['mail_activity'] == True:
-                if self.user_id.id > 0:
+            if params['mail_activity']:
+                if self.user_id:
                     # search
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
                         [
@@ -88,12 +87,16 @@ class SaleOrder(models.Model):
                         ]
                     )
                     if len(mail_activity_ids) == 0:
-                        #search
-                        ir_model_ids = self.env['ir.model'].sudo().search([('model', '=', 'sale.order')])
-                        if len(ir_model_ids)>0:
+                        # search
+                        ir_model_ids = self.env['ir.model'].sudo().search(
+                            [
+                                ('model', '=', 'sale.order')
+                            ]
+                        )
+                        if ir_model_ids:
                             ir_model_id = ir_model_ids[0]
                             # create
-                            mail_activity_vals = {
+                            vals = {
                                 'activity_type_id': params['mail_activity_type_id'],
                                 'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S"),
                                 'user_id': self.user_id.id,
@@ -101,70 +104,70 @@ class SaleOrder(models.Model):
                                 'res_model_id': ir_model_id.id,
                                 'res_id': self.id
                             }
-                            mail_activity_obj = self.env['mail.activity'].sudo(self.create_uid.id).create(mail_activity_vals)
+                            self.env['mail.activity'].sudo(self.create_uid.id).create(ir_model_ids)
                             # save_log
-                            automation_log_vals = {
+                            vals = {
                                 'model': 'sale.prder',
                                 'res_id': self.opportunity_id.id,
                                 'category': 'sale_order',
                                 'action': 'mail_activity_type_id_' + str(params['mail_activity_type_id']),
                             }
-                            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
-        #send_mail
+                            self.env['automation.log'].sudo().create(vals)
+        # send_mail
         if 'mail_template_id' in params:
             self.action_send_mail_with_template_id(int(params['mail_template_id']))
-            #save_log
-            automation_log_vals = {                    
+            # save_log
+            vals = {
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
                 'action': 'send_mail',                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
-            #update
+            self.env['automation.log'].sudo().create(vals)
+            # update
             self.write({
                 'state': 'sent',
                 'date_order_send_mail': fields.datetime.now()
             })                    
-        #send_sms
+        # send_sms
         if 'sms_template_id' in params:
             self.action_generate_sale_order_link_tracker()  # Fix generate link-tracker
             self.action_send_sms_automatic(int(params['sms_template_id']), True)
             # save_log
-            automation_log_vals = {
+            vals = {
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
                 'action': 'send_sms_done'
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
-        #update crm.lead stage_id
+            self.env['automation.log'].sudo().create(vals)
+        # update crm.lead stage_id
         if 'lead_stage_id' in params:
             self.opportunity_id.stage_id = int(params['lead_stage_id'])
-            #save_log
-            automation_log_vals = {                    
+            # save_log
+            vals = {
                 'model': 'crm.lead',
                 'res_id': self.opportunity_id.id,
                 'category': 'crm_lead',
                 'action': 'change_stage_id',                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)        
+            self.env['automation.log'].sudo().create(vals)
     
     @api.model    
     def cron_automation_profesional_sale_orders_sens_sms(self):    
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))        
-        #skip_cron
+        # skip_cron
         skip_cron = True
         
         weekday = current_date.weekday()
         current_date_hour = current_date.strftime("%H")    
                         
         hours_allow_by_weekday = {
-            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Lunes
-            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Martes
-            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Miercoles
-            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Jueves
-            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Viernes
+            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Lunes
+            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Martes
+            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Miercoles
+            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Jueves
+            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Viernes
         }
 
         if str(weekday) in hours_allow_by_weekday:
@@ -172,11 +175,11 @@ class SaleOrder(models.Model):
             if current_date_hour in hours_allow:            
                 skip_cron = False                      
         
-        if skip_cron==False:
+        if not skip_cron:
             arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped'))
             arelux_automation_tc_prof_sale_orders_sms_template_id_arelux = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_arelux'))
             arelux_automation_tc_prof_sale_orders_sms_template_id_both = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_both'))
-            #retira_cliente
+            # retira_cliente
             arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped'))
             arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux'))
             arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both'))
@@ -184,7 +187,7 @@ class SaleOrder(models.Model):
             automation_log_ids = self.env['automation.log'].search([('model', '=', 'sale.order'),('category', '=', 'sale_order'),('action', '=', 'send_sms_done')])
             sale_order_ids_get_not_in = automation_log_ids.mapped('res_id')
             
-            #confirmation_date
+            # confirmation_date
             confirmation_date_start = current_date + relativedelta(days=-5)
             confirmation_date_end = current_date + relativedelta(hours=-4)            
                     
@@ -202,52 +205,51 @@ class SaleOrder(models.Model):
                     ('id', 'not in', sale_order_ids_get_not_in)                    
                  ]
             )
-            if len(sale_order_ids)>0:
+            if sale_order_ids:
                 for sale_order_id in sale_order_ids:
                     
-                    if sale_order_id.carrier_id.id==6:#Fix retira_cliente
-                        if sale_order_id.ar_qt_activity_type=='todocesped':
+                    if sale_order_id.carrier_id.id == 6:# Fix retira_cliente
+                        if sale_order_id.ar_qt_activity_type == 'todocesped':
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped
-                        elif sale_order_id.ar_qt_activity_type=='arelux':
+                        elif sale_order_id.ar_qt_activity_type == 'arelux':
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux
                         else:
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both
                     else:                
-                        if sale_order_id.ar_qt_activity_type=='todocesped':
+                        if sale_order_id.ar_qt_activity_type == 'todocesped':
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped
-                        elif sale_order_id.ar_qt_activity_type=='arelux':
+                        elif sale_order_id.ar_qt_activity_type == 'arelux':
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_arelux
                         else:
                             arelux_automation_tc_prof_sale_orders_sms_template_id = arelux_automation_tc_prof_sale_orders_sms_template_id_both
-                    
-                    #send_sms
+                    # send_sms
                     sale_order_id.action_generate_sale_order_link_tracker()  # Fix generate link-tracker
                     sale_order_id.action_send_sms_automatic(arelux_automation_tc_prof_sale_orders_sms_template_id, True)
-                    #save_log
-                    automation_log_vals = {                    
+                    # save_log
+                    vals = {
                         'model': 'sale.order',
                         'res_id': sale_order_id.id,
                         'category': 'sale_order',
                         'action': 'send_sms_done',                                                                                                                                                                                           
                     }
-                    automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+                    self.env['automation.log'].sudo().create(vals)
                                 
     @api.model    
     def cron_automation_todocesped_particular_sale_orders(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        #skip_cron
+        # skip_cron
         skip_cron = True
         
         weekday = current_date.weekday()
         current_date_hour = current_date.strftime("%H")
                         
         hours_allow_by_weekday = {
-            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Lunes
-            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Martes
-            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Miercoles
-            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Jueves
-            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Viernes
-            '5': ['11', '12', '13', '14'],#Sabado
+            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Lunes
+            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Martes
+            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Miercoles
+            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Jueves
+            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Viernes
+            '5': ['11', '12', '13', '14'],# Sabado
         }
 
         if str(weekday) in hours_allow_by_weekday:
@@ -255,7 +257,7 @@ class SaleOrder(models.Model):
             if current_date_hour in hours_allow:            
                 skip_cron = False                      
         
-        if skip_cron==False:
+        if not skip_cron:
             arelux_automation_tc_part_sale_orders_qty_from = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_sale_orders_qty_from'))            
             arelux_automation_tc_part_sale_orders_qty_to = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_sale_orders_qty_to'))
             arelux_automation_tc_part_sale_orders_hours_since_creation = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_sale_orders_hours_since_creation'))
@@ -294,10 +296,10 @@ class SaleOrder(models.Model):
                     ('opportunity_id.user_id', '=', False)
                  ]
             )        
-            if len(sale_order_ids)>0:
+            if sale_order_ids:
                 for sale_order_id in sale_order_ids:
                     user_id_random = int(random.choice(user_ids))
-                    #params
+                    # params
                     sale_order_params = {
                         'user_id': user_id_random,
                         'next_activity': False,                        
@@ -305,28 +307,28 @@ class SaleOrder(models.Model):
                         'sms_template_id': arelux_automation_tc_part_sale_orders_sms_template_id,
                         'lead_stage_id': arelux_automation_tc_part_sale_orders_change_stage_id
                     }                    
-                    #Fix 15m
-                    if sale_order_id.opportunity_id.lead_m2<15:
+                    # Fix 15m
+                    if sale_order_id.opportunity_id.lead_m2 < 15:
                         sale_order_params['mail_template_id'] = arelux_automation_tc_part_sale_orders_mail_template_id_less_15_m                                                                    
-                    #automation_proces
+                    # automation_proces
                     sale_order_id.automation_proces(sale_order_params)                                                             
         
     @api.model    
     def cron_automation_todocesped_particular_sale_orders_mail2(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        #skip_cron
+        # skip_cron
         skip_cron = True
         
         weekday = current_date.weekday()
         current_date_hour = current_date.strftime("%H")
                         
         hours_allow_by_weekday = {
-            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Lunes
-            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Martes
-            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Miercoles
-            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Jueves
-            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],#Viernes
-            '5': ['11', '12', '13', '14', '15', '16'],#Sabado
+            '0': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Lunes
+            '1': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Martes
+            '2': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Miercoles
+            '3': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Jueves
+            '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],# Viernes
+            '5': ['11', '12', '13', '14', '15', '16'],# Sabado
         }
 
         if str(weekday) in hours_allow_by_weekday:
@@ -334,15 +336,15 @@ class SaleOrder(models.Model):
             if current_date_hour in hours_allow:            
                 skip_cron = False                      
         
-        if skip_cron==False:            
+        if not skip_cron:
             arelux_automation_tc_part_sale_orders_mail2_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_sale_orders_mail2_mail_template_id'))
-            #automation_log_ids_send_mail send_mail
+            # automation_log_ids_send_mail send_mail
             automation_log_ids_send_mail = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail')])        
             sale_order_ids_get_in = automation_log_ids_send_mail.mapped('res_id')
-            #automation_log_ids_send_mail2 previously send_mail2
+            # automation_log_ids_send_mail2 previously send_mail2
             automation_log_ids_send_mail2 = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2')])
             sale_order_ids_get_not_in = automation_log_ids_send_mail2.mapped('res_id')
-            #sale_orders
+            # sale_orders
             current_date = datetime.today()
             date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)
             
@@ -358,7 +360,7 @@ class SaleOrder(models.Model):
                     ('opportunity_id.probability', '<', 100)                
                  ]
             )        
-            if len(sale_order_ids)>0:
+            if sale_order_ids:
                 for sale_order_id in sale_order_ids:
                     sale_order_id.action_sale_order_mail2(arelux_automation_tc_part_sale_orders_mail2_mail_template_id)
 
@@ -366,8 +368,7 @@ class SaleOrder(models.Model):
     def cron_automation_todocesped_particular_repaso_mail(self):
         _logger.info('cron_automation_todocesped_particular_repaso_mail')
         # def
-        arelux_automation_tc_part_repaso_mail_template_id = int(
-            self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_repaso_mail_template_id'))
+        arelux_automation_tc_part_repaso_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_automation_tc_part_repaso_mail_template_id'))
         current_date = datetime.today()
         shipping_expedition_date = current_date + relativedelta(days=-4)
         # crm_lead
@@ -382,7 +383,7 @@ class SaleOrder(models.Model):
                 ('stage_id', '=', 2)
             ]
         )
-        if len(crm_lead_ids) > 0:
+        if crm_lead_ids:
             # sale_order
             _logger.info('crm_lead_ids')
             _logger.info(crm_lead_ids.ids)
@@ -394,7 +395,7 @@ class SaleOrder(models.Model):
                     ('carrier_id.carrier_type', '=', 'nacex')
                 ]
             )
-            if len(sale_order_ids) > 0:
+            if sale_order_ids:
                 # stock.picking
                 _logger.info('sale_order_ids')
                 _logger.info(sale_order_ids.ids)
@@ -410,11 +411,11 @@ class SaleOrder(models.Model):
                 )
                 _logger.info('stock_picking_ids')
                 _logger.info(stock_picking_ids.ids)
-                if len(stock_picking_ids) > 0:
+                if stock_picking_ids:
                     lead_ids = []
                     for stock_picking_id in stock_picking_ids:
-                        if stock_picking_id.sale_id.id > 0:
-                            if stock_picking_id.sale_id.opportunity_id.id > 0:
+                        if stock_picking_id.sale_id:
+                            if stock_picking_id.sale_id.opportunity_id:
                                 if stock_picking_id.sale_id.opportunity_id.id not in lead_ids:
                                     lead_ids.append(int(stock_picking_id.sale_id.opportunity_id.id))
                     # sale_order (with_sent_item)
@@ -426,13 +427,13 @@ class SaleOrder(models.Model):
                             ('state', '=', 'sent')
                         ]
                     )
-                    if len(sale_order_ids_operations) > 0:
+                    if sale_order_ids_operations:
                         crm_lead_ids_operations = self.env['crm.lead'].sudo().search(
                             [
                                 ('id', 'in', sale_order_ids_operations.mapped('opportunity_id').ids)
                             ]
                         )
-                        _logger.info('Total items aplicados ' + str(len(crm_lead_ids_operations)))
+                        _logger.info('Total items aplicados %s' % len(crm_lead_ids_operations))
                         for crm_lead_id in crm_lead_ids_operations:
                             sale_order_ids_operations = self.env['sale.order'].sudo().search(
                                 [
@@ -442,11 +443,11 @@ class SaleOrder(models.Model):
                                     ('state', '=', 'sent')
                                 ]
                             )
-                            if len(sale_order_ids_operations) > 0:
+                            if sale_order_ids_operations:
                                 sale_order_id_operations = sale_order_ids_operations[0]
                                 # send_mail (sale.order)
                                 # change state_id (opportunity_id)
-                                _logger.info('Operaciones del presupuesto ' + str(sale_order_id_operations.name))
+                                _logger.info('Operaciones del presupuesto %s'  % sale_order_id_operations.name)
                                 # automation_proces
                                 '''
                                 sale_order_id_operations.automation_proces({
@@ -459,18 +460,24 @@ class SaleOrder(models.Model):
     @api.one
     def action_sale_order_mail2(self, template_id=False):
         need_send_mail = False        
-        automation_log_ids = self.env['automation.log'].search([('category', '=', 'sale_order'),('action', '=', 'send_mail2'),('res_id', '=', self.id)])
-        if len(automation_log_ids)==0:                    
-            if self.claim==False and self.state=='sent' and self.amount_untaxed>0:
+        automation_log_ids = self.env['automation.log'].search(
+            [
+                ('category', '=', 'sale_order'),
+                ('action', '=', 'send_mail2'),
+                ('res_id', '=', self.id)
+            ]
+        )
+        if len(automation_log_ids) == 0:
+            if not self.claim and self.state == 'sent' and self.amount_untaxed > 0:
                 current_date = datetime.today()
                 date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)                        
                 
-                if self.date_order_management<=date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S"):
+                if self.date_order_management <= date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S"):
                     need_send_mail = True
                     
                     date_order_management_check = datetime.strptime(self.date_order_management, "%Y-%m-%d %H:%M:%S") + relativedelta(minutes=5)                    
-                    #1- Que no exista un email enviado por nosotros desde el flujo o pto > fecha gestion
-                    if self.user_id.id>0:
+                    # 1- Que no exista un email enviado por nosotros desde el flujo o pto > fecha gestion
+                    if self.user_id:
                         mail_message_ids_sale_order_author_id_user_id = self.env['mail.message'].search(
                             [
                                 ('model', '=', 'sale.order'),
@@ -480,10 +487,10 @@ class SaleOrder(models.Model):
                                 ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
                              ]
                         )
-                        if len(mail_message_ids_sale_order_author_id_user_id)>0:
+                        if mail_message_ids_sale_order_author_id_user_id:
                             need_send_mail = False
                         
-                        if self.opportunity_id.id>0 and need_send_mail==True:
+                        if self.opportunity_id and need_send_mail:
                             mail_message_ids_crm_lead_author_id_user_id = self.env['mail.message'].search(
                                 [
                                     ('model', '=', 'crm.lead'),
@@ -493,10 +500,10 @@ class SaleOrder(models.Model):
                                     ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
                                  ]
                             )
-                            if len(mail_message_ids_crm_lead_author_id_user_id)>0:
+                            if mail_message_ids_crm_lead_author_id_user_id:
                                 need_send_mail = False
-                    #2- Que no exista un email creado por el cliente (author_id) > a la fecha gestion
-                    if need_send_mail==True:
+                    # 2- Que no exista un email creado por el cliente (author_id) > a la fecha gestion
+                    if need_send_mail:
                         mail_message_ids_sale_order_author_id_partner_id = self.env['mail.message'].search(
                             [
                                 ('model', '=', 'sale.order'),
@@ -506,53 +513,57 @@ class SaleOrder(models.Model):
                                 ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
                              ]
                         )
-                        if len(mail_message_ids_sale_order_author_id_partner_id)>0:
+                        if mail_message_ids_sale_order_author_id_partner_id:
                             need_send_mail = False                                    
-                    #3- Que no exista ninguna llamada en el flujo > a la fecha gestion
-                    if self.opportunity_id.id>0 and need_send_mail==True:
+                    # 3- Que no exista ninguna llamada en el flujo > a la fecha gestion
+                    if self.opportunity_id and need_send_mail:
                         mail_message_ids_crm_lead_subtype_5 = self.env['mail.message'].search(
                             [
                                 ('model', '=', 'crm.lead'),
                                 ('res_id', '=', self.opportunity_id.id),
-                                ('subtype_id', '=', 5),#Llamada
+                                ('subtype_id', '=', 5),# Llamada
                                 ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
                              ]
                         )
-                        if len(mail_message_ids_crm_lead_subtype_5)>0:
+                        if mail_message_ids_crm_lead_subtype_5:
                             need_send_mail = False                                                    
         
-        if need_send_mail==True:
+        if need_send_mail:
             self.action_send_mail_with_template_id(template_id)
-            #save_log
-            automation_log_vals = {                    
+            # save_log
+            vals = {
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
                 'action': 'send_mail2',                                                                                                                                                                                           
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+            self.env['automation.log'].sudo().create(vals)
                                         
     @api.one
     def action_send_mail_with_template_id(self, template_id=False):
-        if template_id!=False:                                        
-            mail_template_item = self.env['mail.template'].search([('id', '=', template_id)])[0]                                
-            mail_compose_message_vals = {                    
+        if template_id:
+            mail_template_item = self.env['mail.template'].search(
+                [
+                    ('id', '=', template_id)
+                ]
+            )[0]
+            vals = {
                 'author_id': self.user_id.partner_id.id,
                 'record_name': self.name,                                                                                                                                                                                           
             }
-            mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(mail_compose_message_vals)
-            return_onchange_template_id = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', 'sale.order', self.id)
+            mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(vals)
+            res = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', 'sale.order', self.id)
 
             mail_compose_message_obj_vals = {
-                'author_id': mail_compose_message_vals['author_id'],
+                'author_id': vals['author_id'],
                 'template_id': mail_template_item.id,
                 'composition_mode': 'comment',
                 'model': 'sale.order',
                 'res_id': self.id,
-                'body': return_onchange_template_id['value']['body'],
-                'subject': return_onchange_template_id['value']['subject'],
-                #'attachment_ids': return_onchange_template_id['value']['attachment_ids'],
-                'record_name': mail_compose_message_vals['record_name'],
+                'body': res['value']['body'],
+                'subject': res['value']['subject'],
+                #'attachment_ids': res['value']['attachment_ids'],
+                'record_name': vals['record_name'],
                 'no_auto_thread': False,
             }
             # email_from
@@ -561,7 +572,7 @@ class SaleOrder(models.Model):
             #partner_ids
             if 'partner_ids' in return_onchange_template_id['value']:
                 mail_compose_message_obj_vals['partner_ids'] = return_onchange_template_id['value']['partner_ids']
-            #update
+            # update
             mail_compose_message_obj.update(mail_compose_message_obj_vals)
             mail_compose_message_obj.send_mail_action()                                                                                                                
             return True

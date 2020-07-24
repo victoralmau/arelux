@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 
@@ -115,7 +114,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_ql_product_waterproofing_show = False
             for item in partner_obj.ar_qt_arelux_pr_ql_product:
-                if item.id==1:
+                if item.id == 1:
                     partner_obj.ar_qt_arelux_pr_ql_product_waterproofing_show = True
        
     ar_qt_arelux_pr_ql_product_waterproofing_other = fields.Char(
@@ -148,7 +147,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_ql_product_thermal_paints_show = False
             for item in partner_obj.ar_qt_arelux_pr_ql_product:
-                if item.id==2:
+                if item.id == 2:
                     partner_obj.ar_qt_arelux_pr_ql_product_thermal_paints_show = True    
     
     ar_qt_arelux_pr_ql_product_thermal_paints_other = fields.Char(
@@ -180,7 +179,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_ql_product_reflective_insulators_show = False
             for item in partner_obj.ar_qt_arelux_pr_ql_product:
-                if item.id==3:
+                if item.id == 3:
                     partner_obj.ar_qt_arelux_pr_ql_product_reflective_insulators_show = True    
         
     ar_qt_arelux_pr_ql_product_reflective_insulators_other = fields.Char(
@@ -211,15 +210,13 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_ql_product_surface_treatment_show = False
             for item in partner_obj.ar_qt_arelux_pr_ql_product:
-                if item.id==4:
+                if item.id == 4:
                     partner_obj.ar_qt_arelux_pr_ql_product_surface_treatment_show = True        
     
     ar_qt_arelux_pr_ql_product_surface_treatment_other = fields.Char(
         string='AR - Tratamiento de superficies - Otro',
         size=35
     )
-    
-            
     ar_qt_arelux_pr_ql_product_other_show = fields.Boolean(
         compute='_get_ar_qt_arelux_pr_ql_product_other_show',
         store=False
@@ -263,7 +260,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_reason_buy_other_show = False
             for item in partner_obj.ar_qt_arelux_pr_reason_buy:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_arelux_pr_reason_buy_other_show = True
     
     ar_qt_arelux_pr_valuation_thing = fields.Many2many(
@@ -292,7 +289,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pr_valuation_thing_other_show = False            
             for item in partner_obj.ar_qt_arelux_pr_valuation_thing:            
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_arelux_pr_valuation_thing_other_show = True
                     partner_obj.ar_qt_arelux_valuation_thing_other_show = True                        
        
@@ -359,7 +356,7 @@ class ResPartnerArelux(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_arelux_pf_valuation_thing_other_show = False
             for item in partner_obj.ar_qt_arelux_pf_valuation_thing:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_arelux_pf_valuation_thing_other_show = True
                     partner_obj.ar_qt_arelux_valuation_thing_other_show = True            
              

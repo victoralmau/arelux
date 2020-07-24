@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from . import arelux_sale_report
 from . import arelux_sale_report_line
 from . import arelux_sale_report_line_user

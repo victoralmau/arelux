@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
     <data>
+
         <record id="contact_form_submission_action_form_view" model="ir.ui.view">
             <field name="name">contact_form_submission_action_form_view</field>
             <field name="model">contact.form.submission</field>
@@ -44,6 +45,7 @@
                 </form>
             </field>
         </record>
+
         <record id="contact_form_submission_action_tree" model="ir.ui.view">
             <field name="name">contact_form_submission_action_tree</field>
             <field name="model">contact.form.submission</field>
@@ -64,6 +66,7 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.actions.act_window" id="contact_form_submission_action">
             <field name="name">Contact form submission</field>
             <field name="type">ir.actions.act_window</field>
@@ -71,6 +74,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
+
         <menuitem
             action="contact_form_submission_action"
             name="Contact form submission"
@@ -78,4 +82,4 @@
             parent="sale.menu_sale_config"
         />
     </data>
-</openerp>
+</odoo>

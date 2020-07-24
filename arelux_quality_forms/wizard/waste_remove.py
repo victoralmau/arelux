@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, fields, models
 from odoo.exceptions import Warning
 
@@ -11,11 +11,11 @@ class WizardWasteRemove(models.TransientModel):
     _description = 'Wizard Waste Remove'
 
     date_from = fields.Date(
-        string='Fecha desde',
+        string='Date from',
         required=True
     )
     date_to = fields.Date(
-        string='Fecha hasta',
+        string='Date to',
         required=True
     )
 
@@ -38,7 +38,7 @@ class WizardWasteRemove(models.TransientModel):
         for item in self:
             waste_remove_product_ids = self.get_waste_remove_product_ids()
             waste_remove_ids = self.get_waste_remove_ids(item.date_from, item.date_to)
-            if len(waste_remove_ids) > 0:
+            if waste_remove_ids:
                 details_by_key = {}
                 for waste_remove_id in waste_remove_ids:
                     for waste_remove_detail_id in waste_remove_id.waste_remove_detail_ids:
@@ -46,20 +46,20 @@ class WizardWasteRemove(models.TransientModel):
                             details_by_key[waste_remove_detail_id.waste_remove_product_id.id] = waste_remove_detail_id.quantity
                         else:
                             details_by_key[waste_remove_detail_id.waste_remove_product_id.id] += waste_remove_detail_id.quantity
-                #total
+                # total
                 for waste_remove_product_id in waste_remove_product_ids:
                     data_item = {
                         'name': waste_remove_product_id.name,
                         'uom': waste_remove_product_id.uom,
                         'with_details': False
                     }
-                    #search
+                    # search
                     if waste_remove_product_id.id in details_by_key:
                         data_item['with_details'] = True
                         data_item['quantity'] = details_by_key[waste_remove_product_id.id]
-                    #append
+                    # append
                     data.append(data_item)
-        #return
+        # return
         return data
 
     @api.model
@@ -68,7 +68,7 @@ class WizardWasteRemove(models.TransientModel):
         for item in self:
             waste_remove_product_ids = self.get_waste_remove_product_ids()
             waste_remove_ids = self.get_waste_remove_ids(item.date_from, item.date_to)
-            if len(waste_remove_ids)>0:
+            if waste_remove_ids:
                 for waste_remove_id in waste_remove_ids:
                     data_item = {
                         'date': waste_remove_id.date,
@@ -77,26 +77,26 @@ class WizardWasteRemove(models.TransientModel):
                         'destination': dict(waste_remove_id.fields_get(allfields=['destination'])['destination']['selection'])[waste_remove_id.destination],
                         'waste_remove_product_ids': []
                     }
-                    #details_by_key
+                    # details_by_key
                     details_by_key = {}
                     for waste_remove_detail_id in waste_remove_id.waste_remove_detail_ids:
                         details_by_key[waste_remove_detail_id.waste_remove_product_id.id] = waste_remove_detail_id.quantity
-                    #waste_remove_product_ids
+                    # waste_remove_product_ids
                     for waste_remove_product_id in waste_remove_product_ids:
                         waste_remove_product_id_item = {
                             'name': waste_remove_product_id.name,
                             'uom': waste_remove_product_id.uom,
                             'with_detail': False
                         }
-                        #search
+                        # search
                         if waste_remove_product_id.id in details_by_key:
                             waste_remove_product_id_item['with_detail'] = True
                             waste_remove_product_id_item['quantity'] = details_by_key[waste_remove_product_id.id]
-                        #append
+                        # append
                         data_item['waste_remove_product_ids'].append(waste_remove_product_id_item)
-                    #append
+                    # append
                     data.append(data_item)
-        #return
+        # return
         return data
 
     @api.multi

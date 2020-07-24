@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 from datetime import datetime
-
-import logging
-_logger = logging.getLogger(__name__)
 
 from lxml import etree
 
@@ -29,15 +25,15 @@ class StockPicking(models.Model):
             default_picking_type_id = self.env.context.get('default_picking_type_id')                        
             doc = etree.fromstring(res['arch'])
             
-            if default_picking_type_id!=1:
-                #fields_invisible = ['date', 'min_date']
+            if default_picking_type_id != 1:
+                # fields_invisible = ['date', 'min_date']
                 fields_invisible = ['date']
                 
                 fields = doc.findall('field')
                 for field in fields:
                     field_name = field.get('name')
                     if field_name in fields_invisible:
-                        #field.set('invisible', '1')
+                        # field.set('invisible', '1')
                         doc.remove(field)                    
             else:
                 doc.set('default_order', 'min_date asc')
@@ -57,13 +53,13 @@ class StockPicking(models.Model):
     @api.one
     def do_transfer(self):
         return_super = super(StockPicking, self).do_transfer()
-        if return_super==True:
-            if len(self.pack_operation_product_ids)>0:
+        if return_super:
+            if self.pack_operation_product_ids:
                 for pack_operation_product_id in self.pack_operation_product_ids:
-                    if pack_operation_product_id.product_id.id>0 and pack_operation_product_id.product_id.tracking=='lot':
-                        if len(pack_operation_product_id.pack_lot_ids)>0:
+                    if pack_operation_product_id.product_id and pack_operation_product_id.product_id.tracking == 'lot':
+                        if pack_operation_product_id.pack_lot_ids:
                             for pack_lot_id in pack_operation_product_id.pack_lot_ids:
-                                if pack_lot_id.lot_id.id>0:
+                                if pack_lot_id.lot_id:
                                     stock_quant_quantity_sum = 0 
                                                                                                                    
                                     stock_quant_ids = self.env['stock.quant'].search(
@@ -73,12 +69,12 @@ class StockPicking(models.Model):
                                             ('location_id.usage', '=', 'internal')
                                         ]
                                     )                
-                                    if len(stock_quant_ids)>0:
+                                    if stock_quant_ids:
                                         for stock_quant_id in stock_quant_ids:
                                             stock_quant_quantity_sum += stock_quant_id.qty
                                                                                                                         
                                     pack_lot_id.lot_id.product_qty_store = stock_quant_quantity_sum 
-        #return
+        # return
         return return_super
         
     @api.one    
@@ -90,13 +86,13 @@ class StockPicking(models.Model):
         current_date = datetime.today()
         allow_generate_invoices = True
         
-        if current_date.day==31 and current_date.month==12:
+        if current_date.day == 31 and current_date.month == 12:
             allow_generate_invoices = False
             
-        if current_date.day==1 and current_date.month==1:
+        if current_date.day == 1 and current_date.month == 1:
             allow_generate_invoices = False
         
-        if allow_generate_invoices==True:
+        if allow_generate_invoices:
             stock_picking_ids = self.env['stock.picking'].search(
                 [
                     ('id', '>', 125958),
@@ -105,7 +101,7 @@ class StockPicking(models.Model):
                     ('out_refund_invoice_id', '=', False) 
                  ]
             )
-            if len(stock_picking_ids)>0:
+            if stock_picking_ids:
                 for stock_picking_id in stock_picking_ids:
                     stock_picking_ids_get = self.env['stock.picking'].search(
                         [
@@ -114,10 +110,10 @@ class StockPicking(models.Model):
                             ('name', '=', stock_picking_id.origin)
                         ]
                     )
-                    if len(stock_picking_ids_get)>0:
+                    if stock_picking_ids_get:
                         stock_picking_id_origin = stock_picking_ids_get[0] 
-                        if stock_picking_id_origin.sale_id.id>0:
-                            #check exist crm_claim (not need generate account.invoice automatic)
+                        if stock_picking_id_origin.sale_id:
+                            # check exist crm_claim (not need generate account.invoice automatic)
                             need_create_out_invoice = True
                             crm_claim_ids_get = self.env['crm.claim'].search(
                                 [
@@ -125,20 +121,20 @@ class StockPicking(models.Model):
                                     ('model_ref_id', '=', 'sale.order,'+str(stock_picking_id_origin.sale_id.id))
                                 ]
                             )                            
-                            if len(crm_claim_ids_get)>0:
+                            if crm_claim_ids_get:
                                 need_create_out_invoice = False                            
                             
-                            if need_create_out_invoice==True:
+                            if need_create_out_invoice:
                                 if stock_picking_id_origin.sale_id.invoice_status=='invoiced':
-                                    if len(stock_picking_id_origin.sale_id.invoice_ids)>0:
-                                        #invoice_id
+                                    if stock_picking_id_origin.sale_id.invoice_ids:
+                                        # invoice_id
                                         invoice_id = False
                                         for invoice_id_get in stock_picking_id_origin.sale_id.invoice_ids:
-                                            if invoice_id_get.type=='out_invoice':
+                                            if invoice_id_get.type == 'out_invoice':
                                                 invoice_id = invoice_id_get                                                                        
-                                        #contionue
-                                        if invoice_id!=False:
-                                            #products_info
+                                        # contionue
+                                        if invoice_id:
+                                            # products_info
                                             products_info = {}
                                             for invoice_line_id in invoice_id.invoice_line_ids:
                                                 if invoice_line_id.product_id.id>0:
@@ -148,8 +144,8 @@ class StockPicking(models.Model):
                                                         'account_id': invoice_line_id.account_id.id,
                                                         'discount': invoice_line_id.discount,
                                                     }                                                                                                                                                                                                
-                                            #account.invoice
-                                            account_invoice_vals = {
+                                            # account.invoice
+                                            vals = {
                                                 'partner_id': invoice_id.partner_id.id,
                                                 'partner_shipping_id': invoice_id.partner_shipping_id.id,
                                                 'account_id': invoice_id.account_id.id,
@@ -167,17 +163,17 @@ class StockPicking(models.Model):
                                                 'team_id': invoice_id.team_id.id,
                                                 'user_id': invoice_id.user_id.id                                          
                                             }
-                                            #partner_bank_id
-                                            if invoice_id.partner_bank_id.id>0:
-                                                account_invoice_vals['partner_bank_id'] = invoice_id.partner_bank_id.id 
-                                            #mandate_id
-                                            if invoice_id.mandate_id.id>0:
-                                                account_invoice_vals['mandate_id'] = invoice_id.mandate_id.id
-                                            #create
-                                            account_invoice_obj = self.env['account.invoice'].sudo().create(account_invoice_vals)
-                                            #lines
+                                            # partner_bank_id
+                                            if invoice_id.partner_bank_id:
+                                                vals['partner_bank_id'] = invoice_id.partner_bank_id.id
+                                            # mandate_id
+                                            if invoice_id.mandate_id:
+                                                vals['mandate_id'] = invoice_id.mandate_id.id
+                                            # create
+                                            account_invoice_obj = self.env['account.invoice'].sudo().create(vals)
+                                            # lines
                                             for pack_operation_product_id in stock_picking_id.pack_operation_product_ids:
-                                                account_invoice_line_vals = {
+                                                line_vals = {
                                                     'invoice_id': account_invoice_obj.id,
                                                     'product_id': pack_operation_product_id.product_id.id,
                                                     'quantity': pack_operation_product_id.qty_done,
@@ -186,26 +182,26 @@ class StockPicking(models.Model):
                                                     'account_id': products_info[pack_operation_product_id.product_id.id]['account_id'],
                                                     'name': products_info[pack_operation_product_id.product_id.id]['name']                     
                                                 }
-                                                account_invoice_line_obj = self.env['account.invoice.line'].sudo().create(account_invoice_line_vals)
+                                                account_invoice_line_obj = self.env['account.invoice.line'].sudo().create(line_vals)
                                                 account_invoice_line_obj._onchange_product_id()
                                                 account_invoice_line_obj._onchange_account_id()
-                                                #price
+                                                # price
                                                 price_unit_clean = account_invoice_line_vals['price_unit']
                                                 
-                                                if account_invoice_line_vals['discount']>0:
-                                                    price_unit_discount = (account_invoice_line_vals['price_unit']/100)*account_invoice_line_vals['discount']
-                                                    price_unit_clean = account_invoice_line_vals['price_unit']-price_unit_discount
+                                                if line_vals['discount']>0:
+                                                    price_unit_discount = (line_vals['price_unit']/100)*line_vals['discount']
+                                                    price_unit_clean = line_vals['price_unit']-price_unit_discount
                                                 
-                                                price_subtotal = price_unit_clean*account_invoice_line_vals['quantity']
+                                                price_subtotal = price_unit_clean*line_vals['quantity']
                                                                                             
                                                 account_invoice_line_obj.update({
-                                                    'price_unit': round(account_invoice_line_vals['price_unit'],4),
+                                                    'price_unit': round(line_vals['price_unit'],4),
                                                     'price_subtotal': round(price_subtotal,4),
                                                 })
-                                            #compute_taxes
+                                            # compute_taxes
                                             account_invoice_obj.compute_taxes()
                                             account_invoice_obj.action_invoice_open()
-                                            #update_stock_picking
+                                            # update_stock_picking
                                             stock_picking_id.out_refund_invoice_id = account_invoice_obj.id
-                                            #action_send_account_invoice_out_refund
+                                            # action_send_account_invoice_out_refund
                                             stock_picking_id.action_send_account_invoice_out_refund()

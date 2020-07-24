@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import fields, models
+
 
 class FireDrill(models.Model):
     _name = 'fire.drill'
     _description = 'Fire Drill'            
     
     date = fields.Date(        
-        string='Fecha'
+        string='Date'
     )    
     emergency_type = fields.Selection(
         selection=[
@@ -40,4 +38,8 @@ class FireDrill(models.Model):
     general_description_intervention_performed = fields.Text(
         string='Descripcion general de la intervencion realizada'
     )        
-    fire_drill_decision_ids = fields.One2many('fire.drill.decision', 'fire_drill_id', string='Decisiones')
+    fire_drill_decision_ids = fields.One2many(
+        'fire.drill.decision',
+        'fire_drill_id',
+        string='Decisiones'
+    )

@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, exceptions, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import api, models
+
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
@@ -11,8 +9,7 @@ class CrmLead(models.Model):
     @api.model
     def get_survey_id(self):
         survey_id = 0
-        if self.ar_qt_activity_type!=False and self.partner_id.ar_qt_customer_type!=False:
-            
+        if self.ar_qt_activity_type and self.partner_id.ar_qt_customer_type:
             survey_survey_ids = self.env['survey.survey'].search(
                 [
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type),
@@ -22,8 +19,7 @@ class CrmLead(models.Model):
                     ('active', '=', True)
                 ]
             )
-            if len(survey_survey_ids)>0:
-                survey_survey_id = survey_survey_ids[0]
-                survey_id = survey_survey_id.id            
+            if survey_survey_ids:
+                survey_id = survey_survey_ids[0].id
                     
         return survey_id

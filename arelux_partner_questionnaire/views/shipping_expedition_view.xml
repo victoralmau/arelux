@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="arelux_partner_questionnaire_shipping_expedition_form_view" model="ir.ui.view">
         <field name="name">arelux_partner_questionnaire_shipping_expedition_form_view</field>
         <field name="model">shipping.expedition</field>
@@ -12,6 +13,7 @@
             </field>                                                            
         </field>
     </record>
+
     <record id="arelux_partner_questionnaire_shipping_expedition_tree" model="ir.ui.view">
         <field name="name">arelux_partner_questionnaire_shipping_expedition_tree</field>
         <field name="model">shipping.expedition</field>
@@ -24,6 +26,7 @@
             </field>                                                            
         </field>
     </record>
+
     <record id="arelux_partner_questionnaire_view_shipping_expedition_search" model="ir.ui.view">
         <field name="name">arelux_partner_questionnaire_view_shipping_expedition_search</field>
         <field name="model">shipping.expedition</field>
@@ -41,5 +44,6 @@
                 <separator/>
             </xpath>                                                                                                                
         </field>
-    </record>                
+    </record>
+
 </odoo>

@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, models, fields
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
@@ -27,7 +27,11 @@ class ResPartner(models.Model):
     @api.one        
     def _get_ar_qt_questionnaire_todocesped_show(self):
         self.ar_qt_questionnaire_todocesped_show = False
-        if self.customer==True and (self.ar_qt_activity_type=='todocesped' or self.ar_qt_activity_type=='evert' or self.ar_qt_activity_type=='both'):
+        if self.customer and (
+                self.ar_qt_activity_type == 'todocesped'
+                or self.ar_qt_activity_type == 'evert'
+                or self.ar_qt_activity_type == 'both'
+        ):
             self.ar_qt_questionnaire_todocesped_show = True
     
     #ar_qt_questionnaire_arelux_show
@@ -39,7 +43,7 @@ class ResPartner(models.Model):
     @api.one        
     def _get_ar_qt_questionnaire_arelux_show(self):
         self.ar_qt_questionnaire_arelux_show = False
-        if self.customer==True and self.ar_qt_activity_type=='arelux':
+        if self.customer and self.ar_qt_activity_type == 'arelux':
             self.ar_qt_questionnaire_arelux_show = True        
     
     ar_qt_customer_type = fields.Selection(
@@ -179,20 +183,20 @@ class ResPartner(models.Model):
                 
             for sale_order_id in sale_order_ids:
                 for order_line in sale_order_id.order_line:
-                    if order_line.product_id.id==97:
+                    if order_line.product_id.id == 97:
                         partner_id.ar_qt_samples  = sale_order_id.confirmation_date
                         
     @api.model
     def create(self, values):
         record = super(ResPartner, self).create(values)
-        #operations                        
-        if record.parent_id.id>0:
-            if record.parent_id.ar_qt_activity_type!=False:
+        # operations
+        if record.parent_id:
+            if record.parent_id.ar_qt_activity_type:
                 record.ar_qt_activity_type = record.parent_id.ar_qt_activity_type
 
-            if record.parent_id.ar_qt_customer_type!=False:
+            if record.parent_id.ar_qt_customer_type:
                 record.ar_qt_customer_type = record.parent_id.ar_qt_customer_type                
-        #return                
+        # return
         return record                                                                              
     
     @api.model    
@@ -201,8 +205,13 @@ class ResPartner(models.Model):
         start_date = current_date + relativedelta(months=-12, day=1)
         end_date = datetime(current_date.year, start_date.month, 1) + relativedelta(months=1, days=-1)
         
-        partner_ids = self.env['res.partner'].search([('customer', '=', True),('active', '=', True) ])
-        if len(partner_ids)>0:
+        partner_ids = self.env['res.partner'].search(
+            [
+                ('customer', '=', True),
+                ('active', '=', True)
+            ]
+        )
+        if partner_ids:
             partner_ids_real = partner_ids.mapped('id')
             
             sale_order_ids = self.env['sale.order'].search(
@@ -214,33 +223,32 @@ class ResPartner(models.Model):
                     ('confirmation_date', '<=', end_date.strftime("%Y-%m-%d"))
                 ]
             )
-            if len(sale_order_ids)>0:
+            if sale_order_ids:
                 for partner_id in partner_ids:
-                    #default
+                    # default
                     ar_qt_pf_frequency_customer_type_item = 'none'
                     ar_qt_pf_sale_customer_type_item = 'bronze'
-                    #filter
+                    # filter
                     sale_order_items = filter(lambda x : x['partner_id'] == partner_id, sale_order_ids)
                     if len(sale_order_items)>0:
-                        #ar_qt_pf_frequency_customer_type_item
+                        # ar_qt_pf_frequency_customer_type_item
                         sale_order_ids_total = len(sale_order_items)
-                        if sale_order_ids_total>=1 and sale_order_ids_total<=2:
+                        if sale_order_ids_total >= 1 and sale_order_ids_total <= 2:
                             ar_qt_pf_frequency_customer_type_item = 'puntual'                
-                        elif sale_order_ids_total>2 and sale_order_ids_total<=5:
+                        elif sale_order_ids_total > 2 and sale_order_ids_total <= 5:
                             ar_qt_pf_frequency_customer_type_item = 'loyalized'
-                        elif sale_order_ids_total>=6:
+                        elif sale_order_ids_total >= 6:
                             ar_qt_pf_frequency_customer_type_item = 'recurrent'
-                        
-                        #ar_qt_pf_sale_customer_type_item
+                        # ar_qt_pf_sale_customer_type_item
                         amount_totals = map(lambda x : x['amount_total'],  sale_order_items)
                         partner_amount_total = sum(map(float,amount_totals))                        
                         
-                        if partner_amount_total>=6000 and partner_amount_total<=20000:
+                        if partner_amount_total >= 6000 and partner_amount_total <= 20000:
                             ar_qt_pf_sale_customer_type_item = 'silver'
-                        elif partner_amount_total>20000 and partner_amount_total<=40000:
+                        elif partner_amount_total > 20000 and partner_amount_total <= 40000:
                             ar_qt_pf_sale_customer_type_item = 'gold'
-                        elif partner_amount_total>40000:
+                        elif partner_amount_total > 40000:
                             ar_qt_pf_sale_customer_type_item = 'diamond'                                                                
-                    #update
+                    # update
                     partner_id.ar_qt_pf_frequency_customer_type = ar_qt_pf_frequency_customer_type_item
                     partner_id.ar_qt_pf_sale_customer_type = ar_qt_pf_sale_customer_type_item                                                                                      

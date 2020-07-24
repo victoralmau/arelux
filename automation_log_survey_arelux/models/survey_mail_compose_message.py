@@ -1,19 +1,17 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, exceptions, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import api, models
+
 
 class SurveyMailComposeMessage(models.TransientModel):
     _inherit = 'survey.mail.compose.message'    
     
     @api.one
     def arelux_create_survey_user_input_log(self, survey_user_input):
-        automation_log_vals = {                    
+        vals = {
             'model': 'survey.user_input',
             'res_id': survey_user_input.id,
             'category': 'survey_user_input',
             'action': 'send_mail',                                                                                                                                                                                           
         }
-        automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)                          
+        self.env['automation.log'].sudo().create(vals)

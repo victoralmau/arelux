@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import fields, models
+
 
 class WasteRemove(models.Model):
     _name = 'waste.remove'
@@ -27,4 +25,8 @@ class WasteRemove(models.Model):
         ],
         string='Destino'
     )
-    waste_remove_detail_ids = fields.One2many('waste.remove.detail', 'waste_remove_id', string='Detalles')                                                    
+    waste_remove_detail_ids = fields.One2many(
+        'waste.remove.detail',
+        'waste_remove_id',
+        string='Detalles'
+    )

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="res_partner_stock_capacity_data_1" model="res.partner.stock.capacity">
         <field name="id">1</field>
         <field name="name">Tiene almacen (espacio)</field>
@@ -8,6 +9,7 @@
         <field name="position">0</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_stock_capacity_data_2" model="res.partner.stock.capacity">
         <field name="id">2</field>
         <field name="name">Tiene capacidad finaciera (liquidez)</field>
@@ -16,6 +18,7 @@
         <field name="position">1</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_stock_capacity_data_3" model="res.partner.stock.capacity">
         <field name="id">3</field>
         <field name="name">No</field>
@@ -23,5 +26,6 @@
         <field name="filter_ar_qt_customer_type">profesional</field>
         <field name="position">2</field>
         <field name="other">False</field>
-    </record>        
+    </record>
+
 </odoo>

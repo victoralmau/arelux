@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 _logger = logging.getLogger(__name__)
@@ -56,9 +55,9 @@ class SaleOrder(models.Model):
     
     @api.onchange('partner_id')
     def onchange_partner_id_override(self):
-        if self.partner_id.id>0:
+        if self.partner_id:
             self.payment_mode_id = self.partner_id.customer_payment_mode_id.id or False
-            #partner_shipping_id
+            # partner_shipping_id
             res_partner_ids = self.env['res.partner'].search(
                 [
                     ('parent_id', '=', self.partner_id.id),
@@ -66,50 +65,49 @@ class SaleOrder(models.Model):
                     ('type', '=', 'delivery')
                  ]
             )
-            if len(res_partner_ids)>1:
+            if len(res_partner_ids) > 1:
                 self.partner_shipping_id = 0
-            elif len(res_partner_ids)==1:
-                res_partner_id = res_partner_ids[0]
-                self.partner_shipping_id = res_partner_id.id                                
+            elif len(res_partner_ids) == 1:
+                self.partner_shipping_id = res_partner_ids[0].id
     
     @api.model
     def fix_copy_custom_field_opportunity_id(self):
-        if self.id>0:
-            if self.opportunity_id.id>0:
-                #user_id
-                if self.opportunity_id.user_id.id>0 and self.opportunity_id.user_id.id!=self.user_id.id:
+        if self.id > 0:
+            if self.opportunity_id:
+                # user_id
+                if self.opportunity_id.user_id and self.opportunity_id.user_id.id != self.user_id.id:
                     self.user_id = self.opportunity_id.user_id.id
-                #team_id                    
-                if self.opportunity_id.team_id.id>0 and self.opportunity_id.team_id.id!=self.team_id.id:
+                # team_id
+                if self.opportunity_id.team_id and self.opportunity_id.team_id.id != self.team_id.id:
                     self.team_id = self.opportunity_id.team_id.id                                                              
     
     @api.model
     def create(self, values):            
         return_val = super(SaleOrder, self).create(values)            
         
-        if return_val.user_id.id!=False and return_val.partner_id.user_id.id!=False and self.user_id.id!=return_val.partner_id.user_id.id:
+        if return_val.user_id.id and return_val.partner_id.user_id.id and self.user_id.id != return_val.partner_id.user_id.id:
             return_val.user_id = return_val.partner_id.user_id.id                        
         
-        if return_val.user_id.id==6:
+        if return_val.user_id.id == 6:
             return_val.user_id = 0
         
-        return_val.fix_copy_custom_field_opportunity_id()#Fix copy fields opportunity
+        return_val.fix_copy_custom_field_opportunity_id()# Fix copy fields opportunity
                         
         return return_val                                
     
     @api.multi
     def write(self, vals):
-        #date_order_management
+        # date_order_management
         if vals.get('state')=='sent' and 'date_order_management' not in vals:
             vals['date_order_management'] = fields.datetime.now()                            
                                         
         return_object = super(SaleOrder, self).write(vals)
     
-        if self.user_id.id!=False:        
+        if self.user_id.id:
             for message_follower_id in self.message_follower_ids:
-                if message_follower_id.partner_id.user_ids!=False:
+                if message_follower_id.partner_id.user_ids:
                     for user_id in message_follower_id.partner_id.user_ids:
-                        if user_id.id!=self.user_id.id:
+                        if user_id.id != self.user_id.id:
                             self.env.cr.execute("DELETE FROM  mail_followers WHERE id = "+str(message_follower_id.id))                            
                                                             
         return return_object                    
@@ -136,14 +134,14 @@ class SaleOrder(models.Model):
     
     @api.onchange('user_id')
     def change_user_id(self):                    
-        if self.user_id.id>0:
-            if self.user_id.sale_team_id.id>0:
+        if self.user_id:
+            if self.user_id.sale_team_id:
                 self.team_id = self.user_id.sale_team_id.id
                                                         
     @api.onchange('template_id')
     def change_template_id(self):
-        if self.template_id.id>0:
-            if self.template_id.delivery_carrier_id.id>0:
+        if self.template_id:
+            if self.template_id.delivery_carrier_id:
                 self.carrier_id = self.template_id.delivery_carrier_id
             else:
                 self.carrier_id = False

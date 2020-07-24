@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    +
     <record id="res_partner_valuation_thing_data_1" model="res.partner.valuation.thing">
         <field name="id">1</field>
         <field name="name">Calidad (ensayos, certificados, propiedades)</field>
@@ -8,6 +9,7 @@
         <field name="position">0</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_2" model="res.partner.valuation.thing">
         <field name="id">2</field>
         <field name="name">Calidad - Precio</field>
@@ -16,6 +18,7 @@
         <field name="position">1</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_3" model="res.partner.valuation.thing">
         <field name="id">3</field>
         <field name="name">Precio</field>
@@ -24,6 +27,7 @@
         <field name="position">2</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_4" model="res.partner.valuation.thing">
         <field name="id">4</field>
         <field name="name">Servicio (muestras, rapidez, entrega, instalacion, asesoramiento...)</field>
@@ -32,6 +36,7 @@
         <field name="position">3</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_5" model="res.partner.valuation.thing">
         <field name="id">5</field>
         <field name="name">Valores de Empresa: RSC</field>
@@ -40,6 +45,7 @@
         <field name="position">4</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_6" model="res.partner.valuation.thing">
         <field name="id">6</field>
         <field name="name">Tiempo de entrega</field>
@@ -48,6 +54,7 @@
         <field name="position">5</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_7" model="res.partner.valuation.thing">
         <field name="id">7</field>
         <field name="name">Ensayos y certificaciones</field>
@@ -56,6 +63,7 @@
         <field name="position">6</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_8" model="res.partner.valuation.thing">
         <field name="id">8</field>
         <field name="name">Asesoramiento y anteción recibidos</field>
@@ -64,6 +72,7 @@
         <field name="position">7</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_9" model="res.partner.valuation.thing">
         <field name="id">9</field>
         <field name="name">Envío de clientes</field>
@@ -72,6 +81,7 @@
         <field name="position">8</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_10" model="res.partner.valuation.thing">
         <field name="id">10</field>
         <field name="name">Corte a medida</field>
@@ -80,6 +90,7 @@
         <field name="position">9</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_11" model="res.partner.valuation.thing">
         <field name="id">11</field>
         <field name="name">Servicio (muestras, rapidez entrega, instalación, asesoramiento...)</field>
@@ -88,6 +99,7 @@
         <field name="position">10</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_12" model="res.partner.valuation.thing">
         <field name="id">12</field>
         <field name="name">Valores de Empresa: RSC</field>
@@ -96,6 +108,7 @@
         <field name="position">11</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_13" model="res.partner.valuation.thing">
         <field name="id">13</field>
         <field name="name">Personalización de productos (etiquetas, envases)</field>
@@ -104,6 +117,7 @@
         <field name="position">12</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_valuation_thing_data_14" model="res.partner.valuation.thing">
         <field name="id">14</field>
         <field name="name">Otro</field>
@@ -112,4 +126,5 @@
         <field name="position">13</field>
         <field name="other">True</field>
     </record>
+
 </odoo>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+
     <record id="cron_set_all_weather_stations" forcecreate="True" model="ir.cron">
         <field name="name">Cron Set All Weather Stations</field>
         <field name="active" eval="False"/>
@@ -12,6 +13,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_set_all_weather_stations()</field>
     </record>
+
     <record id="cron_weather_station_history_previous_month" forcecreate="True" model="ir.cron">
         <field name="name">Cron Weather Station History Previous month</field>
         <field name="active" eval="False"/>
@@ -24,6 +26,7 @@
         <field name="state">code</field>
         <field name="code">model.cron_weather_station_history_previous_month()</field>
     </record>
+
     <record id="cron_weather_station_history_all_years" forcecreate="True" model="ir.cron">
         <field name="name">Cron Weather Station History all years</field>
         <field name="active" eval="False"/>
@@ -35,5 +38,6 @@
         <field name="model_id" ref="model_res_city_zip"/>
         <field name="state">code</field>
         <field name="code">model.cron_weather_station_history_all_years()</field>
-    </record>    
+    </record>
+
 </odoo>

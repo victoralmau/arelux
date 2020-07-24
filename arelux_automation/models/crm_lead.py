@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 _logger = logging.getLogger(__name__)
 
-from odoo import api, models, fields
+from odoo import api, models
 
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
@@ -31,37 +30,37 @@ class CrmLead(models.Model):
         '''
         # special_log
         if 'action_log' in params:
-            automation_log_vals = {
+            vals = {
                 'model': 'crm.lead',
                 'res_id': self.id,
                 'category': 'crm_lead',
                 'action': str(params['action_log']),
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+            self.env['automation.log'].sudo().create(vals)
         # check_user_id crm_lead
         if 'user_id' in params:
             if self.user_id.id == 0:
                 user_id_random = int(params['user_id'])
-                #write
+                # write
                 self.write({
                     'user_id': user_id_random
                 })
                 # save_log
-                automation_log_vals = {
+                vals = {
                     'model': 'crm.lead',
                     'res_id': self.id,
                     'category': 'crm_lead',
                     'action': 'asign_user_id',
                 }
-                automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+                self.env['automation.log'].sudo().create(vals)
                 # fix change user_id res.partner
                 if self.partner_id.user_id.id == 0:
                     self.partner_id.user_id = user_id_random
         # mail_activity
         if 'mail_activity' in params:
-            if params['mail_activity'] == True:
-                if self.user_id.id>0:
-                    #search
+            if params['mail_activity'] :
+                if self.user_id:
+                    # search
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
                         [
                             ('activity_type_id', '=', params['mail_activity_type_id']),
@@ -70,13 +69,17 @@ class CrmLead(models.Model):
                             ('res_id', '=', self.id)
                         ]
                     )
-                    if len(mail_activity_ids)==0:
-                        #search
-                        ir_model_ids = self.env['ir.model'].sudo().search([('model', '=', 'crm.lead')])
-                        if len(ir_model_ids) > 0:
+                    if len(mail_activity_ids) == 0:
+                        # search
+                        ir_model_ids = self.env['ir.model'].sudo().search(
+                            [
+                                ('model', '=', 'crm.lead')
+                            ]
+                        )
+                        if ir_model_ids:
                             ir_model_id = ir_model_ids[0]
-                            #create
-                            mail_activity_vals = {
+                            # create
+                            vals = {
                                 'activity_type_id': params['mail_activity_type_id'],
                                 'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S"),
                                 'user_id': self.user_id.id,
@@ -84,78 +87,78 @@ class CrmLead(models.Model):
                                 'res_model_id': ir_model_id.id,
                                 'res_id': self.id
                             }
-                            mail_activity_obj = self.env['mail.activity'].sudo(self.create_uid.id).create(mail_activity_vals)
+                            self.env['mail.activity'].sudo(self.create_uid.id).create(vals)
                             # save_log
-                            automation_log_vals = {
+                            vals = {
                                 'model': 'crm.lead',
                                 'res_id': self.id,
                                 'category': 'crm_lead',
                                 'action': 'mail_activity_type_id_' + str(params['mail_activity_type_id']),
                             }
-                            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+                            self.env['automation.log'].sudo().create(vals)
         # send_mail
         if 'mail_template_id' in params:
             self.action_send_mail_with_template_id(int(params['mail_template_id']))
             # save_log
-            automation_log_vals = {
+            vals = {
                 'model': 'crm.lead',
                 'res_id': self.id,
                 'category': 'crm_lead',
                 'action': 'send_mail',
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+            self.env['automation.log'].sudo().create(vals)
         # update crm.lead stage_id
         if 'lead_stage_id' in params:
             self.stage_id = int(params['lead_stage_id'])
             # save_log
-            automation_log_vals = {
+            vals = {
                 'model': 'crm.lead',
                 'res_id': self.id,
                 'category': 'crm_lead',
                 'action': 'change_stage_id',
             }
-            automation_log_obj = self.env['automation.log'].sudo().create(automation_log_vals)
+            self.env['automation.log'].sudo().create(vals)
 
     @api.one
     def action_send_mail_with_template_id(self, template_id=False):
-        if template_id!=False:
+        if template_id:
             mail_template_item = self.env['mail.template'].browse(template_id)
-            mail_compose_message_vals = {
+            vals = {
                 'author_id': 1,
                 'record_name': self.name,                                                                                                                                                                                           
             }
-            #Fix user_id
-            if self.user_id.id>0:
-                mail_compose_message_vals['author_id'] = self.user_id.partner_id.id
-                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(mail_compose_message_vals)
+            # Fix user_id
+            if self.user_id:
+                vals['author_id'] = self.user_id.partner_id.id
+                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(vals)
             else:
-                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo().create(mail_compose_message_vals)
+                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
 
-            return_onchange_template_id = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', 'crm.lead', self.id)
-            #mail_compose_message_obj_vals
+            res = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', 'crm.lead', self.id)
+            # mail_compose_message_obj_vals
             mail_compose_message_obj_vals = {
-                'author_id': mail_compose_message_vals['author_id'],
+                'author_id': vals['author_id'],
                 'template_id': mail_template_item.id,
                 'composition_mode': 'comment',
                 'model': 'crm.lead',
                 'res_id': self.id,
-                'body': return_onchange_template_id['value']['body'],
-                'subject': return_onchange_template_id['value']['subject'],
+                'body': res['value']['body'],
+                'subject': res['value']['subject'],
                 # 'attachment_ids': return_onchange_template_id['value']['attachment_ids'],
-                'record_name': mail_compose_message_vals['record_name'],
+                'record_name': vals['record_name'],
                 'no_auto_thread': False,
             }
             # partner_ids
             if 'email_from' in return_onchange_template_id['value']:
                 mail_compose_message_obj_vals['email_from'] = return_onchange_template_id['value']['email_from']
-            #partner_ids
+            # partner_ids
             if 'partner_ids' in return_onchange_template_id['value']:
                 mail_compose_message_obj_vals['partner_ids'] = return_onchange_template_id['value']['partner_ids']
-            #update
+            # update
             mail_compose_message_obj.update(mail_compose_message_obj_vals)
-            #send_mail_action
+            # send_mail_action
             mail_compose_message_obj.send_mail_action()
-            #return
+            # return
             return True
 
     @api.model    
@@ -174,13 +177,13 @@ class CrmLead(models.Model):
                 ('create_date', '<', '2018-01-01')
              ]
         )                        
-        if res_partner_ids!=False:            
+        if res_partner_ids:
             res_partner_ids_potencial = []
             for res_partner_id in res_partner_ids:
-                if res_partner_id.ref!=False:                    
+                if res_partner_id.ref:
                     res_partner_ids_potencial.append(res_partner_id.id)
                     partners[res_partner_id.id] = res_partner_id                                    
-            #account_invoice
+            # account_invoice
             account_invoice_ids = self.env['account.invoice'].search(
                 [
                     ('state', 'in', ('open','paid')),
@@ -189,13 +192,13 @@ class CrmLead(models.Model):
                     ('partner_id', 'in', res_partner_ids_potencial)
                  ]
             )            
-            if account_invoice_ids!=False:
+            if account_invoice_ids:
                 for account_invoice_id in account_invoice_ids:
                     if account_invoice_id.partner_id.id in res_partner_ids_potencial:
                         res_partner_ids_potencial.remove(account_invoice_id.partner_id.id)
             
-            if res_partner_ids_potencial!=False:                                    
-                #crm_lead_6_months
+            if res_partner_ids_potencial:
+                # crm_lead_6_months
                 start_date = current_date + relativedelta(months=-6)
                 end_date = current_date
                 
@@ -211,7 +214,7 @@ class CrmLead(models.Model):
                             ('date', '<=', end_date.strftime("%Y-%m-%d"))
                          ]
                     )
-                    if len(crm_activity_report_ids)==0:
+                    if len(crm_activity_report_ids) == 0:
                         crm_lead_ids = self.env['crm.lead'].search(
                             [
                                 ('active', '=', True),
@@ -221,9 +224,9 @@ class CrmLead(models.Model):
                                 ('ar_qt_customer_type', '=', partner_item.ar_qt_customer_type),                                
                              ]
                         )
-                        if len(crm_lead_ids)==0:                            
-                            #Auto-create lead
-                            crm_lead_vals = {
+                        if len(crm_lead_ids) == 0:
+                            # Auto-create lead
+                            vals = {
                                 'active': True,                                
                                 'type': 'opportunity',
                                 'stage_id': 1,
@@ -233,7 +236,7 @@ class CrmLead(models.Model):
                                 'ar_qt_customer_type': partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                                                  
                             }
-                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(crm_lead_vals)
+                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(vals)
                             crm_lead_obj._onchange_partner_id()
         
     @api.multi    
@@ -253,12 +256,12 @@ class CrmLead(models.Model):
                 ('create_date', '>=', '2018-01-01')
              ]
         )            
-        if res_partner_ids!=False:
+        if res_partner_ids:
             res_partner_ids_potencial_activo = []
             for res_partner_id in res_partner_ids:                    
                 res_partner_ids_potencial_activo.append(res_partner_id.id)
                 partners[res_partner_id.id] = res_partner_id                    
-            #account_invoice
+            # account_invoice
             account_invoice_ids = self.env['account.invoice'].search(
                 [
                     ('state', 'in', ('open','paid')),
@@ -267,13 +270,13 @@ class CrmLead(models.Model):
                     ('partner_id', 'in', res_partner_ids_potencial_activo)
                  ]
             )                            
-            if account_invoice_ids!=False:
+            if account_invoice_ids:
                 for account_invoice_id in account_invoice_ids:
                     if account_invoice_id.partner_id.id in res_partner_ids_potencial_activo:
                         res_partner_ids_potencial_activo.remove(account_invoice_id.partner_id.id)
             
-            if res_partner_ids_potencial_activo!=False:
-                #crm_lead_3_months
+            if res_partner_ids_potencial_activo:
+                # crm_lead_3_months
                 start_date = current_date + relativedelta(months=-3)
                 end_date = current_date
                 
@@ -289,7 +292,7 @@ class CrmLead(models.Model):
                             ('date', '<=', end_date.strftime("%Y-%m-%d"))
                          ]
                     )
-                    if len(crm_activity_report_ids)==0:
+                    if len(crm_activity_report_ids) == 0:
                         crm_lead_ids = self.env['crm.lead'].search(
                             [
                                 ('active', '=', True),
@@ -299,9 +302,9 @@ class CrmLead(models.Model):
                                 ('ar_qt_customer_type', '=', partner_item.ar_qt_customer_type),
                              ]
                         )
-                        if len(crm_lead_ids)==0:                            
-                            #Auto-create lead
-                            crm_lead_vals = {
+                        if len(crm_lead_ids) == 0:
+                            # Auto-create lead
+                            vals = {
                                 'active': True,                                
                                 'type': 'opportunity',
                                 'stage_id': 1,
@@ -311,7 +314,7 @@ class CrmLead(models.Model):
                                 'ar_qt_customer_type': partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                  
                             }
-                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(crm_lead_vals)
+                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(vals)
                             crm_lead_obj._onchange_partner_id()
                             
     @api.multi    

@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, exceptions, fields, models
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
@@ -38,17 +38,25 @@ class WeatherHistory(models.Model):
     
     @api.model    
     def cron_weather_station_history_previous_month(self):
-        #define
+        # define
         current_date = datetime.today()
         date_from = current_date + relativedelta(months=-1, day=1)
         date_to = datetime(date_from.year, date_from.month, 1) + relativedelta(months=1, days=-1)
         
         for station_uuid in self.station_uuids():
-            message = {"pathParameters": {"uuid": str(station_uuid)},"queryStringParameters": {"date_to": str(date_to.strftime("%Y-%m-%d")),"date_from": str(date_from.strftime("%Y-%m-%d"))}}
+            message = {
+                "pathParameters": {
+                    "uuid": str(station_uuid)
+                },
+                "queryStringParameters": {
+                    "date_to": str(date_to.strftime("%Y-%m-%d")),
+                    "date_from": str(date_from.strftime("%Y-%m-%d"))
+                }
+            }
             _logger.info(message)
-            #sns_send
+            # sns_send
             response = self.action_weather_sns_send(message)
-            if response['send']==False:
+            if not response['send']:
                 _logger.info(response['error'])
         
     @api.model    
@@ -58,14 +66,21 @@ class WeatherHistory(models.Model):
         for station_uuid in self.station_uuids():
             for year in years:
                 for month in months:
-                    #define                
-                    date_from = str(year)+'-'+str(month)+'-01'
+                    # define
+                    date_from = '%s-%s-01' % (year, month)
                     date_to = datetime(int(year), int(month), 1) + relativedelta(months=1, days=-1)
                     date_to = date_to.strftime("%Y-%m-%d")
-                    
-                    message = {"pathParameters": {"uuid": str(station_uuid)},"queryStringParameters": {"date_to": str(date_to),"date_from": str(date_from)}}
+                    message = {
+                        "pathParameters": {
+                            "uuid": str(station_uuid)
+                        },
+                        "queryStringParameters": {
+                            "date_to": str(date_to),
+                            "date_from": str(date_from)
+                        }
+                    }
                     _logger.info(message)
-                    #sns_send
+                    # sns_send
                     response = self.action_weather_sns_send(message)
-                    if response['send']==False:
+                    if not response['send']:
                         _logger.info(response['error'])                                                                                           

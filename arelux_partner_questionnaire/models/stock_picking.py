@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 
@@ -33,11 +32,11 @@ class StockPicking(models.Model):
         return_stock_picking.ar_qt_activity_type = 'todocesped'
         return_stock_picking.ar_qt_customer_type = 'particular'
         
-        if return_stock_picking.partner_id.id>0:
+        if return_stock_picking.partner_id:
             return_stock_picking.ar_qt_activity_type = return_stock_picking.partner_id.ar_qt_activity_type
             return_stock_picking.ar_qt_customer_type = return_stock_picking.partner_id.ar_qt_customer_type
         
-        if return_stock_picking.origin!="":
+        if return_stock_picking.origin != "":
             origin_find = False
             sale_order_ids = self.env['sale.order'].search(
                 [
@@ -50,7 +49,7 @@ class StockPicking(models.Model):
                 
                 origin_find = True
             
-            if origin_find==False:
+            if not origin_find:
                 stock_picking_ids = self.env['stock.picking'].search(
                     [
                         ('name', '=', return_stock_picking.origin)                    

@@ -6,6 +6,7 @@
         parent="sale.menu_sale_config" 
         groups="sales_team.group_sale_manager"
     />
+
     <record id="arelux_sale_report_form_view" model="ir.ui.view">
         <field name="name">Reporte</field>
         <field name="model">arelux.sale.report</field>
@@ -36,6 +37,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_sale_report_line_form_view" model="ir.ui.view">
         <field name="name">Linea de reporte</field>
         <field name="model">arelux.sale.report.line</field>
@@ -55,6 +57,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_sale_report_line_tree" model="ir.ui.view">
         <field name="name">Lineas de reportes</field>
         <field name="model">arelux.sale.report.line</field>            
@@ -82,7 +85,8 @@
                 <field name="state"/>                                                                                                                    
             </tree>
         </field>            
-    </record>                
+    </record>
+
     <record model="ir.actions.act_window" id="arelux_sale_report_action">
         <field name="name">Reportes</field>
         <field name="type">ir.actions.act_window</field>
@@ -91,6 +95,7 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="arelux_sale_report_tree"/>
     </record>
+
     <menuitem 
         action="arelux_sale_report_action" 
         name="Reportes"
@@ -98,6 +103,7 @@
         parent="sale_menu_arelux_sale_report"
         sequence="1"
     />
+
     <record id="arelux_sale_report_type_form_view" model="ir.ui.view">
         <field name="name">Tipo de reporte</field>
         <field name="model">arelux.sale.report.type</field>
@@ -113,6 +119,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_sale_report_type_tree" model="ir.ui.view">
         <field name="name">Tipos de reportes</field>
         <field name="model">arelux.sale.report.type</field>            
@@ -123,7 +130,8 @@
                 <field name="group_by_user"/>                                                                                                                                    
             </tree>
         </field>            
-    </record>                
+    </record>
+
     <record model="ir.actions.act_window" id="arelux_sale_report_type_action">
         <field name="name">Tipos de reportes</field>
         <field name="type">ir.actions.act_window</field>
@@ -132,6 +140,7 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="arelux_sale_report_type_tree"/>
     </record>
+
     <menuitem 
         action="arelux_sale_report_type_action" 
         name="Tipos de reportes"
@@ -139,6 +148,7 @@
         parent="sale_menu_arelux_sale_report"
         sequence="2"
     />
+
     <record id="arelux_sale_report_template_form_view" model="ir.ui.view">
         <field name="name">Plantilla de reporte</field>
         <field name="model">arelux.sale.report.template</field>
@@ -166,6 +176,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_sale_report_template_tree" model="ir.ui.view">
         <field name="name">Plantillas de reportes</field>
         <field name="model">arelux.sale.report.template</field>            
@@ -176,6 +187,7 @@
             </tree>
         </field>            
     </record>
+
     <record id="arelux_sale_report_template_line_form_view" model="ir.ui.view">
         <field name="name">Linea plantilla de reporte</field>
         <field name="model">arelux.sale.report.template.line</field>
@@ -195,6 +207,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_sale_report_template_line_tree" model="ir.ui.view">
         <field name="name">Lineas plantillas de reportes</field>
         <field name="model">arelux.sale.report.template.line</field>            
@@ -209,7 +222,8 @@
                 <field name="position"/>                                                                                                                    
             </tree>
         </field>            
-    </record>                
+    </record>
+
     <record model="ir.actions.act_window" id="arelux_sale_report_template_action">
         <field name="name">Plantillas de reportes</field>
         <field name="type">ir.actions.act_window</field>
@@ -217,7 +231,8 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="arelux_sale_report_template_tree"/>
-    </record>            
+    </record>
+
     <menuitem 
         action="arelux_sale_report_template_action" 
         name="Plantillas reportes"

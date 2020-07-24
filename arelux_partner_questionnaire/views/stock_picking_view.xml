@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="stock_picking_form_arelux_questionarie" model="ir.ui.view">
         <field name="name">stock_picking_form_arelux_questionarie</field>
         <field name="model">stock.picking</field>
@@ -12,6 +13,7 @@
             </field>                                                            
         </field>
     </record>
+
     <record id="stock_picking_tree_arelux_questionarie" model="ir.ui.view">
         <field name="name">stock_picking_tree_arelux_questionarie</field>
         <field name="model">stock.picking</field>
@@ -24,6 +26,7 @@
             </field>                                                            
         </field>
     </record>
+
     <record id="view_picking_internal_search_arelux_partner_questionnaire" model="ir.ui.view">
         <field name="name">view_picking_internal_search_arelux_partner_questionnaire</field>
         <field name="model">stock.picking</field>
@@ -41,5 +44,6 @@
                 <separator/>
             </filter>                                                                                                                
         </field>
-    </record>                
+    </record>
+
 </odoo>

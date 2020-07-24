@@ -1,20 +1,17 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+from odoo import fields, models
 
 class MaintenanceInstallationNeedCheck(models.Model):
     _name = 'maintenance.installation.need.check'
     _description = 'Maintenance Installation Need Check'            
     
     name = fields.Char(        
-        string='Cuestion'
+        string='Name'
     )
     quality_team_id = fields.Many2one(
         comodel_name='quality.team',
-        string='Equipo de calidad'
+        string='Quality team'
     )
     month_01 = fields.Boolean(        
         string='Enero'

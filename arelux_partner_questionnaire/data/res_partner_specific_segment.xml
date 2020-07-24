@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="res_partner_specific_segment_data_1" model="res.partner.specific.segment">
         <field name="id">1</field>
         <field name="name">Comunidad de vecinos</field>
@@ -8,6 +9,7 @@
         <field name="position">0</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_specific_segment_data_2" model="res.partner.specific.segment">
         <field name="id">2</field>
         <field name="name">Decoración</field>
@@ -16,6 +18,7 @@
         <field name="position">1</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_specific_segment_data_3" model="res.partner.specific.segment">
         <field name="id">3</field>
         <field name="name">Mascota</field>
@@ -24,6 +27,7 @@
         <field name="position">2</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_specific_segment_data_4" model="res.partner.specific.segment">
         <field name="id">4</field>
         <field name="name">Niños</field>
@@ -32,6 +36,7 @@
         <field name="position">3</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_specific_segment_data_5" model="res.partner.specific.segment">
         <field name="id">5</field>
         <field name="name">Piscina (de obra, hinchable, agua salada...)</field>
@@ -40,6 +45,7 @@
         <field name="position">4</field>
         <field name="other">False</field>
     </record>
+
     <record id="res_partner_specific_segment_data_6" model="res.partner.specific.segment">
         <field name="id">6</field>
         <field name="name">Otro</field>
@@ -47,5 +53,6 @@
         <field name="filter_ar_qt_customer_type">particular</field>
         <field name="position">5</field>
         <field name="other">True</field>
-    </record>    
+    </record>
+
 </odoo>

@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, models, fields
 
-import logging
-_logger = logging.getLogger(__name__)
 
 class MailComposer(models.TransientModel):
     _inherit = 'mail.compose.message'
@@ -11,8 +9,8 @@ class MailComposer(models.TransientModel):
     @api.one
     @api.depends('model', 'res_id')        
     def _get_ar_qt_activity_type(self):                    
-        if self.model!=False and self.res_id!=False and self.res_id>0:         
-            model_item = self.env[self.model].search([('id', '=', self.res_id)])[0]            
+        if self.model and self.res_id:
+            model_item = self.env[self.model].search([('id', '=', self.res_id)])[0]
             if 'ar_qt_activity_type' in model_item:
                 self.ar_qt_activity_type = model_item.ar_qt_activity_type
                 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="arelux_sale_report_template_line_data_1" model="arelux.sale.report.template.line">
         <field name="id">1</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -10,6 +11,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>                                
     </record>
+
     <record id="arelux_sale_report_template_line_data_2" model="arelux.sale.report.template.line">
         <field name="id">2</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -20,6 +22,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>                
     </record>
+
     <record id="arelux_sale_report_template_line_data_3" model="arelux.sale.report.template.line">
         <field name="id">3</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -30,6 +33,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>                
     </record>
+
     <record id="arelux_sale_report_template_line_data_4" model="arelux.sale.report.template.line">
         <field name="id">4</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -40,6 +44,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>                
     </record>
+
     <record id="arelux_sale_report_template_line_data_5" model="arelux.sale.report.template.line">
         <field name="id">5</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -50,6 +55,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>                
     </record>
+
     <record id="arelux_sale_report_template_line_data_6" model="arelux.sale.report.template.line">
         <field name="id">6</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -60,6 +66,7 @@
         <field name="group_by_user">False</field>
         <field name="show_in_table_format">False</field>                        
     </record>
+
     <record id="arelux_sale_report_template_line_data_7" model="arelux.sale.report.template.line">
         <field name="id">7</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_1')"/>
@@ -69,7 +76,8 @@
         <field name="ar_qt_customer_type">particular</field>
         <field name="group_by_user">False</field>
         <field name="show_in_table_format">False</field>       
-    </record>        
+    </record>
+
     <record id="arelux_sale_report_template_line_data_8" model="arelux.sale.report.template.line">
         <field name="id">8</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -90,6 +98,7 @@
         <field name="group_by_user">True</field> 
         <field name="show_in_table_format">True</field>
     </record>
+
     <record id="arelux_sale_report_template_line_data_10" model="arelux.sale.report.template.line">
         <field name="id">10</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -100,6 +109,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>      
     </record>
+
     <record id="arelux_sale_report_template_line_data_11" model="arelux.sale.report.template.line">
         <field name="id">11</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -110,6 +120,7 @@
         <field name="group_by_user">True</field> 
         <field name="show_in_table_format">True</field>
     </record>
+
     <record id="arelux_sale_report_template_line_data_12" model="arelux.sale.report.template.line">
         <field name="id">12</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -120,6 +131,7 @@
         <field name="group_by_user">True</field>
         <field name="show_in_table_format">True</field>
     </record>
+
     <record id="arelux_sale_report_template_line_data_12" model="arelux.sale.report.template.line">
         <field name="id">12</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -130,6 +142,7 @@
         <field name="group_by_user">False</field> 
         <field name="show_in_table_format">False</field>     
     </record>
+
     <record id="arelux_sale_report_template_line_data_13" model="arelux.sale.report.template.line">
         <field name="id">13</field>        
         <field name="arelux_sale_report_template_id" eval="ref('arelux_sale_reports.arelux_sale_report_template_data_2')"/>
@@ -139,5 +152,6 @@
         <field name="ar_qt_customer_type">profesional</field>
         <field name="group_by_user">False</field>
         <field name="show_in_table_format">False</field>      
-    </record>            
+    </record>
+
 </odoo>

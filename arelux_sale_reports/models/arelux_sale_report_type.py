@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 
@@ -14,18 +13,18 @@ class AreluxSaleReportType(models.Model):
     )
     custom_type = fields.Selection(
         selection=[
-            ('sale_order_done_amount_untaxed','Ventas (Base Imponible)'),#Ventas � (Base imponible) 
-            ('sale_order_done_count','Ventas (Cuenta)'),#Ventas pedidos (N� de pedidos)
-            ('sale_order_ticket_medio','Ventas (Ticket medio)'),#Ticket medio (dividir los dos datos anteriores)
-            ('sale_order_sent_count','Ptos realizados (Cuenta)'),#Presupuestos realizados (excluyendo los de muestras)
-            ('sale_order_done_muestras','Muestras enviadas (Cuenta)'),#Muestras enviadas (presus de importe 0� confirmados en esa semana)
-            ('ratio_muestras','Ratio muestras'),#Ratio muestras: (muestras enviadas/presupuestos realizados)
-            ('ratio_calidad','Ratio calidad'),#Ratio de calidad: (pedidos confirmados/presupuestos realizados)
-            ('res_partner_potencial_count','Contactos potenciales (Cuenta)'),#Nuevos pots (clientes nuevos creados por cada comercial, aqui tambi�n aparecer� como comercial el webservice que ser�n los que entren por formularios)
-            ('cartera_actual_activa_count','Cartera Actual activa (Cuenta)'),#Cartera actual activa (N� clientes con alguna compra en 2019)
-            ('cartera_actual_count','Cartera Actual (Cuenta)'),#Cartera actual (N� de clientes prof. de TC asignados a cada comercial)
-            ('nuevos_clientes_con_ventas','Nuevos clientes con ventas'),#Nuevos clientes con ventas (clientes que han comprado la primera vez esa semana)
-            ('line_break','Salto de linea'),#Salto de linea
+            ('sale_order_done_amount_untaxed','Ventas (Base Imponible)'),# Ventas  (Base imponible)
+            ('sale_order_done_count','Ventas (Cuenta)'),# Ventas pedidos (N de pedidos)
+            ('sale_order_ticket_medio','Ventas (Ticket medio)'),# Ticket medio (dividir los dos datos anteriores)
+            ('sale_order_sent_count','Ptos realizados (Cuenta)'),# Presupuestos realizados (excluyendo los de muestras)
+            ('sale_order_done_muestras','Muestras enviadas (Cuenta)'),# Muestras enviadas (presus de importe 0 confirmados en esa semana)
+            ('ratio_muestras','Ratio muestras'),# Ratio muestras: (muestras enviadas/presupuestos realizados)
+            ('ratio_calidad','Ratio calidad'),# Ratio de calidad: (pedidos confirmados/presupuestos realizados)
+            ('res_partner_potencial_count','Contactos potenciales (Cuenta)'),# Nuevos pots (clientes nuevos creados por cada comercial, aqui tambien aparecere como comercial el webservice que seran los que entren por formularios)
+            ('cartera_actual_activa_count','Cartera Actual activa (Cuenta)'),# Cartera actual activa (N1 clientes con alguna compra en 2019)
+            ('cartera_actual_count','Cartera Actual (Cuenta)'),# Cartera actual (Nº de clientes prof. de TC asignados a cada comercial)
+            ('nuevos_clientes_con_ventas','Nuevos clientes con ventas'),# Nuevos clientes con ventas (clientes que han comprado la primera vez esa semana)
+            ('line_break','Salto de linea'),# Salto de linea
         ],
         string='Custom Type',
         default=''
@@ -37,7 +36,7 @@ class AreluxSaleReportType(models.Model):
     
     @api.one
     def get_info(self, date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id):
-        if self.custom_type=='sale_order_done_amount_untaxed':
+        if self.custom_type == 'sale_order_done_amount_untaxed':
             response = {
                 'type': 'sum',
                 'result_value': '',
@@ -49,13 +48,13 @@ class AreluxSaleReportType(models.Model):
                 ('confirmation_date', '>=', date_from),
                 ('confirmation_date', '<=', date_to)
             ]
-            #ar_qt_activity_type
-            if ar_qt_activity_type!='none':
+            # ar_qt_activity_type
+            if ar_qt_activity_type != 'none':
                 search_filters.append(('ar_qt_activity_type', '=', ar_qt_activity_type))
-            ##ar_qt_customer_type
-            if ar_qt_customer_type!='none':
+            # ar_qt_customer_type
+            if ar_qt_customer_type != 'none':
                 search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
-            ##sale_team_id
+            # sale_team_id
             if sale_team_id>0:
                 search_filters.append(('sale_team_id', '=', sale_team_id))
             
@@ -67,25 +66,25 @@ class AreluxSaleReportType(models.Model):
             return response
         
             #return self._get_line_info_sale_order_done_amount_untaxed(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='sale_order_done_count':
+        elif self.custom_type == 'sale_order_done_count':
             return self._get_line_info_sale_order_done_count(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='sale_order_ticket_medio':
+        elif self.custom_type == 'sale_order_ticket_medio':
             return self._get_line_info_sale_order_ticket_medio(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='sale_order_sent_count':
+        elif self.custom_type == 'sale_order_sent_count':
             return self._get_line_info_sale_order_sent_count(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='sale_order_done_muestras':
+        elif self.custom_type == 'sale_order_done_muestras':
             return self._get_line_info_sale_order_done_muestras(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='ratio_muestras':
+        elif self.custom_type == 'ratio_muestras':
             return self._get_line_info_ratio_muestras(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='ratio_calidad':
+        elif self.custom_type == 'ratio_calidad':
             return self._get_line_info_ratio_calidad(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='res_partner_potencial_count':
+        elif self.custom_type == 'res_partner_potencial_count':
             return self._get_line_info_res_partner_potencial_count(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='cartera_actual_activa_count':
+        elif self.custom_type == 'cartera_actual_activa_count':
             return self._get_line_info_cartera_actual_activa_count(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='cartera_actual_count':
+        elif self.custom_type == 'cartera_actual_count':
             return self._get_line_info_cartera_actual_count(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)
-        elif self.custom_type=='nuevos_clientes_con_ventas':
+        elif self.custom_type == 'nuevos_clientes_con_ventas':
             return self._get_line_info_nuevos_clientes_con_ventas(date_from, date_to, ar_qt_activity_type, ar_qt_customer_type, sale_team_id)                                                                                                                                    
     
     @api.one
@@ -97,13 +96,13 @@ class AreluxSaleReportType(models.Model):
             ('confirmation_date', '>=', date_from),
             ('confirmation_date', '<=', date_to)
         ]
-        #ar_qt_activity_type
-        if ar_qt_activity_type!='none':
+        # ar_qt_activity_type
+        if ar_qt_activity_type != 'none':
             search_filters.append(('ar_qt_activity_type', '=', ar_qt_activity_type))
-        ##ar_qt_customer_type
-        if ar_qt_customer_type!='none':
+        # ar_qt_customer_type
+        if ar_qt_customer_type != 'none':
             search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
-        ##sale_team_id
+        # sale_team_id
         if sale_team_id>0:
             search_filters.append(('sale_team_id', '=', sale_team_id))
         
@@ -126,13 +125,13 @@ class AreluxSaleReportType(models.Model):
             ('confirmation_date', '>=', date_from),
             ('confirmation_date', '<=', date_to)
         ]
-        #ar_qt_activity_type
-        if ar_qt_activity_type!='none':
+        # ar_qt_activity_type
+        if ar_qt_activity_type != 'none':
             search_filters.append(('ar_qt_activity_type', '=', ar_qt_activity_type))
-        ##ar_qt_customer_type
-        if ar_qt_customer_type!='none':
+        # ar_qt_customer_type
+        if ar_qt_customer_type != 'none':
             search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
-        ##sale_team_id
+        # sale_team_id
         if sale_team_id>0:
             search_filters.append(('sale_team_id', '=', sale_team_id))
         

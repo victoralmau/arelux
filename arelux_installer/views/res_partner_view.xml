@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="res_partner_view_arelux_installer" model="ir.ui.view">
         <field name="name">res.partner.view.arelux_installer</field>
         <field name="model">res.partner</field>
@@ -7,18 +8,20 @@
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='sales_purchases']//field[@name='supplier']" position="after">
-                <field name="installer" string="Instalador" />
+                <field name="installer" />
             </xpath>                        
         </field>
-    </record>    
+    </record>
+
     <record id="view_res_partner_filter" model="ir.ui.view">
        <field name="name">res.partner.select</field>
        <field name="model">res.partner</field>
        <field name="inherit_id" ref="base.view_res_partner_filter"/>
        <field name="arch" type="xml">
            <filter name="supplier" position="after">
-               <filter string="Instaladores" name="installer" domain="[('installer', '=', 1)]" />
+               <filter string="Installers" name="installer" domain="[('installer', '=', 1)]" />
            </filter>
         </field>
-   </record>   
+   </record>
+
 </odoo>

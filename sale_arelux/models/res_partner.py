@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 
@@ -33,7 +32,7 @@ class ResPartner(models.Model):
                     ('claim', '=', False) 
                  ]
             )
-            if sale_order_ids!=False:
+            if sale_order_ids:
                 for sale_order_id in sale_order_ids:
                     partner.sale_order_sale_sum = partner.sale_order_sale_sum + sale_order_id.amount_untaxed
     
@@ -58,8 +57,8 @@ class ResPartner(models.Model):
     @api.model
     def create(self, values):
         record = super(ResPartner, self).create(values)        
-        #state_id
-        if record.state_id.id>0:        
+        # state_id
+        if record.state_id:
             product_pricelist_ids = self.env['product.pricelist'].search(
                 [
                     ('ar_qt_activity_type', '=', record.ar_qt_activity_type),
@@ -67,19 +66,18 @@ class ResPartner(models.Model):
                     ('state_ids', 'in', (record.state_id.id))
                 ]
             )
-            if len(product_pricelist_ids)>0:
-                product_pricelist_id = product_pricelist_ids[0]
-                record.property_product_pricelist = product_pricelist_id.id                                   
+            if product_pricelist_ids:
+                record.property_product_pricelist = product_pricelist_ids[0].id
             else:
                 record.property_product_pricelist = 1                
-        #return                
+        # return
         return record
     
     @api.model    
     def cron_operations_res_partners(self):
-        #reset all 0
+        # reset all 0
         self.env.cr.execute("UPDATE res_partner SET sale_order_count_store = 0 WHERE id > 0")
-        #update only with sales                    
+        # update only with sales
         sale_order_ids = self.env['sale.order'].search(
             [
                 ('amount_total', '>', 0),
@@ -87,17 +85,15 @@ class ResPartner(models.Model):
                 ('state', 'in', ('sale', 'done'))
             ]
         )
-        if len(sale_order_ids) > 0:
-            _logger.info('Total pedidos a actualizar')
-            _logger.info(len(sale_order_ids))
+        if sale_order_ids:
+            _logger.info('Total pedidos a actualizar=%s' % len(sale_order_ids))
             res_partner_ids = self.env['res.partner'].search(
                 [
                     ('id', 'in', sale_order_ids.mapped('partner_id').ids)
                 ]
             )
-            if len(res_partner_ids) > 0:
-                _logger.info('Total contactos a actualizar')
-                _logger.info(len(res_partner_ids))
+            if res_partner_ids:
+                _logger.info('Total contactos a actualizar=%' % len(res_partner_ids))
                 for res_partner_id in res_partner_ids:
                     sale_order_ids = self.env['sale.order'].search(
                         [

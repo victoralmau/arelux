@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models, fields
 
@@ -133,7 +132,7 @@ class ResPartnerTodocesped(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_todocesped_pr_type_surface_other_show = False
             for item in partner_obj.ar_qt_todocesped_pr_type_surface:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_todocesped_pr_type_surface_other_show = True                         
         
     '''3'''
@@ -161,7 +160,7 @@ class ResPartnerTodocesped(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_todocesped_pr_specific_segment_other_show = False
             for item in partner_obj.ar_qt_todocesped_pr_specific_segment:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_todocesped_pr_specific_segment_other_show = True
                                                                                                        
     '''4'''
@@ -189,7 +188,7 @@ class ResPartnerTodocesped(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_todocesped_pr_why_install_it_other_show = False
             for item in partner_obj.ar_qt_todocesped_pr_why_install_it:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_todocesped_pr_why_install_it_other_show = True                         
                             
     '''5'''
@@ -217,7 +216,7 @@ class ResPartnerTodocesped(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_todocesped_pr_who_values_more_other_show = False
             for item in partner_obj.ar_qt_todocesped_pr_who_values_more:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_todocesped_pr_who_values_more_other_show = True                                                 
         
     '''Profesional'''      
@@ -286,5 +285,5 @@ class ResPartnerTodocesped(models.Model):
         for partner_obj in self:          
             partner_obj.ar_qt_todocesped_pf_valuation_thing_other_show = False
             for item in partner_obj.ar_qt_todocesped_pf_valuation_thing:
-                if item.other==True:
+                if item.other:
                     partner_obj.ar_qt_todocesped_pf_valuation_thing_other_show = True                                                                              

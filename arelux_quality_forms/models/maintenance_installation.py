@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 
@@ -63,11 +62,11 @@ class MaintenanceInstallation(models.Model):
                 ('month_' + str(month), '=', True)
             ]
         )
-        if len(maintenance_installation_need_check_ids) > 0:
-            date_next_month_item = str(year) + '-' + str(month) + '-01'
+        if maintenance_installation_need_check_ids:
+            date_next_month_item = '%s-%s-01' % (year, month)
 
             for maintenance_installation_need_check_id in maintenance_installation_need_check_ids:
-                if maintenance_installation_need_check_id.quality_team_id.user_id.id>0:
+                if maintenance_installation_need_check_id.quality_team_id.user_id:
                     maintenance_installation_ids = self.env['maintenance.installation'].search(
                         [
                             ('date', '=', date_next_month_item),
@@ -75,13 +74,13 @@ class MaintenanceInstallation(models.Model):
                         ]
                     )
                     if len(maintenance_installation_ids) == 0:
-                        maintenance_installation_vals = {
+                        vals = {
                             'date': date_next_month_item,
                             'maintenance_installation_need_check_id': maintenance_installation_need_check_id.id,
                             'user_id': maintenance_installation_need_check_id.quality_team_id.user_id.id,
                             'state': 'draft'
                         }
-                        maintenance_installation_obj = self.env['maintenance.installation'].sudo().create(maintenance_installation_vals)
+                        self.env['maintenance.installation'].sudo().create(vals)
 
     @api.model
     def cron_autongenerate_maintenance_installation_next_month(self):
