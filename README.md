@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/OdooNodrizaTech/arelux.svg?branch=12.0)](https://travis-ci.org/OdooNodrizaTech/arelux)
+[![Coverage Status](https://coveralls.io/repos/OdooNodrizaTech/arelux/badge.svg?branch=12.0)](https://coveralls.io/r/OdooNodrizaTech/arelux?branch=12.0)
+
 arelux
 =========
 Módulos relacionados con Arelux
