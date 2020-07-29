@@ -18,12 +18,12 @@ class StockPicking(models.Model):
     confirmation_date_order = fields.Datetime(
         string='Fecha confirmacion pedido',
         related='sale_id.confirmation_date',
-        store=True
+        store=False
     )
     
     @api.model
     def fields_view_get(self, view_id=None, view_type='tree', toolbar=False, submenu=False):        
-        res = super(StockPicking, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)                        
+        res = super(StockPicking, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
                                 
         if view_type == 'tree':            
             default_picking_type_id = self.env.context.get('default_picking_type_id')                        
