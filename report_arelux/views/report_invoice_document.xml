@@ -228,7 +228,7 @@
                         <t t-if="o.payment_mode_id.id>0">
                             <t t-if="o.payment_mode_id.show_payment_method_id_journal_ids_in_pdf==True">
                                 <div class="acc_numbers" style="margin-top:30px;">
-                                    <p style="text-decoration:underline;">Números de Cuenta a favor de TodoCesped/Arelux</p>
+                                    <p style="text-decoration:underline;">Números de Cuenta a favor de NODRIZA tech</p>
                                     <ul style="padding-left: 20px;">
                                         <t t-if="o.payment_mode_id.bank_account_link=='fixed'">
                                             <li><span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.bank_id.public_name" />: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number" /></li>                        
