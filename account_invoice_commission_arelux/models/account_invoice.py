@@ -5,7 +5,7 @@ from odoo import api, models
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
-        
+
     @api.multi
     def action_regenerate_commission_percent_lines(self):
         res = super(AccountInvoice, self).action_regenerate_commission_percent_lines()

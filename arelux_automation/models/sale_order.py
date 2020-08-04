@@ -1,7 +1,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
-from odoo import api, models, _
-from odoo.exceptions import Warning
+from odoo import api, fields, models, _
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import pytz
@@ -11,14 +10,14 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-    
+
     @api.multi
     def action_send_sms_automatic(self,
                                   sms_template_id=False,
                                   need_check_date_order_send_sms=True
                                   ):
         self.ensure_one()
-        res = super(SaleOrder, self).action_send_sms_automatic(
+        super(SaleOrder, self).action_send_sms_automatic(
             sms_template_id,
             need_check_date_order_send_sms
         )
@@ -27,9 +26,9 @@ class SaleOrder(models.Model):
     @api.multi
     def action_generate_sale_order_link_tracker(self):
         self.ensure_one()
-        res = super(SaleOrder, self).action_generate_sale_order_link_tracker()
+        super(SaleOrder, self).action_generate_sale_order_link_tracker()
         return True
-        
+
     @api.multi
     def automation_proces(self, params):
         self.ensure_one()
@@ -42,7 +41,7 @@ class SaleOrder(models.Model):
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
-                'action': str(params['action_log']),                                                                                                                                                                                           
+                'action': str(params['action_log'])
             }
             self.env['automation.log'].sudo().create(vals)
         # check_user_id sale_order
@@ -58,13 +57,13 @@ class SaleOrder(models.Model):
                         'model': 'crm.lead',
                         'res_id': self.opportunity_id.id,
                         'category': 'crm_lead',
-                        'action': 'asign_user_id',                                                                                                                                                                                           
+                        'action': 'asign_user_id'
                     }
                     self.env['automation.log'].sudo().create(vals)
                     # fix change user_id res.partner
                     if self.partner_id.user_id.id == 0:
                         self.partner_id.user_id = user_id_random
-                else:                        
+                else:
                     self.user_id.id = user_id_random
         # mail_activity
         if 'mail_activity' in params:
@@ -74,7 +73,13 @@ class SaleOrder(models.Model):
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
                         [
                             ('activity_type_id', '=', params['mail_activity_type_id']),
-                            ('date_deadline', '=', params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S")),
+                            (
+                                'date_deadline',
+                                '=',
+                                params['next_activity_date_action'].strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                )
+                            ),
                             ('res_model_id.model', '=', 'sale.order'),
                             ('res_id', '=', self.id)
                         ]
@@ -91,7 +96,10 @@ class SaleOrder(models.Model):
                             # create
                             vals = {
                                 'activity_type_id': params['mail_activity_type_id'],
-                                'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S"),
+                                'date_deadline':
+                                    params['next_activity_date_action'].strftime(
+                                        "%Y-%m-%d %H:%M:%S")
+                                ,
                                 'user_id': self.user_id.id,
                                 'summary': str(params['mail_activity_summary']),
                                 'res_model_id': ir_model_id.id,
@@ -105,7 +113,8 @@ class SaleOrder(models.Model):
                                 'model': 'sale.prder',
                                 'res_id': self.opportunity_id.id,
                                 'category': 'sale_order',
-                                'action': 'mail_activity_type_id_' + str(params['mail_activity_type_id']),
+                                'action': 'mail_activity_type_id_%s' 
+                                          % params['mail_activity_type_id'],
                             }
                             self.env['automation.log'].sudo().create(vals)
         # send_mail
@@ -118,7 +127,7 @@ class SaleOrder(models.Model):
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
-                'action': 'send_mail',                                                                                                                                                                                           
+                'action': 'send_mail'
             }
             self.env['automation.log'].sudo().create(vals)
             # update
@@ -149,7 +158,7 @@ class SaleOrder(models.Model):
                 'model': 'crm.lead',
                 'res_id': self.opportunity_id.id,
                 'category': 'crm_lead',
-                'action': 'change_stage_id',                                                                                                                                                                                           
+                'action': 'change_stage_id'
             }
             self.env['automation.log'].sudo().create(vals)
     
@@ -189,17 +198,17 @@ class SaleOrder(models.Model):
                 )
             )
             # retira_cliente
-            sms_template_id_retira_cliente_todocesped = int(
+            sms_template_id_rc_todocesped = int(
                 self.env['ir.config_parameter'].sudo().get_param(
                     'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped'
                 )
             )
-            sms_template_id_retira_cliente_arelux = int(
+            sms_template_id_rc_arelux = int(
                 self.env['ir.config_parameter'].sudo().get_param(
                     'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux'
                 )
             )
-            sms_template_id_retira_cliente_both = int(
+            sms_template_id_rc_both = int(
                 self.env['ir.config_parameter'].sudo().get_param(
                     'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both'
                 )
@@ -224,8 +233,16 @@ class SaleOrder(models.Model):
                     ('claim', '=', False),
                     ('ar_qt_customer_type', '=', 'profesional'),
                     ('create_date', '>', '2019-06-18 00:00:00'),
-                    ('confirmation_date', '>', confirmation_date_start.strftime("%Y-%m-%d %H:%M:%S")),
-                    ('confirmation_date', '<', confirmation_date_end.strftime("%Y-%m-%d %H:%M:%S")),
+                    (
+                        'confirmation_date',
+                        '>',
+                        confirmation_date_start.strftime("%Y-%m-%d %H:%M:%S")
+                    ),
+                    (
+                        'confirmation_date',
+                        '<',
+                        confirmation_date_end.strftime("%Y-%m-%d %H:%M:%S")
+                    ),
                     ('partner_id.mobile', '!=', False),
                     ('partner_id.mobile_code_res_country_id', '!=', False),
                     ('id', 'not in', sale_order_ids_get_not_in)                    
@@ -235,11 +252,11 @@ class SaleOrder(models.Model):
                 for sale_order_id in sale_order_ids:
                     if sale_order_id.carrier_id.id == 6:
                         if sale_order_id.ar_qt_activity_type == 'todocesped':
-                            sms_template_id = sms_template_id_retira_cliente_todocesped
+                            sms_template_id = sms_template_id_rc_todocesped
                         elif sale_order_id.ar_qt_activity_type == 'arelux':
-                            sms_template_id = sms_template_id_retira_cliente_arelux
+                            sms_template_id = sms_template_id_rc_arelux
                         else:
-                            sms_template_id = sms_template_id_retira_cliente_both
+                            sms_template_id = sms_template_id_rc_both
                     else:                
                         if sale_order_id.ar_qt_activity_type == 'todocesped':
                             sms_template_id = sms_template_id_todocesped
@@ -255,7 +272,7 @@ class SaleOrder(models.Model):
                         'model': 'sale.order',
                         'res_id': sale_order_id.id,
                         'category': 'sale_order',
-                        'action': 'send_sms_done',                                                                                                                                                                                           
+                        'action': 'send_sms_done'
                     }
                     self.env['automation.log'].sudo().create(vals)
                                 
@@ -346,7 +363,11 @@ class SaleOrder(models.Model):
                     ('ar_qt_activity_type', '=', 'todocesped'),
                     ('ar_qt_customer_type', '=', 'particular'),
                     ('create_date', '>', '2019-03-15 00:00:00'),
-                    ('create_date', '<', date_now_hours_diference.strftime("%Y-%m-%d %H:%M:%S")),
+                    (
+                        'create_date',
+                        '<',
+                        date_now_hours_diference.strftime("%Y-%m-%d %H:%M:%S")
+                    ),
                     ('opportunity_id', '!=', False),
                     ('opportunity_id.active', '=', True),
                     ('opportunity_id.type', '=', 'opportunity'),                    
@@ -418,14 +439,21 @@ class SaleOrder(models.Model):
             order_ids_get_not_in = log_ids_send_mail2.mapped('res_id')
             # sale_orders
             current_date = datetime.today()
-            date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)
+            date_order_management_filter = current_date + relativedelta(
+                days=-2,
+                minutes=-5
+            )
             order_ids = self.env['sale.order'].search(
                 [
                     ('state', '=', 'sent'),
                     ('claim', '=', False),
                     ('id', 'in', order_ids_get_in),
                     ('id', 'not in', order_ids_get_not_in),
-                    ('date_order_management', '<=', date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S")),
+                    (
+                        'date_order_management',
+                        '<=',
+                        date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S")
+                    ),
                     ('opportunity_id', '!=', False),
                     ('opportunity_id.probability', '>', 0),
                     ('opportunity_id.probability', '<', 100)                
@@ -481,7 +509,11 @@ class SaleOrder(models.Model):
                         ('carrier_id.carrier_type', '=', 'nacex'),
                         ('shipping_expedition_id', '!=', False),
                         ('shipping_expedition_id.state', '=', 'delivered'),
-                        ('shipping_expedition_id.date', '<=', shipping_expedition_date.strftime("%Y-%m-%d"))
+                        (
+                            'shipping_expedition_id.date',
+                            '<=',
+                            shipping_expedition_date.strftime("%Y-%m-%d")
+                        )
                     ]
                 )
                 _logger.info('stock_picking_ids')
@@ -522,15 +554,10 @@ class SaleOrder(models.Model):
                                 order_id_operations = order_ids_operations[0]
                                 # send_mail (sale.order)
                                 # change state_id (opportunity_id)
-                                _logger.info('Operaciones del presupuesto %s' % order_id_operations.name)
-                                # automation_proces
-                                '''
-                                sale_order_id_operations.automation_proces({
-                                    'action_log': 'repaso_mail',
-                                    'mail_template_id': template_id,
-                                    'lead_stage_id': 3#Repaso
-                                })
-                                '''
+                                _logger.info(
+                                    _('Operaciones del presupuesto %s')
+                                    % order_id_operations.name
+                                )
     
     @api.multi
     def action_sale_order_mail2(self, template_id=False):
@@ -546,7 +573,9 @@ class SaleOrder(models.Model):
         if len(automation_log_ids) == 0:
             if not self.claim and self.state == 'sent' and self.amount_untaxed > 0:
                 current_date = datetime.today()
-                date_order_management_filter = current_date + relativedelta(days=-2, minutes=-5)                        
+                date_order_management_filter = current_date + relativedelta(
+                    days=-2, minutes=-5
+                )
                 
                 if self.date_order_management <= date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S"):
                     need_send_mail = True
@@ -600,7 +629,7 @@ class SaleOrder(models.Model):
                             [
                                 ('model', '=', 'crm.lead'),
                                 ('res_id', '=', self.opportunity_id.id),
-                                ('subtype_id', '=', 5),# Llamada
+                                ('subtype_id', '=', 5),
                                 ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
                              ]
                         )
@@ -614,7 +643,7 @@ class SaleOrder(models.Model):
                 'model': 'sale.order',
                 'res_id': self.id,
                 'category': 'sale_order',
-                'action': 'send_mail2',                                                                                                                                                                                           
+                'action': 'send_mail2'
             }
             self.env['automation.log'].sudo().create(vals)
                                         

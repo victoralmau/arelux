@@ -188,13 +188,14 @@ class AreluxAutomationProcess(models.Model):
                     if item.lead_m2_to == 0:
                         allow_calculate = False
                         raise UserError(
-                            _('It is necessary to define a Lead m2 up to greater than 0')
+                            _('It is necessary to define a Lead m2 up to '
+                              'greater than 0')
                         )
                 # operations_real
                 if allow_calculate:
                     # by_model
                     if item.model == 'crm.lead':
-                        itemcrm_lead_ids = self.env['crm.lead'].search(
+                        item.crm_lead_ids = self.env['crm.lead'].search(
                             [
                                 ('type', '=', item.lead_type),
                                 ('ar_qt_activity_type', '=', item.ar_qt_activity_type),
@@ -237,7 +238,8 @@ class AreluxAutomationProcess(models.Model):
             if item.state == 'calculate':
                 if item.total_records == 0:
                     raise UserError(
-                        _('It is necessary that there is a registry to be able to execute the action')
+                        _('It is necessary that there is a registry to be '
+                          'able to execute the action')
                     )
                 else:
                     # update
@@ -245,15 +247,15 @@ class AreluxAutomationProcess(models.Model):
                     # mail_activity
                     if item.mail_activity:
                         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-                        activity_date_deadline = current_date + relativedelta(
+                        activity_dd = current_date + relativedelta(
                             days=item.mail_activity_date_deadline_days
                         )
-                        activity_date_deadline_w = activity_date_deadline.weekday()
+                        activity_dd_w = activity_dd.weekday()
                         # prevent saturday and sunday
-                        if activity_date_deadline_w == 5:  # saturday
-                            activity_date_deadline = activity_date_deadline + relativedelta(days=2)
-                        elif activity_date_deadline_w == 6:  # sunday
-                            activity_date_deadline = activity_date_deadline + relativedelta(days=1)
+                        if activity_dd_w == 5:  # saturday
+                            activity_dd = activity_dd + relativedelta(days=2)
+                        elif activity_dd_w == 6:  # sunday
+                            activity_dd = activity_dd + relativedelta(days=1)
                     # user_ids
                     user_ids = []
                     for user_id in item.user_ids:
@@ -278,8 +280,9 @@ class AreluxAutomationProcess(models.Model):
                             }
                             # mail_activity
                             if item.mail_activity:
-                                vals['mail_activity_type_id'] = item.mail_activity_type_id.id
-                                vals['mail_activity_date_deadline'] = activity_date_deadline
+                                vals['mail_activity_type_id'] = \
+                                    item.mail_activity_type_id.id
+                                vals['mail_activity_date_deadline'] = activity_dd
                                 vals['mail_activity_summary'] = item.mail_activity_summary
                             # lead_stage_id
                             if item.stage_id:
@@ -311,8 +314,9 @@ class AreluxAutomationProcess(models.Model):
                             }
                             # mail_activity
                             if item.mail_activity:
-                                vals['mail_activity_type_id'] = item.mail_activity_type_id.id
-                                vals['mail_activity_date_deadline'] = activity_date_deadline
+                                vals['mail_activity_type_id'] = \
+                                    item.mail_activity_type_id.id
+                                vals['mail_activity_date_deadline'] = activity_dd
                                 vals['mail_activity_summary'] = item.mail_activity_summary
                             # sms_template_id
                             if item.sms_template_id:
@@ -332,7 +336,7 @@ class AreluxAutomationProcess(models.Model):
                                 item.total_records
                             ))
                     # update
-                    obj.state = 'done'
+                    item.state = 'done'
         return True
 
     @api.multi

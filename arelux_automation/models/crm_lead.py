@@ -64,7 +64,13 @@ class CrmLead(models.Model):
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
                         [
                             ('activity_type_id', '=', params['mail_activity_type_id']),
-                            ('date_deadline', '=', params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S")),
+                            (
+                                'date_deadline',
+                                '=',
+                                params['next_activity_date_action'].strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                )
+                            ),
                             ('res_model_id.model', '=', 'crm.lead'),
                             ('res_id', '=', self.id)
                         ]
@@ -81,19 +87,25 @@ class CrmLead(models.Model):
                             # create
                             vals = {
                                 'activity_type_id': params['mail_activity_type_id'],
-                                'date_deadline': params['next_activity_date_action'].strftime("%Y-%m-%d %H:%M:%S"),
+                                'date_deadline':
+                                    params['next_activity_date_action'].strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ),
                                 'user_id': self.user_id.id,
                                 'summary': str(params['mail_activity_summary']),
                                 'res_model_id': ir_model_id.id,
                                 'res_id': self.id
                             }
-                            self.env['mail.activity'].sudo(self.create_uid.id).create(vals)
+                            self.env['mail.activity'].sudo(
+                                self.create_uid.id
+                            ).create(vals)
                             # save_log
                             vals = {
                                 'model': 'crm.lead',
                                 'res_id': self.id,
                                 'category': 'crm_lead',
-                                'action': 'mail_activity_type_id_%s' % params['mail_activity_type_id'],
+                                'action': 'mail_activity_type_id_%s'
+                                          % params['mail_activity_type_id'],
                             }
                             self.env['automation.log'].sudo().create(vals)
         # send_mail
@@ -124,7 +136,9 @@ class CrmLead(models.Model):
     @api.one
     def action_send_mail_with_template_id(self, template_id=False):
         if template_id:
-            mail_template_item = self.env['mail.template'].browse(template_id)
+            mail_template_item = self.env['mail.template'].browse(
+                template_id
+            )
             vals = {
                 'author_id': 1,
                 'record_name': self.name,                                                                                                                                                                                           
@@ -132,9 +146,11 @@ class CrmLead(models.Model):
             # Fix user_id
             if self.user_id:
                 vals['author_id'] = self.user_id.partner_id.id
-                message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(vals)
+                message_obj = self.env['mail.compose.message'].sudo(
+                    self.user_id.id
+                ).create(vals)
             else:
-                message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
+                message_obj = self.env['mail.compose.message'].sudo().create(vals)
 
             res = message_obj.onchange_template_id(
                 mail_template_item.id,
@@ -151,7 +167,6 @@ class CrmLead(models.Model):
                 'res_id': self.id,
                 'body': res['value']['body'],
                 'subject': res['value']['subject'],
-                # 'attachment_ids': return_onchange_template_id['value']['attachment_ids'],
                 'record_name': vals['record_name'],
                 'no_auto_thread': False,
             }
@@ -171,7 +186,6 @@ class CrmLead(models.Model):
     @api.model    
     def cron_automation_todocesped_profesional_potenciales(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        tomorrow_date = current_date + relativedelta(days=+1)
         partners = {}
         res_partner_ids = self.env['res.partner'].search(
             [
@@ -184,31 +198,31 @@ class CrmLead(models.Model):
              ]
         )                        
         if res_partner_ids:
-            res_partner_ids_potencial = []
+            partner_ids_potencial = []
             for res_partner_id in res_partner_ids:
                 if res_partner_id.ref:
-                    res_partner_ids_potencial.append(res_partner_id.id)
+                    partner_ids_potencial.append(res_partner_id.id)
                     partners[res_partner_id.id] = res_partner_id                                    
             # account_invoice
-            account_invoice_ids = self.env['account.invoice'].search(
+            invoice_ids = self.env['account.invoice'].search(
                 [
                     ('state', 'in', ('open','paid')),
                     ('amount_total', '>', 0),
                     ('type', '=', 'out_invoice'),
-                    ('partner_id', 'in', res_partner_ids_potencial)
+                    ('partner_id', 'in', partner_ids_potencial)
                  ]
             )            
-            if account_invoice_ids:
-                for account_invoice_id in account_invoice_ids:
-                    if account_invoice_id.partner_id.id in res_partner_ids_potencial:
-                        res_partner_ids_potencial.remove(account_invoice_id.partner_id.id)
+            if invoice_ids:
+                for invoice_id in invoice_ids:
+                    if invoice_id.partner_id.id in partner_ids_potencial:
+                        partner_ids_potencial.remove(invoice_id.partner_id.id)
             
             if res_partner_ids_potencial:
                 # crm_lead_6_months
                 start_date = current_date + relativedelta(months=-6)
                 end_date = current_date
-                for res_partner_id_potencial in res_partner_ids_potencial:
-                    partner_item = partners[res_partner_id_potencial]
+                for partner_id_potencial in partner_ids_potencial:
+                    partner_item = partners[partner_id_potencial]
                     crm_activity_report_ids = self.env['crm.activity.report'].search(
                         [
                             ('subtype_id', 'in', (1, 2, 4)),
@@ -262,30 +276,30 @@ class CrmLead(models.Model):
              ]
         )            
         if res_partner_ids:
-            res_partner_ids_potencial_activo = []
+            partner_ids_potencial_activo = []
             for res_partner_id in res_partner_ids:                    
-                res_partner_ids_potencial_activo.append(res_partner_id.id)
+                partner_ids_potencial_activo.append(res_partner_id.id)
                 partners[res_partner_id.id] = res_partner_id                    
             # account_invoice
-            account_invoice_ids = self.env['account.invoice'].search(
+            invoice_ids = self.env['account.invoice'].search(
                 [
                     ('state', 'in', ('open','paid')),
                     ('amount_total', '>', 0),
                     ('type', '=', 'out_invoice'),
-                    ('partner_id', 'in', res_partner_ids_potencial_activo)
+                    ('partner_id', 'in', partner_ids_potencial_activo)
                  ]
             )                            
-            if account_invoice_ids:
-                for account_invoice_id in account_invoice_ids:
-                    if account_invoice_id.partner_id.id in res_partner_ids_potencial_activo:
-                        res_partner_ids_potencial_activo.remove(account_invoice_id.partner_id.id)
+            if invoice_ids:
+                for invoice_id in invoice_ids:
+                    if invoice_id.partner_id.id in partner_ids_potencial_activo:
+                        partner_ids_potencial_activo.remove(invoice_id.partner_id.id)
             
             if res_partner_ids_potencial_activo:
                 # crm_lead_3_months
                 start_date = current_date + relativedelta(months=-3)
                 end_date = current_date
-                for res_partner_id_potencial_activo in res_partner_ids_potencial_activo:
-                    partner_item = partners[res_partner_id_potencial_activo]
+                for partner_id_potencial_activo in partner_ids_potencial_activo:
+                    partner_item = partners[partner_id_potencial_activo]
                     crm_activity_report_ids = self.env['crm.activity.report'].search(
                         [
                             ('subtype_id', 'in', (1,2,4)),
@@ -336,14 +350,14 @@ class CrmLead(models.Model):
 
     @api.model
     def cron_automation_todocesped_profesional(self):
-        #potenciales
-        #self.cron_automation_todocesped_profesional_potenciales()
-        #potenciales_activo
-        #self.cron_automation_todocesped_profesional_potenciales_activo()
-        #puntuales
-        #self.cron_automation_todocesped_profesional_puntuales()
-        #recurrentes
-        #self.cron_automation_todocesped_profesional_recurrentes()
-        #fidelizados
-        #self.cron_automation_todocesped_profesional_fidelizados()
+        # potenciales
+        # self.cron_automation_todocesped_profesional_potenciales()
+        # potenciales_activo
+        # self.cron_automation_todocesped_profesional_potenciales_activo()
+        # puntuales
+        # self.cron_automation_todocesped_profesional_puntuales()
+        # recurrentes
+        # self.cron_automation_todocesped_profesional_recurrentes()
+        # fidelizados
+        # self.cron_automation_todocesped_profesional_fidelizados()
         _logger.info('cron_automation_todocesped_profesional')                                                                                                              

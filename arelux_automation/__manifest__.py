@@ -24,6 +24,6 @@
         "data/ir_cron.xml",
         "security/ir.model.access.csv",
         "views/arelux_automation_process_view.xml",
-    ],    
+    ],
     "installable": True
 }
