@@ -40,7 +40,7 @@ class ResPartnerArelux(models.Model):
     )
     ar_qt_arelux_interest_product_all = fields.Boolean(
         string="AR - Productos relacionados que le podrían encajar - Todos"
-    )    
+    )
 
     @api.multi
     @api.onchange('ar_qt_arelux_interest_product_all')
@@ -51,9 +51,10 @@ class ResPartnerArelux(models.Model):
             item.ar_qt_arelux_interest_product_3 = 0
             item.ar_qt_arelux_interest_product_4 = 0
             item.ar_qt_arelux_interest_product_not_yet = False
-    
+
     ar_qt_arelux_interest_product_not_yet = fields.Boolean(
-        string="AR - Productos relacionados que le podrían encajar - Todavía no lo tiene claro"
+        string="AR - Productos relacionados que le podrían encajar - "
+               "Todavía no lo tiene claro"
     )
 
     @api.multi
@@ -65,41 +66,40 @@ class ResPartnerArelux(models.Model):
             item.ar_qt_arelux_interest_product_3 = 0
             item.ar_qt_arelux_interest_product_4 = 0
             item.ar_qt_arelux_interest_product_all = False
-    
+
     ar_qt_arelux_valuation_thing = fields.Many2many(
-        comodel_name='res.partner.valuation.thing',         
+        comodel_name='res.partner.valuation.thing',
         string='AR - Qué valora más',
-    )            
+    )
     ar_qt_arelux_valuation_thing_other = fields.Char(
         string='AR - Otro',
         size=35
     )
     ar_qt_arelux_valuation_thing_other_show = fields.Boolean(
         store=False
-    )            
+    )
     ar_qt_arelux_contact_form = fields.Many2many(
-        comodel_name='res.partner.contact.form', 
+        comodel_name='res.partner.contact.form',
         string='AR - Formas de contacto / Colectivo',
-    )     
+    )
     ar_qt_arelux_contact_form_other = fields.Char(
         string='AR - Formas de contacto / Colectivo - Otro',
         size=35
     )
     ar_qt_arelux_contact_form_other_show = fields.Boolean(
         store=False
-    )    
-                        
+    )
     ar_qt_arelux_is_recommendation = fields.Boolean(
         string="AR - Viene recomendado"
-    )    
+    )
     ar_qt_arelux_recommendation_partner_id = fields.Many2one(
-        comodel_name='res.partner', 
+        comodel_name='res.partner',
         string='AR - Quién nos recomendó',
-    )                    
+    )
     '''Particular'''
     ''''1'''
     ar_qt_arelux_pr_ql_product = fields.Many2many(
-        comodel_name='res.partner.qualification.product', 
+        comodel_name='res.partner.qualification.product',
         string='AR - Clasificación segun producto',
     )
 
@@ -112,24 +112,23 @@ class ResPartnerArelux(models.Model):
             item._get_ar_qt_arelux_pr_ql_product_reflective_insulators_show()
             item._get_ar_qt_arelux_pr_ql_product_surface_treatment_show()
             item._get_ar_qt_arelux_pr_ql_product_other_show()
-            
+
     '''1-Impermeabilizantes'''
     ar_qt_arelux_pr_ql_product_waterproofing = fields.Selection(
         [
             ('leaks', 'Filtraciones'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=15,
-        string='AR - Impermeabilizantes - Por qué?', 
-        copy=False, 
+        string='AR - Impermeabilizantes - Por qué?',
+        copy=False,
         index=True
-    ) 
-    
+    )
     ar_qt_arelux_pr_ql_product_waterproofing_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pr_ql_product_waterproofing_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_arelux_pr_ql_product_waterproofing_show(self):
         for item in self:
@@ -137,11 +136,11 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_ql_product in item.ar_qt_arelux_pr_ql_product:
                 if ar_qt_arelux_pr_ql_product.id == 1:
                     item.ar_qt_arelux_pr_ql_product_waterproofing_show = True
-       
+
     ar_qt_arelux_pr_ql_product_waterproofing_other = fields.Char(
         string='AR - Impermeabilizantes - Otro',
         size=35
-    )                    
+    )
     '''1-Pinturas termincas'''
     ar_qt_arelux_pr_ql_product_thermal_paints = fields.Selection(
         [
@@ -152,17 +151,17 @@ class ResPartnerArelux(models.Model):
             ('mold', 'Moho'),
             ('cold wall', 'Pared fria'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=15,
-        string='AR - Pinturas térmicas - Por qué pintura términa', 
-        copy=False, 
+        string='AR - Pinturas térmicas - Por qué pintura términa',
+        copy=False,
         index=True
-    )        
+    )
     ar_qt_arelux_pr_ql_product_thermal_paints_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pr_ql_product_thermal_paints_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_arelux_pr_ql_product_thermal_paints_show(self):
         for item in self:
@@ -170,13 +169,13 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_ql_product in item.ar_qt_arelux_pr_ql_product:
                 if ar_qt_arelux_pr_ql_product.id == 2:
                     item.ar_qt_arelux_pr_ql_product_thermal_paints_show = True
-    
+
     ar_qt_arelux_pr_ql_product_thermal_paints_other = fields.Char(
         string='AR - Pinturas térmicas - Otro',
         size=35
     )
     '''1-Aislantes reflexivos'''
-    ar_qt_arelux_pr_ql_product_reflective_insulators= fields.Selection(
+    ar_qt_arelux_pr_ql_product_reflective_insulators = fields.Selection(
         [
             ('insulation_little_space', 'Aislante que ocupa poco espacio'),
             ('thermal_insulation', 'Aislamiento termico'),
@@ -184,17 +183,17 @@ class ResPartnerArelux(models.Model):
             ('vans_isolation', 'Aislamiento furgonetas'),
             ('floor_insulation', 'Aislamiento suelos'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=15,
-        string='AR - Aislantes reflexivos - Por qué aislantes', 
-        copy=False, 
+        string='AR - Aislantes reflexivos - Por qué aislantes',
+        copy=False,
         index=True
     )
     ar_qt_arelux_pr_ql_product_reflective_insulators_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pr_ql_product_reflective_insulators_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_arelux_pr_ql_product_reflective_insulators_show(self):
         for item in self:
@@ -202,7 +201,7 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_ql_product in item.ar_qt_arelux_pr_ql_product:
                 if ar_qt_arelux_pr_ql_product.id == 3:
                     item.ar_qt_arelux_pr_ql_product_reflective_insulators_show = True
-        
+
     ar_qt_arelux_pr_ql_product_reflective_insulators_other = fields.Char(
         string='AR - Aislantes reflexivos - Otro',
         size=35
@@ -215,17 +214,17 @@ class ResPartnerArelux(models.Model):
             ('storage_rooms', 'Trasteros / pequenas zonas'),
             ('sports_areas', 'Zonas deportivas'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=15,
-        string='AR - Tratamiento de superficies - Dónde', 
-        copy=False, 
+        string='AR - Tratamiento de superficies - Dónde',
+        copy=False,
         index=True
-    )    
+    )
     ar_qt_arelux_pr_ql_product_surface_treatment_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pr_ql_product_surface_treatment_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_arelux_pr_ql_product_surface_treatment_show(self):
         for item in self:
@@ -233,7 +232,7 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_ql_product in item.ar_qt_arelux_pr_ql_product:
                 if ar_qt_arelux_pr_ql_product.id == 4:
                     item.ar_qt_arelux_pr_ql_product_surface_treatment_show = True
-    
+
     ar_qt_arelux_pr_ql_product_surface_treatment_other = fields.Char(
         string='AR - Tratamiento de superficies - Otro',
         size=35
@@ -242,6 +241,7 @@ class ResPartnerArelux(models.Model):
         compute='_compute_ar_qt_arelux_pr_ql_product_other_show',
         store=False
     )
+
     @api.multi
     def _compute_ar_qt_arelux_pr_ql_product_other_show(self):
         for item in self:
@@ -249,27 +249,27 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_ql_product in item.ar_qt_arelux_pr_ql_product:
                 if ar_qt_arelux_pr_ql_product.other:
                     item.ar_qt_arelux_pr_ql_product_other_show = True
-                    
+
     ar_qt_arelux_pr_ql_product_other = fields.Char(
         string='AR - Otro',
         size=35
-    )        
+    )
     '''1b'''
     ar_qt_arelux_pr_insall_the_same = fields.Boolean(
         string="AR - Lo aplica o instala ella/él mismo"
     )
     '''2'''
     ar_qt_arelux_pr_reason_buy = fields.Many2many(
-        comodel_name='res.partner.reason.buy', 
+        comodel_name='res.partner.reason.buy',
         string='AR - Por qué lo compran',
-    )    
+    )
 
     @api.multi
     @api.onchange('ar_qt_arelux_pr_reason_buy')
     def change_ar_qt_arelux_pr_reason_buy(self):
         for item in self:
             item._get_ar_qt_arelux_pr_reason_buy_other_show()
-        
+
     ar_qt_arelux_pr_reason_buy_other = fields.Char(
         string='AR - Otro',
         size=35
@@ -278,7 +278,7 @@ class ResPartnerArelux(models.Model):
         compute='_compute_ar_qt_arelux_pr_reason_buy_other_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_arelux_pr_reason_buy_other_show(self):
         for item in self:
@@ -286,9 +286,9 @@ class ResPartnerArelux(models.Model):
             for ar_qt_arelux_pr_reason_buy in item.ar_qt_arelux_pr_reason_buy:
                 if ar_qt_arelux_pr_reason_buy.other:
                     item.ar_qt_arelux_pr_reason_buy_other_show = True
-    
+
     ar_qt_arelux_pr_valuation_thing = fields.Many2many(
-        comodel_name='res.partner.valuation.thing', 
+        comodel_name='res.partner.valuation.thing',
         domain=[
             ('filter_company', 'in', ('all', 'arelux')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
@@ -302,7 +302,7 @@ class ResPartnerArelux(models.Model):
         for item in self:
             item.ar_qt_arelux_valuation_thing = item.ar_qt_arelux_pr_valuation_thing
             item._compute_ar_qt_arelux_pr_valuation_thing_other_show()
-                
+
     ar_qt_arelux_pr_valuation_thing_other = fields.Char(
         store=False
     )
@@ -311,12 +311,14 @@ class ResPartnerArelux(models.Model):
     @api.onchange('ar_qt_arelux_pr_valuation_thing_other')
     def change_ar_qt_arelux_pr_valuation_thing_other(self):
         for item in self:
-            item.ar_qt_arelux_valuation_thing_other = item.ar_qt_arelux_pr_valuation_thing_other
-    
+            item.ar_qt_arelux_valuation_thing_other = \
+                item.ar_qt_arelux_pr_valuation_thing_other
+
     ar_qt_arelux_pr_valuation_thing_other_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pr_valuation_thing_other_show',
         store=False
     )
+
     @api.multi
     def _compute_ar_qt_arelux_pr_valuation_thing_other_show(self):
         for item in self:
@@ -325,9 +327,9 @@ class ResPartnerArelux(models.Model):
                 if ar_qt_arelux_pr_valuation_thing.other:
                     item.ar_qt_arelux_pr_valuation_thing_other_show = True
                     item.ar_qt_arelux_valuation_thing_other_show = True
-       
-    '''7'''    
-    '''Profesional'''      
+
+    '''7'''
+    '''Profesional'''
     '''1'''
     ar_qt_arelux_pf_customer_type = fields.Selection(
         [
@@ -340,10 +342,10 @@ class ResPartnerArelux(models.Model):
             ('reform', 'Reforma / Albanil'),
             ('companies_specialized_in_insulation', 'Empresas especializadas en aislamiento'),            
             ('other', 'Otros'),
-        ], 
+        ],
         size=30,
-        string='AR - Tipo de cliente', 
-        copy=False, 
+        string='AR - Tipo de cliente',
+        copy=False,
         index=True
     )
     ar_qt_arelux_pf_customer_type_other = fields.Char(
@@ -376,9 +378,10 @@ class ResPartnerArelux(models.Model):
     @api.onchange('ar_qt_arelux_pf_valuation_thing')
     def change_ar_qt_arelux_pf_valuation_thing(self):
         for item in self:
-            item.ar_qt_arelux_valuation_thing = self.ar_qt_arelux_pf_valuation_thing
+            item.ar_qt_arelux_valuation_thing = \
+                self.ar_qt_arelux_pf_valuation_thing
             item._compute_ar_qt_arelux_pf_valuation_thing_other_show()
-                
+
     ar_qt_arelux_pf_valuation_thing_other = fields.Char(
         store=False
     )
@@ -387,8 +390,9 @@ class ResPartnerArelux(models.Model):
     @api.onchange('ar_qt_arelux_pf_valuation_thing_other')
     def change_ar_qt_arelux_pf_valuation_thing_other(self):
         for item in self:
-            item.ar_qt_arelux_valuation_thing_other = item.ar_qt_arelux_pf_valuation_thing_other
-    
+            item.ar_qt_arelux_valuation_thing_other = \
+                item.ar_qt_arelux_pf_valuation_thing_other
+
     ar_qt_arelux_pf_valuation_thing_other_show = fields.Boolean(
         compute='_compute_ar_qt_arelux_pf_valuation_thing_other_show',
         store=False
@@ -398,7 +402,7 @@ class ResPartnerArelux(models.Model):
     def _compute_ar_qt_arelux_pf_valuation_thing_other_show(self):
         for item in self:
             item.ar_qt_arelux_pf_valuation_thing_other_show = False
-            for ar_qt_arelux_pf_valuation_thing in item.ar_qt_arelux_pf_valuation_thing:
-                if ar_qt_arelux_pf_valuation_thing.other:
+            for item2 in item.ar_qt_arelux_pf_valuation_thing:
+                if item2.other:
                     item.ar_qt_arelux_pf_valuation_thing_other_show = True
                     item.ar_qt_arelux_valuation_thing_other_show = True

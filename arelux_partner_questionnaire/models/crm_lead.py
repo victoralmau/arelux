@@ -54,7 +54,7 @@ class CrmLead(models.Model):
                             "AND rp.type = 'contact' "
                             "AND rp.ar_qt_activity_type = 'todocesped' "
                             "AND rp.ar_qt_customer_type = 'profesional')")
-    
+
     @api.onchange('partner_id')
     def change_partner_id(self):
         return_item = super(CrmLead, self)._onchange_partner_id()
@@ -88,7 +88,7 @@ class CrmLead(models.Model):
                     self.partner_id.ar_qt_customer_type = self.ar_qt_customer_type
         # return
         return return_item
-        
+
     @api.multi
     def fix_copy_custom_field_sale_orders(self, update_user_id=True):
         self.ensure_one()
@@ -123,7 +123,7 @@ class CrmLead(models.Model):
                 # ar_qt_customer_type
                 if self.ar_qt_customer_type:
                     order_id.ar_qt_customer_type = self.ar_qt_customer_type
-                        
+
     @api.model
     def create(self, values):
         allow_create = True
@@ -132,24 +132,25 @@ class CrmLead(models.Model):
             values['ar_qt_activity_type'] = 'todocesped'
         # ar_qt_customer_type
         if 'ar_qt_customer_type' not in values:
-            values['ar_qt_customer_type'] = 'particular'                                    
+            values['ar_qt_customer_type'] = 'particular'
         # prevent duplicate
         if 'partner_id' in values:
             if values['partner_id']:
                 sale_quote_template_obj = self.env['crm.lead'].search(
                     [
                         ('active', '=', True),
-                        ('partner_id', '=', values['partner_id']),                
+                        ('partner_id', '=', values['partner_id']),
                         ('ar_qt_activity_type', '=', values['ar_qt_activity_type']),
                         ('ar_qt_customer_type', '=', values['ar_qt_customer_type']),
-                        ('probability', '<', 100),                
+                        ('probability', '<', 100),
                     ]
                 )
                 if sale_quote_template_obj:
                     allow_create = False
                     raise Warning(
                         _("No se puede crear otro flujo para el mismo contacto,"
-                          " tipo de actividad y tipo de cliente si ya existe uno abierto")
+                          " tipo de actividad y tipo de cliente si ya existe "
+                          "uno abierto")
                     )
         # operations
         if allow_create:
@@ -165,7 +166,8 @@ class CrmLead(models.Model):
                     team_modify = False
                     for team_id in team_ids:
                         if team_id.ar_qt_customer_type \
-                                and team_id.ar_qt_customer_type == self.ar_qt_customer_type:
+                                and team_id.ar_qt_customer_type == \
+                                self.ar_qt_customer_type:
                             self.team_id = team_id.id
                             team_modify = True
                         else:
@@ -173,23 +175,23 @@ class CrmLead(models.Model):
                                 self.team_id = team_id.id
             # return
             return return_object
-    
+
     @api.multi
-    def write(self, vals):                              
+    def write(self, vals):
         allow_write = True
         if self.id > 0:
             # check imposible team_id
             if 'team_id' in vals:
                 team_obj = self.env['crm.team'].browse(vals['team_id'])
-                
+                # ar_qt_activity_type
                 ar_qt_activity_type_check = self.ar_qt_activity_type
                 if 'ar_qt_activity_type' in vals:
                     ar_qt_activity_type_check = vals['ar_qt_activity_type']
-                
+                # ar_qt_customer_type
                 ar_qt_customer_type_check = self.ar_qt_customer_type
                 if 'ar_qt_customer_type' in vals:
                     ar_qt_customer_type_check = vals['ar_qt_customer_type']
-                
+                # ar_qt_activity_type
                 if team_obj.ar_qt_activity_type \
                         and team_obj.ar_qt_activity_type != ar_qt_activity_type_check:
                     allow_write = False

@@ -40,7 +40,7 @@ class SaleOrder(models.Model):
             if item.opportunity_id:
                 item.ar_qt_activity_type = item.opportunity_id.ar_qt_activity_type
                 item.ar_qt_customer_type = item.opportunity_id.ar_qt_customer_type
-        
+
     @api.model
     def create(self, values):
         res = super(SaleOrder, self).create(values)

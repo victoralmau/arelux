@@ -245,7 +245,7 @@ class ResPartner(models.Model):
                         sale_order_ids_total = len(sale_order_items)
                         if sale_order_ids_total >= 1 \
                                 and sale_order_ids_total <= 2:
-                            ar_qt_pf_frequency_customer_type_item = 'puntual'                
+                            ar_qt_pf_frequency_customer_type_item = 'puntual'
                         elif sale_order_ids_total > 2 \
                                 and sale_order_ids_total <= 5:
                             ar_qt_pf_frequency_customer_type_item = 'loyalized'
@@ -256,8 +256,8 @@ class ResPartner(models.Model):
                             lambda x : x['amount_total'],
                             sale_order_items
                         )
-                        partner_amount_total = sum(map(float,amount_totals))                        
-                        
+                        partner_amount_total = sum(map(float, amount_totals))
+
                         if partner_amount_total >= 6000 \
                                 and partner_amount_total <= 20000:
                             ar_qt_pf_sale_customer_type_item = 'silver'
@@ -265,7 +265,7 @@ class ResPartner(models.Model):
                                 and partner_amount_total <= 40000:
                             ar_qt_pf_sale_customer_type_item = 'gold'
                         elif partner_amount_total > 40000:
-                            ar_qt_pf_sale_customer_type_item = 'diamond'                                                                
+                            ar_qt_pf_sale_customer_type_item = 'diamond'
                     # update
                     partner_id.ar_qt_pf_frequency_customer_type = \
                         ar_qt_pf_frequency_customer_type_item
