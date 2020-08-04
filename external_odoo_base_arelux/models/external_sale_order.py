@@ -1,16 +1,17 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, models, tools
-
 import logging
+from odoo import api, models, tools, _
 _logger = logging.getLogger(__name__)
+
 
 class ExternalSaleOrder(models.Model):
     _inherit = 'external.sale.order'             
         
-    @api.one
+    @api.multi
     def action_crm_lead_create(self):
-        return_item = super(ExternalSaleOrder, self).action_crm_lead_create()        
+        self.ensure_one()
+        return_item = super(ExternalSaleOrder, self).action_crm_lead_create()
         # lead_id
         if self.lead_id:
             # external_customer_id
@@ -23,16 +24,25 @@ class ExternalSaleOrder(models.Model):
         # return
         return return_item
     
-    @api.one
+    @api.multi
     def action_sale_order_done_error_external_shipping_address_id_without_country_id(self):
-        _logger.info('No se puede confirmar el pedido %s porque la direccion de envio del cliente NO tiene PAIS mapeado' % self.sale_order_id.name)
+        self.ensure_one()
+        _logger.info(
+            _('No se puede confirmar el pedido %s porque la direccion de envio del cliente NO tiene PAIS mapeado')
+            % self.sale_order_id.name
+        )
         
-    @api.one
+    @api.multi
     def action_sale_order_done_error_external_shipping_address_id_without_country_state_id(self):
-        _logger.info('No se puede confirmar el pedido %s porque la direccion de envio del cliente NO tiene PROVINCIA mapeada' % self.sale_order_id.name)
+        self.ensure_one()
+        _logger.info(
+            _('No se puede confirmar el pedido %s porque la direccion de envio del cliente NO tiene PROVINCIA mapeada')
+            % self.sale_order_id.name
+        )
     
-    @api.one
+    @api.multi
     def action_sale_order_done(self):
+        self.ensure_one()
         # antes
         if self.sale_order_id:
             if self.sale_order_id.state in ['draft', 'sent']:
@@ -60,4 +70,4 @@ class ExternalSaleOrder(models.Model):
                 allow_confirm = False                
         # allow_confirm
         if allow_confirm:
-            return super(ExternalSaleOrder, self).action_sale_order_done()            
+            return super(ExternalSaleOrder, self).action_sale_order_done()

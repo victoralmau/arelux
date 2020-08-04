@@ -20,4 +20,7 @@ class AccountInvoice(models.Model):
         else:
             custom_mail_template_id = self.journal_id.invoice_mail_template_id_arelux
         # account_invoice_auto_send_mail_item_real
-        return super(AccountInvoice, self).account_invoice_auto_send_mail_item_real(custom_mail_template_id, author_id)        
+        return super(AccountInvoice, self).account_invoice_auto_send_mail_item_real(
+            custom_mail_template_id,
+            author_id
+        )

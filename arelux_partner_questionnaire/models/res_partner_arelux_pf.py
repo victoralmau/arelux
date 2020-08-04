@@ -17,4 +17,4 @@ class ResPartnerAreluxPfValuationThing(models.Model):
 
     name = fields.Char(
         string="Nombre"
-    )                                                 
+    )

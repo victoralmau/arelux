@@ -1,14 +1,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
 from odoo import _, api, exceptions, fields, models
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
 import uuid
 import pytz
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class SurveySurvey(models.Model):
     _inherit = 'survey.survey'
@@ -40,18 +39,22 @@ class SurveySurvey(models.Model):
         default='none'
     )   
     
-    @api.one    
+    @api.multi
     def get_sale_order_ids_satisfaction(self):
+        self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         sale_order_ids = False
-        
         if self.automation_difference_days > 0:
             # date_filters
-            date_done_picking_start = current_date + relativedelta(days=-self.automation_difference_days*2)
-            date_done_picking_end = current_date + relativedelta(days=-self.automation_difference_days)            
+            date_done_picking_start = current_date + relativedelta(
+                days=-self.automation_difference_days*2
+            )
+            date_done_picking_end = current_date + relativedelta(
+                days=-self.automation_difference_days
+            )
             # res_partner_sale_order_first_report_ids
             if self.survey_filter_installer == 'none':
-                res_partner_sale_order_first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),                
@@ -61,7 +64,7 @@ class SurveySurvey(models.Model):
                     ]
                 )
             elif self.survey_filter_installer == 'without_installer':
-                res_partner_sale_order_first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -72,7 +75,7 @@ class SurveySurvey(models.Model):
                     ]
                 )
             elif self.survey_filter_installer == 'with_installer':
-                res_partner_sale_order_first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -83,10 +86,10 @@ class SurveySurvey(models.Model):
                     ]
                 )            
             # operations
-            if res_partner_sale_order_first_report_ids:
-                order_ids_mapped = res_partner_sale_order_first_report_ids.mapped('order_id')
+            if first_report_ids:
+                order_ids_mapped = first_report_ids.mapped('order_id')
                 # survey_user_input_ids
-                survey_user_input_ids = self.env['survey.user_input'].search(
+                user_input_ids = self.env['survey.user_input'].search(
                     [ 
                         ('survey_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('survey_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -95,20 +98,21 @@ class SurveySurvey(models.Model):
                         ('order_id', 'in', order_ids_mapped.ids)                
                     ]
                 )
-                if survey_user_input_ids:
-                    sale_order_ids = self.env['sale.order'].search(
+                if user_input_ids:
+                    order_ids = self.env['sale.order'].search(
                         [ 
                             ('id', 'in', order_ids_mapped.ids),
-                            ('id', 'not in', survey_user_input_ids.mapped('order_id').ids)                                                
+                            ('id', 'not in', user_input_ids.mapped('order_id').ids)
                         ]
                     )
                 else:
-                    sale_order_ids = self.env['sale.order'].search([('id', 'in', order_ids_mapped.ids)])
+                    order_ids = self.env['sale.order'].search([('id', 'in', order_ids_mapped.ids)])
                 
-        return sale_order_ids
+        return order_ids
         
-    @api.one    
+    @api.multi
     def get_res_partner_ids_satisfaction_recurrent(self):
+        self.ensure_one()
         # general
         survey_frequence_days = {
             'day': 1,
@@ -117,17 +121,18 @@ class SurveySurvey(models.Model):
             'year': 365
         }
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        res_partner_ids = False
-        
+        partner_ids = False
         if self.automation_difference_days > 0:
             # date_filters
             date_filter_end = current_date
-            date_filter_start = current_date + relativedelta(days=-self.automation_difference_days)
+            date_filter_start = current_date + relativedelta(
+                days=-self.automation_difference_days
+            )
             # others
             if self.ar_qt_customer_type == 'profesional':
                 # res_partner_sale_order_report_ids
                 if self.ar_qt_activity_type == 'arelux':
-                    res_partner_sale_order_report_ids = self.env['res.partner.sale.order.report'].search(
+                    order_report_ids = self.env['res.partner.sale.order.report'].search(
                         [ 
                             ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                             ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -139,7 +144,7 @@ class SurveySurvey(models.Model):
                         ]
                     )
                 else:
-                    res_partner_sale_order_report_ids = self.env['res.partner.sale.order.report'].search(
+                    order_report_ids = self.env['res.partner.sale.order.report'].search(
                         [ 
                             ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                             ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -151,14 +156,14 @@ class SurveySurvey(models.Model):
                         ]
                     )
                 # operations
-                if res_partner_sale_order_report_ids:
+                if order_report_ids:
                     # only >1
                     partner_ids_all = {}
-                    for res_partner_sale_order_report_id in res_partner_sale_order_report_ids:
-                        if res_partner_sale_order_report_id.partner_id.id not in partner_ids_all:
-                            partner_ids_all[res_partner_sale_order_report_id.partner_id.id] = 0
+                    for order_report_id in order_report_ids:
+                        if order_report_id.partner_id.id not in partner_ids_all:
+                            partner_ids_all[order_report_id.partner_id.id] = 0
                             
-                        partner_ids_all[res_partner_sale_order_report_id.partner_id.id] += 1
+                        partner_ids_all[order_report_id.partner_id.id] += 1
                     
                     if len(partner_ids_all) > 0:
                         partner_ids_mapped = []
@@ -169,12 +174,12 @@ class SurveySurvey(models.Model):
     
                         if len(partner_ids_mapped) > 0:
                             # operations
-                            res_partner_ids_max_date_survey_user_input = {}
+                            res_partner_ids_max_date_sui = {}
                             for partner_id_mapped in partner_ids_mapped:
-                                if partner_id_mapped not in res_partner_ids_max_date_survey_user_input:
-                                    res_partner_ids_max_date_survey_user_input[partner_id_mapped] = None                                                   
+                                if partner_id_mapped not in res_partner_ids_max_date_sui:
+                                    res_partner_ids_max_date_sui[partner_id_mapped] = None
                             # survey_user_input_ids
-                            survey_user_input_ids = self.env['survey.user_input'].search(
+                            user_input_ids = self.env['survey.user_input'].search(
                                 [ 
                                     ('survey_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                                     ('survey_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -183,47 +188,54 @@ class SurveySurvey(models.Model):
                                     ('partner_id', 'in', partner_ids_mapped)                                        
                                 ]
                             )                                
-                            if survey_user_input_ids:
+                            if user_input_ids:
                                 # operations
-                                for survey_user_input_id in survey_user_input_ids:
-                                    date_create_item_format = datetime.strptime(survey_user_input_id.date_create, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d')
+                                for user_input_id in user_input_ids:
+                                    date_create_item_format = datetime.strptime(
+                                        user_input_id.date_create,
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ).strftime('%Y-%m-%d')
                                     
-                                    if res_partner_ids_max_date_survey_user_input[survey_user_input_id.partner_id.id] == None:
-                                        res_partner_ids_max_date_survey_user_input[survey_user_input_id.partner_id.id] = date_create_item_format
+                                    if res_partner_ids_max_date_sui[user_input_id.partner_id.id] is None:
+                                        res_partner_ids_max_date_sui[user_input_id.partner_id.id] = date_create_item_format
                                     else:
-                                        if date_create_item_format>res_partner_ids_max_date_survey_user_input[survey_user_input_id.partner_id.id]:
-                                            res_partner_ids_max_date_survey_user_input[survey_user_input_id.partner_id.id] = date_create_item_format                        
+                                        if date_create_item_format > res_partner_ids_max_date_sui[user_input_id.partner_id.id]:
+                                            res_partner_ids_max_date_sui[user_input_id.partner_id.id] = date_create_item_format
                             # operations
-                            res_partner_ids_final = []                            
+                            partner_ids_final = []
                             b = datetime.strptime(date_filter_end.strftime("%Y-%m-%d"), "%Y-%m-%d")
                             survey_frequence_days_item = survey_frequence_days[self.survey_frequence]
-                            for partner_id in res_partner_ids_max_date_survey_user_input:
-                                partner_id_item = res_partner_ids_max_date_survey_user_input[partner_id]
-                                 #checks
-                                if partner_id_item == None:
-                                    res_partner_ids_final.append(partner_id)
+                            for partner_id in res_partner_ids_max_date_sui:
+                                partner_id_item = res_partner_ids_max_date_sui[partner_id]
+                                 # checks
+                                if partner_id_item is None:
+                                    partner_ids_final.append(partner_id)
                                 else:
                                     a = datetime.strptime(partner_id_item, "%Y-%m-%d")                                
                                     delta = b - a
                                     difference_days = delta.days                                                                                                            
-                                    if difference_days>=survey_frequence_days_item:
-                                        res_partner_ids_final.append(partner_id)                                                                                                                                       
+                                    if difference_days >= survey_frequence_days_item:
+                                        partner_ids_final.append(partner_id)
                             # final
-                            res_partner_ids = self.env['res.partner'].search([('id', 'in', res_partner_ids_final)])
+                            partner_ids = self.env['res.partner'].search(
+                                [
+                                    ('id', 'in', partner_ids_final)
+                                ]
+                            )
         # return
         return res_partner_ids            
     
-    @api.one    
+    @api.multi
     def send_survey_satisfaction_phone(self):
+        self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # deadline
         deadline = False                
         if self.deadline_days > 0:
             deadline = current_date + relativedelta(days=self.deadline_days)                
         # ANADIMOS LOS QUE CORRESPONDEN (NUEVOS)
-        sale_order_ids = self.get_sale_order_ids_satisfaction()[0]# Fix multi
+        sale_order_ids = self.get_sale_order_ids_satisfaction()[0]
         if sale_order_ids:
-            # buscamos los de encuestas viejas "raros" (los que no pasaron por la de telefono y en el pasado se hicieron de email directamente)
             survey_survey_old_ids = self.env['survey.survey'].search(
                 [
                     ('active', '=', False),
@@ -260,7 +272,6 @@ class SurveySurvey(models.Model):
                     vals = {
                         'order_id': sale_order_id.id,
                         'lead_id': sale_order_id.opportunity_id.id,
-                        # 'user_id': sale_order_id.user_id.id,#Fix prevent assign 'incorrectly'
                         'installer_id': sale_order_id.installer_id.id,
                         'state': 'skip',
                         'type': 'manually',
@@ -275,21 +286,21 @@ class SurveySurvey(models.Model):
                     # create
                     self.env['survey.user_input'].sudo().create(vals)
     
-    @api.one    
+    @api.multi
     def send_survey_satisfaction_recurrent_phone(self):
+        self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # deadline
         deadline = False                
         if self.deadline_days > 0:
             deadline = current_date + relativedelta(days=self.deadline_days)                
         # ANADIMOS LOS QUE CORRESPONDEN (NUEVOS)
-        res_partner_ids = self.get_res_partner_ids_satisfaction_recurrent()[0]# Fix multi
+        res_partner_ids = self.get_res_partner_ids_satisfaction_recurrent()[0]
         if res_partner_ids:
             # operations
             for res_partner_id in res_partner_ids:
                 # creamos el registro personalizado SIN asignar a nadie
                 vals = {
-                    # 'user_id': sale_order_id.user_id.id,#Fix prevent assign 'incorrectly'
                     'state': 'skip',
                     'type': 'manually',
                     'token': uuid.uuid4().__str__(),
@@ -304,71 +315,84 @@ class SurveySurvey(models.Model):
                 self.env['survey.user_input'].sudo().create(vals)
     
     # mail NOT recurrent
-    @api.one    
+    @api.multi
     def send_survey_real_satisfaction_mail(self):
-        sale_order_ids = self.get_sale_order_ids_satisfaction()[0]# Fix multi
+        self.ensure_one()
+        sale_order_ids = self.get_sale_order_ids_satisfaction()[0]
         if sale_order_ids:
             for sale_order_id in sale_order_ids:
                 self.send_survey_real(self, sale_order_id)
     
-    @api.one    
-    def send_survey_satisfaction_mail(self, survey_survey_input_expired_ids):
-        if len(survey_survey_input_expired_ids) > 0:
+    @api.multi
+    def send_survey_satisfaction_mail(self, user_input_expired_ids):
+        self.ensure_one()
+        if len(user_input_expired_ids) > 0:
             # actual_results
-            survey_survey_input_ids = self.env['survey.user_input'].search(
+            user_input_ids = self.env['survey.user_input'].search(
                 [
                     ('survey_id', '=', self.id)
                 ]
             )
             # query
-            if survey_survey_input_ids:
-                sale_order_ids = self.env['sale.order'].search(
+            if user_input_ids:
+                order_ids = self.env['sale.order'].search(
                     [ 
-                        ('id', 'in', survey_survey_input_expired_ids.mapped('order_id').ids),
-                        ('id', 'not in', survey_survey_input_ids.mapped('order_id').ids)                                                
+                        ('id', 'in', user_input_expired_ids.mapped('order_id').ids),
+                        ('id', 'not in', user_input_ids.mapped('order_id').ids)
                     ]
                 )
             else:
-                sale_order_ids = self.env['sale.order'].search([('id', 'in', survey_survey_input_expired_ids.mapped('order_id').ids)])
+                order_ids = self.env['sale.order'].search(
+                    [
+                        ('id', 'in', user_input_expired_ids.mapped('order_id').ids)
+                    ]
+                )
             # operations
-            if sale_order_ids:
-                for sale_order_id in sale_order_ids:                                
-                    self.send_survey_real(self, sale_order_id)
+            if order_ids:
+                for order_id in order_ids:
+                    self.send_survey_real(self, order_id)
     
     # mail recurrent
-    @api.one    
+    @api.multi
     def send_survey_real_satisfaction_recurrent_mail(self):
-        sale_order_ids = self.get_sale_order_ids_satisfaction()[0]# Fix multi
-        if sale_order_ids:
-            for sale_order_id in sale_order_ids:
-                self.send_survey_real(self, sale_order_id)
+        self.ensure_one()
+        order_ids = self.get_sale_order_ids_satisfaction()[0]
+        if order_ids:
+            for order_id in order_ids:
+                self.send_survey_real(self, order_id)
     
-    @api.one    
-    def send_survey_satisfaction_recurrent_mail(self, survey_survey_input_expired_ids):
-        if len(survey_survey_input_expired_ids) > 0:
+    @api.multi
+    def send_survey_satisfaction_recurrent_mail(self, user_input_expired_ids):
+        self.ensure_one()
+        if len(user_input_expired_ids) > 0:
             # actual_results
-            survey_survey_input_ids = self.env['survey.user_input'].search(
+            user_input_ids = self.env['survey.user_input'].search(
                 [
                     ('survey_id', '=', self.id)
                 ]
             )
             # query
-            if survey_survey_input_ids:
-                sale_order_ids = self.env['sale.order'].search(
+            if user_input_ids:
+                order_ids = self.env['sale.order'].search(
                     [ 
-                        ('id', 'in', survey_survey_input_expired_ids.mapped('order_id').ids),
-                        ('id', 'not in', survey_survey_input_ids.mapped('order_id').ids)                                                
+                        ('id', 'in', user_input_expired_ids.mapped('order_id').ids),
+                        ('id', 'not in', user_input_ids.mapped('order_id').ids)
                     ]
                 )
             else:
-                sale_order_ids = self.env['sale.order'].search([('id', 'in', survey_survey_input_expired_ids.mapped('order_id').ids)])
+                order_ids = self.env['sale.order'].search(
+                    [
+                        ('id', 'in', user_input_expired_ids.mapped('order_id').ids)
+                    ]
+                )
             # operations
-            if sale_order_ids:
-                for sale_order_id in sale_order_ids:                                
-                    self.send_survey_real(self, sale_order_id)
+            if order_ids:
+                for order_id in order_ids:
+                    self.send_survey_real(self, order_id)
                             
-    @api.one
+    @api.multi
     def get_phone_survey_surveys(self):
+        self.ensure_one()
         return self.env['survey.survey'].search(
             [ 
                 ('active', '=', True),
@@ -383,6 +407,7 @@ class SurveySurvey(models.Model):
     
     @api.multi    
     def send_survey_real(self, survey_survey, sale_order):
+        self.ensure_one()
         vals = {
             'auto_delete_message': False,
             'template_id': survey_survey.mail_template_id.id,
@@ -403,7 +428,7 @@ class SurveySurvey(models.Model):
         partner_id_partial = (4, sale_order.partner_id.id)
         vals['partner_ids'].append(partner_id_partial)
         # survey_mail_compose_message_obj
-        survey_mail_compose_message_obj = self.env['survey.mail.compose.message'].sudo().create(vals)
-        survey_mail_compose_message_obj.arelux_send_partner_mails({
+        message_obj = self.env['survey.mail.compose.message'].sudo().create(vals)
+        message_obj.arelux_send_partner_mails({
             sale_order.partner_id.id: sale_order
         })  

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="maintenance_installation_form_view" model="ir.ui.view">
             <field name="name">Mantenimiento instalacion</field>
             <field name="model">maintenance.installation</field>
@@ -23,7 +24,8 @@
                     </sheet>                    
                 </form>                
             </field>
-        </record>                           
+        </record>
+
         <record id="maintenance_installation_tree" model="ir.ui.view">
             <field name="name">Mantenimiento instalaciones</field>
             <field name="model">maintenance.installation</field>            
@@ -36,6 +38,7 @@
                 </tree>
             </field>            
         </record>
+
         <record id="view_maintenance_installation_filter" model="ir.ui.view">
             <field name="name">Mantenimiento instalaciones - Filtros</field>
             <field name="model">maintenance.installation</field>
@@ -53,6 +56,7 @@
                 </search>
             </field>
         </record>
+
         <record model="ir.actions.act_window" id="maintenance_installation_action">
             <field name="name">Mantenimiento instalaciones</field>
             <field name="type">ir.actions.act_window</field>
@@ -62,6 +66,7 @@
             <field name="context">{"search_default_user_id":uid, "search_default_state":'draft'}</field>
             <field name="search_view_id" ref="arelux_quality_forms.view_maintenance_installation_filter"/>
             <field name="view_id" ref="maintenance_installation_tree"/>
-        </record>                        
+        </record>
+
     </data>
 </odoo>

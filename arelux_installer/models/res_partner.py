@@ -8,4 +8,4 @@ class ResPartnerSage(models.Model):
            
     installer = fields.Boolean(
         string="Installer"
-    )                                       
+    )

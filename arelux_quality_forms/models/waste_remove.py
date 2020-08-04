@@ -20,8 +20,8 @@ class WasteRemove(models.Model):
     )
     destination = fields.Selection(
         selection=[
-            ('container','Contenedor'), 
-            ('clean_point','Punto limpio')                          
+            ('container', 'Contenedor'),
+            ('clean_point', 'Punto limpio')
         ],
         string='Destino'
     )

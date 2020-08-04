@@ -9,4 +9,4 @@ class DeliveryCarrier(models.Model):
     
     position = fields.Integer(
         string='Position'
-    )                                                     
+    )

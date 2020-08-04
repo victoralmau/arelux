@@ -71,4 +71,4 @@ class ResPartnerReport(models.Model):
                 WHERE rp.active = true AND rp.TYPE = 'contact'
                 GROUP BY rp.id, rc.currency_id
                 ORDER BY total_sale_order DESC
-            )""")       
+            )""")

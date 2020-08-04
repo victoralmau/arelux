@@ -6,9 +6,10 @@ from odoo import api, models, tools
 class ExternalStockPicking(models.Model):
     _inherit = 'external.stock.picking'
     
-    @api.one
+    @api.multi
     def action_run(self):
-        return_item = super(ExternalStockPicking, self).action_run()        
+        self.ensure_one()
+        res = super(ExternalStockPicking, self).action_run()
         # picking
         if self.picking_id:
             # external_customer_id > partner_id info
@@ -26,4 +27,4 @@ class ExternalStockPicking(models.Model):
                 if delivery_carrier_ids:
                     self.picking_id.carrier_id = delivery_carrier_ids[0].id
         # return
-        return return_item
+        return res

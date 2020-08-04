@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="wizard_maintenance_installation" model="ir.ui.view">
         <field name="model">wizard.maintenance.installation</field>
         <field name="arch" type="xml">
@@ -15,6 +16,7 @@
             </form>
         </field>
     </record>
+
     <record id="action_wizard_maintenance_installation" model="ir.actions.act_window">
         <field name="name">Mantenimiento instalaciones</field>
         <field name="res_model">wizard.maintenance.installation</field>

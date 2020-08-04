@@ -19,8 +19,12 @@ class StockPicking(models.Model):
     
     @api.model
     def fields_view_get(self, view_id=None, view_type='tree', toolbar=False, submenu=False):
-        res = super(StockPicking, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-                                
+        res = super(StockPicking, self).fields_view_get(
+            view_id=view_id,
+            view_type=view_type,
+            toolbar=toolbar,
+            submenu=submenu
+        )
         if view_type == 'tree':            
             default_picking_type_id = self.env.context.get('default_picking_type_id')                        
             doc = etree.fromstring(res['arch'])
@@ -37,9 +41,10 @@ class StockPicking(models.Model):
                         doc.remove(field)                    
             else:
                 doc.set('default_order', 'min_date asc')
-                
-                fields_invisible = ['carrier_id', 'shipping_expedition_id', 'management_date', 'confirmation_date_order', 'user_id_done', 'date']
-                
+                fields_invisible = [
+                    'carrier_id', 'shipping_expedition_id', 'management_date',
+                    'confirmation_date_order', 'user_id_done', 'date'
+                ]
                 fields = doc.findall('field')
                 for field in fields:
                     field_name = field.get('name')
@@ -50,7 +55,7 @@ class StockPicking(models.Model):
                                                                     
         return res    
     
-    @api.one
+    @api.multi
     def do_transfer(self):
         return_super = super(StockPicking, self).do_transfer()
         if return_super:
@@ -77,15 +82,16 @@ class StockPicking(models.Model):
         # return
         return return_super
         
-    @api.one    
+    @api.multi
     def action_send_account_invoice_out_refund(self):
+        self.ensure_one()
         return False
     
-    @api.multi    
-    def cron_operations_autogenerate_invoices_stock_picking_return(self, cr=None, uid=False, context=None):        
+    @api.model
+    def cron_operations_autogenerate_invoices_stock_picking_return(self):
         current_date = datetime.today()
         allow_generate_invoices = True
-        
+
         if current_date.day == 31 and current_date.month == 12:
             allow_generate_invoices = False
             

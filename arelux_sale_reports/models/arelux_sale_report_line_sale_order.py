@@ -14,4 +14,4 @@ class AreluxSaleReportLineSaleOrder(models.Model):
     sale_order_id = fields.Many2one(
         comodel_name='sale.order',
         string='Sale Order'
-    )    
+    )

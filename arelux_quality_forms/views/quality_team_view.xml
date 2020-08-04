@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="quality_team_form_view" model="ir.ui.view">
             <field name="name">Equipo de calidad</field>
             <field name="model">quality.team</field>
@@ -15,6 +16,7 @@
                 </form>
             </field>
         </record>
+
         <record id="quality_team_tree" model="ir.ui.view">
             <field name="name">Equipos de calidad</field>
             <field name="model">quality.team</field>
@@ -25,6 +27,7 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.actions.act_window" id="quality_team_action">
             <field name="name">Equipo de calidad</field>
             <field name="type">ir.actions.act_window</field>
@@ -33,5 +36,6 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="quality_team_tree"/>
         </record>
+
     </data>
 </odoo>

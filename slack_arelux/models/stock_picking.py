@@ -6,35 +6,36 @@ from odoo import models, api, _
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
     
-    @api.one    
+    @api.multi
     def action_send_account_invoice_out_refund(self):
         return_object = super(StockPicking, self).action_send_account_invoice_out_refund()
-        self.action_send_account_invoice_out_refund_create_message_slack()
+        for item in self:
+            item.action_send_account_invoice_out_refund_create_message_slack()
         return return_object
     
-    @api.one    
+    @api.multi
     def action_send_account_invoice_out_refund_create_message_slack(self):
+        self.ensure_one()
         if self.out_refund_invoice_id:
             web_base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                                                            
+            url_item = "%s/web?#id=%s&view_type=form&model=account.invoice" % (
+                web_base_url,
+                self.out_refund_invoice_id.id
+            )
             attachments = [
                 {                    
                     "title": _('The refund invoice has been created automatically'),
                     "text": self.out_refund_invoice_id.number,                        
                     "color": "#36a64f",
-                    "fallback": _('View invoice %s %s/web?#id=%s&view_type=form&model=account.invoice') % (
+                    "fallback": _('View invoice %s %s') % (
                         self.out_refund_invoice_id.number,
-                        web_base_url,
-                        self.out_refund_invoice_id.id
+                        url_item
                     ),
                     "actions": [
                         {
                             "type": "button",
                             "text": _('View invoice %s') % self.out_refund_invoice_id.number,
-                            "url": "%s/web?#id=%s&view_type=form&model=account.invoice" % (
-                                web_base_url,
-                                self.out_refund_invoice_id.id
-                            )
+                            "url": url_item
                         }
                     ],
                     "fields": [                    
@@ -55,6 +56,8 @@ class StockPicking(models.Model):
                 'attachments': attachments,
                 'model': 'account.invoice',
                 'res_id': self.out_refund_invoice_id.id,
-                'channel': self.env['ir.config_parameter'].sudo().get_param('slack_log_contabilidad_channel'),                                                         
+                'channel': self.env['ir.config_parameter'].sudo().get_param(
+                    'slack_log_contabilidad_channel'
+                ),
             }                        
             self.env['slack.message'].sudo().create(vals)

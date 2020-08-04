@@ -12,4 +12,4 @@ class WasteRemoveProduct(models.Model):
     )
     uom = fields.Char(        
         string='Unidad de medida'
-    )                                                    
+    )

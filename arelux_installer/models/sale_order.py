@@ -10,4 +10,4 @@ class SaleOrder(models.Model):
         comodel_name='res.partner',         
         string='Installer',
         domain="[('installer', '=', True)]"
-    )                                                                           
+    )

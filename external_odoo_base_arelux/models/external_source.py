@@ -33,4 +33,4 @@ class ExternalSource(models.Model):
         comodel_name='res.partner.contact.form',
         string='Res partner contact form',
         help='Customer (res partner contact form)'
-    )                    
+    )

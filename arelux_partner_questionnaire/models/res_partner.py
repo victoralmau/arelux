@@ -1,11 +1,11 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
 from odoo import api, models, fields
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -17,34 +17,36 @@ class ResPartner(models.Model):
     ar_qt_profession = fields.Char(
         string='Profesión',
         size=35
-    )        
-    #ar_qt_questionnaire_todocesped_show
+    )
+    # ar_qt_questionnaire_todocesped_show
     ar_qt_questionnaire_todocesped_show = fields.Boolean(
-        compute='_get_ar_qt_questionnaire_todocesped_show',
+        compute='_compute_ar_qt_questionnaire_todocesped_show',
         store=False,
     )
     
-    @api.one        
-    def _get_ar_qt_questionnaire_todocesped_show(self):
-        self.ar_qt_questionnaire_todocesped_show = False
-        if self.customer and (
-                self.ar_qt_activity_type == 'todocesped'
-                or self.ar_qt_activity_type == 'evert'
-                or self.ar_qt_activity_type == 'both'
-        ):
-            self.ar_qt_questionnaire_todocesped_show = True
+    @api.multi
+    def _compute_ar_qt_questionnaire_todocesped_show(self):
+        for item in self:
+            item.ar_qt_questionnaire_todocesped_show = False
+            if item.customer and (
+                item.ar_qt_activity_type == 'todocesped'
+                or item.ar_qt_activity_type == 'evert'
+                or item.ar_qt_activity_type == 'both'
+            ):
+                item.ar_qt_questionnaire_todocesped_show = True
     
-    #ar_qt_questionnaire_arelux_show
+    # ar_qt_questionnaire_arelux_show
     ar_qt_questionnaire_arelux_show = fields.Boolean(
-        compute='_get_ar_qt_questionnaire_arelux_show',
+        compute='_compute_ar_qt_questionnaire_arelux_show',
         store=False,
     )
     
-    @api.one        
-    def _get_ar_qt_questionnaire_arelux_show(self):
-        self.ar_qt_questionnaire_arelux_show = False
-        if self.customer and self.ar_qt_activity_type == 'arelux':
-            self.ar_qt_questionnaire_arelux_show = True        
+    @api.multi
+    def _compute_ar_qt_questionnaire_arelux_show(self):
+        for item in self:
+            item.ar_qt_questionnaire_arelux_show = False
+            if item.customer and item.ar_qt_activity_type == 'arelux':
+                item.ar_qt_questionnaire_arelux_show = True
     
     ar_qt_customer_type = fields.Selection(
         [
@@ -138,10 +140,13 @@ class ResPartner(models.Model):
         string='Tipo de actividad', 
         default='todocesped'
     )
+
+    @api.multi
     @api.onchange('ar_qt_activity_type', 'customer')
     def change_ar_qt_activity_type(self):
-        self._get_ar_qt_questionnaire_todocesped_show()
-        self._get_ar_qt_questionnaire_arelux_show()
+        for item in self:
+            item._get_ar_qt_questionnaire_todocesped_show()
+            item._get_ar_qt_questionnaire_arelux_show()
     
     is_potential_advertise_oniad = fields.Boolean(
         string="Potencial para OniAd"
@@ -173,18 +178,18 @@ class ResPartner(models.Model):
                                                         
     @api.multi        
     def _ar_qt_samples(self):
-        for partner_id in self:
-            sale_order_ids = self.env['sale.order'].search(
+        for item in self:
+            order_ids = self.env['sale.order'].search(
                     [
-                        ('state', 'in', ('sale','done')),
-                        ('partner_id', '=', partner_id.id)                    
+                        ('state', 'in', ('sale', 'done')),
+                        ('partner_id', '=', item.id)
                     ]
                 )
-                
-            for sale_order_id in sale_order_ids:
-                for order_line in sale_order_id.order_line:
-                    if order_line.product_id.id == 97:
-                        partner_id.ar_qt_samples  = sale_order_id.confirmation_date
+            if order_ids:
+                for order_id in order_ids:
+                    for order_line in order_id.order_line:
+                        if order_line.product_id.id == 97:
+                            item.ar_qt_samples = order_id.confirmation_date
                         
     @api.model
     def create(self, values):
@@ -203,8 +208,11 @@ class ResPartner(models.Model):
     def cron_action_generate_customer_type(self):        
         current_date = datetime.today()
         start_date = current_date + relativedelta(months=-12, day=1)
-        end_date = datetime(current_date.year, start_date.month, 1) + relativedelta(months=1, days=-1)
-        
+        end_date = datetime(
+            current_date.year,
+            start_date.month,
+            1
+        ) + relativedelta(months=1, days=-1)
         partner_ids = self.env['res.partner'].search(
             [
                 ('customer', '=', True),
@@ -213,7 +221,6 @@ class ResPartner(models.Model):
         )
         if partner_ids:
             partner_ids_real = partner_ids.mapped('id')
-            
             sale_order_ids = self.env['sale.order'].search(
                 [
                     ('state', 'in', ('sale','done')),
@@ -251,4 +258,4 @@ class ResPartner(models.Model):
                             ar_qt_pf_sale_customer_type_item = 'diamond'                                                                
                     # update
                     partner_id.ar_qt_pf_frequency_customer_type = ar_qt_pf_frequency_customer_type_item
-                    partner_id.ar_qt_pf_sale_customer_type = ar_qt_pf_sale_customer_type_item                                                                                      
+                    partner_id.ar_qt_pf_sale_customer_type = ar_qt_pf_sale_customer_type_item

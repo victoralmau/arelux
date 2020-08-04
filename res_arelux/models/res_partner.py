@@ -17,14 +17,14 @@ class ResPartner(models.Model):
         string='Propuesta trae a un amigo'
     )                         
                 
-    @api.one
+    @api.multi
     def write(self, vals):
         allow_write = True
         # check_dni
         if self.type == 'contact' and self.parent_id.id == 0:
             if 'vat' in vals:
                 if vals['vat']:
-                    vals['vat'] = vals['vat'].strip().replace(' ', '').upper()# force to uppercase and remove spaces
+                    vals['vat'] = vals['vat'].strip().replace(' ', '').upper()
                 
                     if self.country_id and self.country_id.code == 'ES':
                         if '-' in vals['vat']:
@@ -33,7 +33,7 @@ class ResPartner(models.Model):
                     
                     if allow_write:
                         if self.supplier:
-                            res_partner_ids = self.env['res.partner'].search(
+                            partner_ids = self.env['res.partner'].search(
                                 [
                                     ('id', 'not in', (1, str(self.id))),
                                     ('type', '=', 'contact'),
@@ -43,7 +43,7 @@ class ResPartner(models.Model):
                                  ]
                             )
                         else:
-                            res_partner_ids = self.env['res.partner'].search(
+                            partner_ids = self.env['res.partner'].search(
                                 [
                                     ('id', 'not in', (1, str(self.id))),
                                     ('type', '=', 'contact'),
@@ -53,9 +53,11 @@ class ResPartner(models.Model):
                                  ]
                             )
                         
-                        if res_partner_ids:
+                        if partner_ids:
                             allow_write = False
-                            raise Warning(_('The NIF already exists for another contact'))
+                            raise Warning(
+                                _('The NIF already exists for another contact')
+                            )
         # check_email
         if allow_write:
             if 'email' in vals:

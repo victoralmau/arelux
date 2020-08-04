@@ -17,4 +17,4 @@ class WasteRemoveDetail(models.Model):
     )
     quantity = fields.Integer(        
         string='Cantidad'
-    )                                                        
+    )

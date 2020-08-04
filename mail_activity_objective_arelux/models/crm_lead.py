@@ -1,12 +1,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+import logging
 from odoo import api, models, fields
 from odoo.exceptions import Warning
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import pytz
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
@@ -74,7 +75,7 @@ class CrmLead(models.Model):
     )
     days_from_last_message = fields.Integer(
         string="Dias desde contacto",
-        help="Nº de dias desde el ultimo contacto (Generalmente mensaje enviado como remitente el comercial)",#Fix para evitar facturas
+        help="Nº de dias desde el ultimo contacto (Generalmente mensaje enviado como remitente el comercial)",
         default=0,
         readonly=True
     )
@@ -83,22 +84,25 @@ class CrmLead(models.Model):
         readonly=True
     )
 
-    @api.depends('crm_activity_ids')    
+    @api.multi
+    @api.depends('crm_activity_ids')
     def _compute_activities_count(self):
-        for lead in self:
-            lead.activities_count = len(lead.crm_activity_ids)                    
+        for item in self:
+            item.activities_count = len(item.crm_activity_ids)
     
+    @api.multi
     @api.depends('partner_id')
     def _partner_id_total_sale_order(self):
-        for lead in self:
-            if lead.partner_id.id>0:
-                lead.partner_id_total_sale_order = lead.partner_id.total_sale_order
+        for item in self:
+            if item.partner_id:
+                item.partner_id_total_sale_order = item.partner_id.total_sale_order
                 
+    @api.multi
     @api.depends('partner_id')
     def _partner_id_account_invoice_amount_untaxed_total(self):
-        for lead in self:
-            if lead.partner_id:
-                lead.partner_id_account_invoice_amount_untaxed_total = lead.partner_id.account_invoice_amount_untaxed_total                                                                                            
+        for item in self:
+            if item.partner_id:
+                item.partner_id_account_invoice_amount_untaxed_total = item.partner_id.account_invoice_amount_untaxed_total
             
     @api.model    
     def cron_odoo_crm_lead_fields_generate(self):
@@ -211,12 +215,11 @@ class CrmLead(models.Model):
     @api.model    
     def cron_odoo_crm_lead_change_empty_next_activity_objective_id(self):
         _logger.info('cron_odoo_crm_lead_change_empty_next_activity_objective_id')
-        self.cron_odoo_crm_lead_change_empty_next_activity_objective_id_todocesped()#Todocesped
-        self.cron_odoo_crm_lead_change_empty_next_activity_objective_id_arelux()#Arelux
+        self.cron_odoo_crm_lead_change_empty_next_activity_objective_id_todocesped()
+        self.cron_odoo_crm_lead_change_empty_next_activity_objective_id_arelux()
         
     @api.model    
     def cron_odoo_crm_lead_change_empty_next_activity_objective_id_todocesped(self):
-        _logger.info('cron_odoo_crm_lead_change_empty_next_activity_objective_id_todocesped')
         # ar_qt_todocesped_pf_customer_type=False
         crm_lead_ids = self.env['crm.lead'].search(
             [
@@ -256,7 +259,6 @@ class CrmLead(models.Model):
                 
     @api.model    
     def cron_odoo_crm_lead_change_empty_next_activity_objective_id_arelux(self):
-        _logger.info('cron_odoo_crm_lead_change_empty_next_activity_objective_id_arelux')
         # ar_qt_arelux_pf_customer_type=False
         crm_lead_ids = self.env['crm.lead'].search(
             [
@@ -296,21 +298,22 @@ class CrmLead(models.Model):
     
     @api.model    
     def cron_odoo_crm_lead_change_seguimiento(self):
-        _logger.info('cron_odoo_crm_lead_change_seguimiento')
-        self.cron_odoo_crm_lead_change_seguimiento_todocesped()# Todocesped
-        self.cron_odoo_crm_lead_change_seguimiento_arelux()# Arelux
+        self.cron_odoo_crm_lead_change_seguimiento_todocesped()
+        self.cron_odoo_crm_lead_change_seguimiento_arelux()
     
     @api.model    
     def cron_odoo_crm_lead_change_seguimiento_todocesped(self):
-        _logger.info('cron_odoo_crm_lead_change_seguimiento_todocesped')        
         # search
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         current_date_month = current_date.strftime("%m")
-        
         if current_date_month in ['03', '04', '05', '06', '07', '08']:
             crm_lead_ids = self.env['crm.lead'].search(
                 [
-                    ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'tracking')),
+                    (
+                        'next_activity_objective_id.objective_type',
+                        'not in',
+                        ('reserved', 'review', 'closing', 'tracking')
+                    ),
                     ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
                     ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                     ('partner_id.total_sale_order_last_30_days', '>', 0),
@@ -323,7 +326,11 @@ class CrmLead(models.Model):
         else:        
             crm_lead_ids = self.env['crm.lead'].search(
                 [
-                    ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'tracking')),
+                    (
+                        'next_activity_objective_id.objective_type',
+                        'not in',
+                        ('reserved', 'review', 'closing', 'tracking')
+                    ),
                     ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
                     ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                     ('partner_id.total_sale_order_last_90_days', '>', 0),
@@ -334,24 +341,27 @@ class CrmLead(models.Model):
                 ]
             )
         # tracking
-        crm_activity_objective_ids_tracking = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'tracking')
             ]
         )
-        if crm_activity_objective_ids_tracking:
+        if objective_ids:
             # operations
             if crm_lead_ids:
                 for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_tracking[0].id
+                    crm_lead_id.next_activity_objective_id = objective_ids[0].id
                     
     @api.model    
     def cron_odoo_crm_lead_change_seguimiento_arelux(self):
-        _logger.info('cron_odoo_crm_lead_change_seguimiento_arelux')        
         # search
         crm_lead_ids = self.env['crm.lead'].search(
             [
-                ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'tracking')),
+                (
+                    'next_activity_objective_id.objective_type',
+                    'not in',
+                    ('reserved', 'review', 'closing', 'tracking')
+                ),
                 ('partner_id.ar_qt_activity_type', '=', 'arelux'),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.total_sale_order_last_90_days', '>', 0),
@@ -362,34 +372,35 @@ class CrmLead(models.Model):
             ]
         )
         # tracking
-        crm_activity_objective_ids_tracking = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'tracking')
             ]
         )
-        if crm_activity_objective_ids_tracking:
+        if objective_ids:
             # operations
             if crm_lead_ids:
                 for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_tracking[0].id
+                    crm_lead_id.next_activity_objective_id = objective_ids[0].id
     
     @api.model    
     def cron_odoo_crm_lead_change_dormidos(self):
-        _logger.info('cron_odoo_crm_lead_change_dormidos')
-        self.cron_odoo_crm_lead_change_dormidos_todocesped()#Todocesped
-        self.cron_odoo_crm_lead_change_dormidos_arelux()#Arelux
+        self.cron_odoo_crm_lead_change_dormidos_todocesped()
+        self.cron_odoo_crm_lead_change_dormidos_arelux()
                 
     @api.model    
     def cron_odoo_crm_lead_change_dormidos_todocesped(self):
-        _logger.info('cron_odoo_crm_lead_change_dormidos_todocesped')
         # search
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         current_date_month = current_date.strftime("%m")
-        
         if current_date_month in ['03', '04', '05', '06', '07', '08']:
             crm_lead_ids = self.env['crm.lead'].search(
                 [
-                    ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'wake')),
+                    (
+                        'next_activity_objective_id.objective_type',
+                        'not in',
+                        ('reserved', 'review', 'closing', 'wake')
+                    ),
                     ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
                     ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                     ('partner_id.total_sale_order_last_30_days', '=', 0),
@@ -403,7 +414,11 @@ class CrmLead(models.Model):
         else:        
             crm_lead_ids = self.env['crm.lead'].search(
                 [
-                    ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'wake')),
+                    (
+                        'next_activity_objective_id.objective_type',
+                        'not in',
+                        ('reserved', 'review', 'closing', 'wake')
+                    ),
                     ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
                     ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                     ('partner_id.total_sale_order_last_90_days', '=', 0),
@@ -415,24 +430,27 @@ class CrmLead(models.Model):
                 ]
             )
         # wake
-        crm_activity_objective_ids_wake = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'wake')
             ]
         )
-        if crm_activity_objective_ids_wake:
+        if objective_ids:
             # operations
             if crm_lead_ids:
                 for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_wake[0].id
+                    crm_lead_id.next_activity_objective_id = objective_ids[0].id
                     
     @api.model    
     def cron_odoo_crm_lead_change_dormidos_arelux(self):
-        _logger.info('cron_odoo_crm_lead_change_dormidos_arelux')
         # search
         crm_lead_ids = self.env['crm.lead'].search(
             [
-                ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'wake')),
+                (
+                    'next_activity_objective_id.objective_type',
+                    'not in',
+                    ('reserved', 'review', 'closing', 'wake')
+                ),
                 ('partner_id.ar_qt_activity_type', '=', 'arelux'),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.total_sale_order_last_90_days', '=', 0),
@@ -444,28 +462,26 @@ class CrmLead(models.Model):
             ]
         )
         # wake
-        crm_activity_objective_ids_wake = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'wake')
             ]
         )
-        if crm_activity_objective_ids_wake:
+        if objective_ids:
             # operations
             if crm_lead_ids:
                 for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_wake[0].id
+                    crm_lead_id.next_activity_objective_id = objective_ids[0].id
                     
     @api.model    
     def action_boton_pedir_dormido(self):        
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         current_date + relativedelta(hours=2)
-        
         response = {
             'errors': True,
-            'error': "No tienes flujos de objetivo Despertar sin siguiente actividad para poder asignarte"
+            'error': _("No tienes flujos de objetivo Despertar sin siguiente actividad para poder asignarte")
         }
-                   
-        crm_lead_ids = self.env['crm.lead'].search(
+        lead_ids = self.env['crm.lead'].search(
             [
                 ('next_activity_objective_id.objective_type', '=', 'wake'),
                 ('user_id', '=', self._uid),
@@ -476,34 +492,42 @@ class CrmLead(models.Model):
                 ('probability', '<', 100)
             ]
         )
-        if crm_lead_ids:
-            crm_lead_id = False
+        if lead_ids:
+            lead_id = False
             # criterio_1
-            crm_lead_ids_criterio_1 = self.env['crm.lead'].search(
+            lead_ids2 = self.env['crm.lead'].search(
                 [
                     ('id', 'in', crm_lead_ids.ids),
                     ('partner_id.total_sale_order_last_12_months', '>', 2)
                 ],
                 order='total_sale_order_last_12_months desc'
             )
-            if crm_lead_ids_criterio_1:
-                crm_lead_id = crm_lead_ids_criterio_1[0]
+            if lead_ids2:
+                lead_id = lead_ids2[0]
             # criterio_2
-            if not crm_lead_id:
+            if not lead_id:
                 # criterio_2 (Todocesped)
-                crm_lead_ids_criterio_2_todocesped = self.env['crm.lead'].search(
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
-                        ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
+                        (
+                            'partner_id.ar_qt_activity_type',
+                            'in',
+                            ('todocesped', 'both')
+                        ),
                         ('partner_id.total_sale_order_last_12_months', '>', 0),
-                        ('ar_qt_todocesped_pf_customer_type', 'in', ('gardener','pool','multiservice','warehouse_construction','nursery'))
+                        (
+                            'ar_qt_todocesped_pf_customer_type',
+                            'in',
+                            ('gardener', 'pool', 'multiservice', 'warehouse_construction', 'nursery')
+                        )
                     ],
                     order='total_sale_order_last_12_months desc'                
                 )
-                if crm_lead_ids_criterio_2_todocesped:
-                    crm_lead_id = crm_lead_ids_criterio_2_todocesped[0]
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
                 # criterio_2 (Arelux)
-                crm_lead_ids_criterio_2_arelux = self.env['crm.lead'].search(
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
                         ('partner_id.ar_qt_activity_type', '=', 'arelux'),
@@ -511,24 +535,32 @@ class CrmLead(models.Model):
                     ],
                     order='total_sale_order_last_12_months desc'                
                 )
-                if crm_lead_ids_criterio_2_arelux:
-                    crm_lead_id = crm_lead_ids_criterio_2_arelux[0]            
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
             # criterio_3
-            if not crm_lead_id:
+            if not lead_id:
                 # criterio_3 (Todocesped)
-                crm_lead_ids_criterio_3_todocesped = self.env['crm.lead'].search(
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
-                        ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
+                        (
+                            'partner_id.ar_qt_activity_type',
+                            'in',
+                            ('todocesped', 'both')
+                        ),
                         ('partner_id.total_sale_order_last_12_months', '>', 0),
-                        ('ar_qt_todocesped_pf_customer_type', 'in', ('construction','architect','decorator','event_planner'))
+                        (
+                            'ar_qt_todocesped_pf_customer_type',
+                            'in',
+                            ('construction', 'architect', 'decorator', 'event_planner')
+                        )
                     ], 
                     order='total_sale_order_last_12_months desc'
                 )
-                if crm_lead_ids_criterio_3_todocesped:
-                    crm_lead_id = crm_lead_ids_criterio_3_todocesped[0]
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
                 # criterio_3 (Arelux)
-                crm_lead_ids_criterio_3_arelux = self.env['crm.lead'].search(
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
                         ('partner_id.ar_qt_activity_type', '=', 'arelux'),
@@ -536,43 +568,47 @@ class CrmLead(models.Model):
                     ], 
                     order='total_sale_order_last_12_months desc'
                 )
-                if crm_lead_ids_criterio_3_arelux:
-                    crm_lead_id = crm_lead_ids_criterio_3_arelux[0]                
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
             # other
-            if not crm_lead_id:
-                crm_lead_ids_criterio_other = self.env['crm.lead'].search(
+            if not lead_id:
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids)
                     ]
                 )
-                if crm_lead_ids_criterio_other:
-                    crm_lead_id = crm_lead_ids_criterio_other[0] 
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
             # operations
-            if crm_lead_id:
-                crm_lead_id.date_action = current_date.strftime("%Y-%m-%d %H:%M:%S")
-                
-                response['errors'] = False                                   
-                # raise Warning("Asignada fecha de siguiente actividad al flujo dormido mas prioritario")
+            if lead_id:
+                lead_id.date_action = current_date.strftime("%Y-%m-%d %H:%M:%S")
+                response['errors'] = False
             else:
-                # raise Warning("No tienes flujos de objetivo 'Despertar' sin siguiente actividad para poder asignarte")
-                response['error'] = "No tienes flujos de objetivo Despertar sin siguiente actividad para poder asignarte"                 
+                response['error'] = _("No tienes flujos de objetivo Despertar sin siguiente actividad para poder asignarte")
         # return
         return response                                                                                                    
     
     @api.model    
     def cron_odoo_crm_lead_change_inactivos(self):
-        _logger.info('cron_odoo_crm_lead_change_inactivos')
-        self.cron_odoo_crm_lead_change_inactivos_todocesped()# Todocesped
-        self.cron_odoo_crm_lead_change_inactivos_arelux()# Arelux
+        self.cron_odoo_crm_lead_change_inactivos_todocesped()
+        self.cron_odoo_crm_lead_change_inactivos_arelux()
                 
     @api.model    
     def cron_odoo_crm_lead_change_inactivos_todocesped(self):
         _logger.info('cron_odoo_crm_lead_change_inactivos_todocesped')
         # search
-        crm_lead_ids = self.env['crm.lead'].search(
+        lead_ids = self.env['crm.lead'].search(
             [
-                ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'activation')),
-                ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
+                (
+                    'next_activity_objective_id.objective_type',
+                    'not in',
+                    ('reserved', 'review', 'closing', 'activation')
+                ),
+                (
+                    'partner_id.ar_qt_activity_type',
+                    'in',
+                    ('todocesped', 'both')
+                ),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', False),
                 ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),                    
@@ -583,23 +619,26 @@ class CrmLead(models.Model):
             ]
         )
         # activation
-        crm_activity_objective_ids_activation = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'activation')
             ]
         )
-        if crm_activity_objective_ids_activation:
-            if crm_lead_ids:
-                for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_activation[0].id
+        if objective_ids:
+            if lead_ids:
+                for lead_id in lead_ids:
+                    lead_id.next_activity_objective_id = objective_ids[0].id
                     
     @api.model    
     def cron_odoo_crm_lead_change_inactivos_arelux(self):
-        _logger.info('cron_odoo_crm_lead_change_inactivos_arelux')
         # search
-        crm_lead_ids = self.env['crm.lead'].search(
+        lead_ids = self.env['crm.lead'].search(
             [
-                ('next_activity_objective_id.objective_type', 'not in', ('reserved', 'review', 'closing', 'activation')),
+                (
+                    'next_activity_objective_id.objective_type',
+                    'not in',
+                    ('reserved', 'review', 'closing', 'activation')
+                ),
                 ('partner_id.ar_qt_activity_type', '=', 'arelux'),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.ar_qt_arelux_pf_customer_type', '!=', False),
@@ -611,27 +650,25 @@ class CrmLead(models.Model):
             ]
         )
         # activation
-        crm_activity_objective_ids_activation = self.env['crm.activity.objective'].search(
+        objective_ids = self.env['crm.activity.objective'].search(
             [
                 ('objective_type', '=', 'activation')
             ]
         )
-        if crm_activity_objective_ids_activation:
-            if crm_lead_ids:
-                for crm_lead_id in crm_lead_ids:
-                    crm_lead_id.next_activity_objective_id = crm_activity_objective_ids_activation[0].id
+        if objective_ids:
+            if lead_ids:
+                for lead_id in lead_ids:
+                    lead_id.next_activity_objective_id = objective_ids[0].id
     
     @api.model                        
     def action_boton_pedir_activo(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         current_date + relativedelta(hours=2)
-        
         response = {
             'errors': True,
-            'error': "No tienes flujos de objetivo Activar sin siguiente actividad para poder asignarte"
+            'error': _("No tienes flujos de objetivo Activar sin siguiente actividad para poder asignarte")
         }
-        
-        crm_lead_ids = self.env['crm.lead'].search(
+        lead_ids = self.env['crm.lead'].search(
             [
                 ('next_activity_objective_id.objective_type', '=', 'activation'),
                 ('user_id', '=', self._uid),
@@ -642,10 +679,10 @@ class CrmLead(models.Model):
                 ('probability', '<', 100)
             ]
         )
-        if crm_lead_ids:
-            crm_lead_id = False
+        if lead_ids:
+            lead_id = False
             # criterio_1 (Todocesped)
-            crm_lead_ids_criterio_1_todocesped = self.env['crm.lead'].search(
+            lead_ids2 = self.env['crm.lead'].search(
                 [
                     ('id', 'in', crm_lead_ids.ids),
                     ('partner_id.ar_qt_activity_type', 'in', ('todocesped', 'both')),
@@ -654,10 +691,10 @@ class CrmLead(models.Model):
                 ],
                 order='total_sale_order_last_12_months desc'
             )
-            if crm_lead_ids_criterio_1_todocesped:
-                crm_lead_id = crm_lead_ids_criterio_1_todocesped[0]                                                
+            if lead_ids2:
+                lead_id = lead_ids2[0]
             # criterio_1 (Arelux)
-            crm_lead_ids_criterio_1_arelux = self.env['crm.lead'].search(
+            lead_ids2 = self.env['crm.lead'].search(
                 [
                     ('id', 'in', crm_lead_ids.ids),
                     ('partner_id.ar_qt_activity_type', '=', 'arelux'),
@@ -666,11 +703,11 @@ class CrmLead(models.Model):
                 ],
                 order='total_sale_order_last_12_months desc'
             )
-            if crm_lead_ids_criterio_1_arelux:
-                crm_lead_id = crm_lead_ids_criterio_1_arelux[0]
+            if lead_ids2:
+                lead_id = lead_ids2[0]
             # criterio_2 (Todocesped + Arelux)
-            if not crm_lead_id:
-                crm_lead_ids_criterio_2 = self.env['crm.lead'].search(
+            if not lead_id:
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
                         ('partner_id.total_sale_order', '>', 0),
@@ -678,35 +715,33 @@ class CrmLead(models.Model):
                     ],
                     order='create_date asc'
                 )
-                if len(crm_lead_ids_criterio_2)>0:
-                    crm_lead_id = crm_lead_ids_criterio_2[0]
+                if len(lead_ids2)>0:
+                    lead_id = lead_ids2[0]
             #criterio_3 (Todocesped + Arelux)
-            if crm_lead_id==False:            
-                crm_lead_ids_criterio_3 = self.env['crm.lead'].search(
+            if not lead_id:
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids),
                         ('account_invoice_amount_untaxed_total', '>', 0)
                     ],
                     order='create_date asc'
                 )
-                if crm_lead_ids_criterio_3:
-                    crm_lead_id = crm_lead_ids_criterio_3[0]
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
             # other
-            if not crm_lead_id:
-                crm_lead_ids_criterio_other = self.env['crm.lead'].search(
+            if not lead_id:
+                lead_ids2 = self.env['crm.lead'].search(
                     [
                         ('id', 'in', crm_lead_ids.ids)
                     ]
                 )
-                if crm_lead_ids_criterio_other:
-                    crm_lead_id = crm_lead_ids_criterio_other[0] 
+                if lead_ids2:
+                    lead_id = lead_ids2[0]
             # operations
-            if crm_lead_id:
-                crm_lead_id.date_action = current_date.strftime("%Y-%m-%d %H:%M:%S")
-                
+            if lead_id:
+                lead_id.date_action = current_date.strftime("%Y-%m-%d %H:%M:%S")
                 response['errors'] = False
             else:
-                # raise Warning("No tienes flujos de objetivo 'Activar' sin siguiente actividad para poder asignarte")
-                response['error'] = "No tienes flujos de objetivo Activar sin siguiente actividad para poder asignarte"                 
+                response['error'] = _("No tienes flujos de objetivo Activar sin siguiente actividad para poder asignarte")
         # return
         return response

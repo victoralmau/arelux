@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="wizard_waste_remove" model="ir.ui.view">
         <field name="model">wizard.waste.remove</field>
         <field name="arch" type="xml">
@@ -16,6 +17,7 @@
             </form>
         </field>
     </record>
+
     <record id="action_wizard_waste_remove" model="ir.actions.act_window">
         <field name="name">Retirada de residuos</field>
         <field name="res_model">wizard.waste.remove</field>

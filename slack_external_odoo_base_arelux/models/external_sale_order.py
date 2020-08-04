@@ -6,27 +6,26 @@ from odoo import models, api, _
 class ExternalSaleOrder(models.Model):
     _inherit = 'external.sale.order'
         
-    @api.one    
+    @api.multi
     def action_sale_order_done_error_partner_id_without_vat(self):
+        self.ensure_one()
         web_base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url_item = "%s/web?#id=%s&view_type=form&model=external.sale.order" % (
+            web_base_url,
+            self.id
+        )
         # attachments
         attachments = [
             {                    
                 "title": _('Error creating external.sale.order'),
                 "text": _('The order cannot be confirmed because the client does NOT have a CIF'),
                 "color": "#ff0000",
-                "fallback": _('View order %s/web?#id=%s&view_type=form&model=external.sale.order') % (
-                    web_base_url,
-                    self.id
-                ),
+                "fallback": _('View order %s') % url_item,
                 "actions": [
                     {
                         "type": "button",
                         "text": _('View order'),
-                        "url": "%s/web?#id=%s&view_type=form&model=external.sale.order" & (
-                            web_base_url,
-                            self.id
-                        )
+                        "url": url_item
                     }
                 ],
                 "fields": [
@@ -48,31 +47,32 @@ class ExternalSaleOrder(models.Model):
             'model': self._inherit,
             'res_id': self.id,
             'as_user': True,
-            'channel': str(self.env['ir.config_parameter'].sudo().get_param('slack_arelux_log_channel'))                                                         
+            'channel': self.env['ir.config_parameter'].sudo().get_param(
+                'slack_arelux_log_channel'
+            )
         }                        
         self.env['slack.message'].sudo().create(vals)
         
-    @api.one    
+    @api.multi
     def action_sale_order_done_error_external_shipping_address_id_without_country_id(self):
+        self.ensure_one()
         web_base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url_item = "%s/web?#id=%s&view_type=form&model=external.sale.order" % (
+            web_base_url,
+            self.id
+        )
         # attachments
         attachments = [
             {                    
                 "title": _('Error creating external.sale.order'),
                 "text": _('The order cannot be confirmed because the customers shipping address has NO mapped COUNTRY'),
                 "color": "#ff0000",                                             
-                "fallback": _('View order %s/web?#id=%s&view_type=form&model=external.sale.order') % (
-                    web_base_url,
-                    self.id
-                ),
+                "fallback": _('View order %s') % url_item,
                 "actions": [
                     {
                         "type": "button",
                         "text": _('View order'),
-                        "url": "%s/web?#id=%s&view_type=form&model=external.sale.order" & (
-                            web_base_url,
-                            self.id
-                        )
+                        "url": url_item
                     }
                 ],
                 "fields": [
@@ -94,31 +94,32 @@ class ExternalSaleOrder(models.Model):
             'model': self._inherit,
             'res_id': self.id,
             'as_user': True,
-            'channel': str(self.env['ir.config_parameter'].sudo().get_param('slack_arelux_log_channel'))                                                         
+            'channel': self.env['ir.config_parameter'].sudo().get_param(
+                'slack_arelux_log_channel'
+            )
         }                        
         self.env['slack.message'].sudo().create(vals)
         
-    @api.one    
+    @api.multi
     def action_sale_order_done_error_external_shipping_address_id_without_country_state_id(self):
+        self.ensure_one()
         web_base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url_item = "%s/web?#id=%s&view_type=form&model=external.sale.order" % (
+            web_base_url,
+            self.id
+        )
         # attachments
         attachments = [
             {                    
                 "title": _('Error creating external.sale.order'),
                 "text": _('The order cannot be confirmed because the customers shipping address DOES NOT have a mapped STATE'),
                 "color": "#ff0000",                                             
-                "fallback": _('View order %s/web?#id=%s&view_type=form&model=external.sale.order') % (
-                    web_base_url,
-                    self.id
-                ),
+                "fallback": _('View order %s') % url_item,
                 "actions": [
                     {
                         "type": "button",
                         "text": _('View order'),
-                        "url": "%s/web?#id=%s&view_type=form&model=external.sale.order" & (
-                            web_base_url,
-                            self.id
-                        )
+                        "url": url_item
                     }
                 ],
                 "fields": [
@@ -140,6 +141,8 @@ class ExternalSaleOrder(models.Model):
             'model': self._inherit,
             'res_id': self.id,
             'as_user': True,
-            'channel': str(self.env['ir.config_parameter'].sudo().get_param('slack_arelux_log_channel'))                                                         
+            'channel': self.env['ir.config_parameter'].sudo().get_param(
+                'slack_arelux_log_channel'
+            )
         }                        
-        self.env['slack.message'].sudo().create(slack_message_vals)
+        self.env['slack.message'].sudo().create(vals)

@@ -10,16 +10,16 @@ class MailThread(models.AbstractModel):
     def _message_auto_subscribe_notify(self, partner_ids):
         not_notify = False
         
-        for record in self:
-            if record._name == 'sale.order':
-                if record.opportunity_id and not record.opportunity_id.user_id.id:# Fix leads 3 emails (lead + 2 sale.order)
+        for item in self:
+            if item._name == 'sale.order':
+                if item.opportunity_id and not item.opportunity_id.user_id.id:
                     not_notify = True
-            elif record._name == 'account.invoice':
+            elif item._name == 'account.invoice':
                 not_notify = True
                                                                                                                  
-            if record._name == 'crm.lead' and record.ar_qt_activity_type == 'arelux':
+            if item._name == 'crm.lead' and item.ar_qt_activity_type == 'arelux':
                 not_notify = True
-            elif record._name == 'sale.order' and record.ar_qt_activity_type == 'arelux':
+            elif item._name == 'sale.order' and item.ar_qt_activity_type == 'arelux':
                 not_notify = True
                                                                 
             if not not_notify:

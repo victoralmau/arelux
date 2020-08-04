@@ -1,24 +1,24 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import logging
 from odoo import models, api
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class SlackChannelDailyReport(models.Model):
     _name = 'slack.channel.daily.report'
     _description = 'Slack Channel Daily Report'
     
     @api.model
-    def convert_amount_to_monetary_field(self, amount_untaxed):
+    def convert_amount_to_monetary_field(self, amount_monetary):
         options = {
             'display_currency': self.env.user.company_id.currency_id
         }        
-        amount_untaxed_monetary = self.env['ir.qweb.field.monetary'].value_to_html(amount_untaxed, options)        
-        amount_untaxed_monetary = amount_untaxed_monetary.replace('<span class="oe_currency_value">', '')
-        amount_untaxed_monetary = amount_untaxed_monetary.replace('</span>', '')
-        return amount_untaxed_monetary
+        amount_monetary = self.env['ir.qweb.field.monetary'].value_to_html(amount_monetary, options)
+        amount_monetary = amount_monetary.replace('<span class="oe_currency_value">', '')
+        amount_monetary = amount_monetary.replace('</span>', '')
+        return amount_monetary
 
     @api.model
     def bi_pedidos_confirmados_dia(self, date_start, date_end, date_previous_start, date_previous_end):
@@ -31,8 +31,18 @@ class SlackChannelDailyReport(models.Model):
             data[ar_qt_activity_type] = {}
             for ar_qt_customer_type in ar_qt_customer_types:
                 data_item = {
-                    'data': self.sale_order_filter_amount_untaxed(ar_qt_activity_type, ar_qt_customer_type, date_start, date_end),
-                    'data_previous': self.sale_order_filter_amount_untaxed(ar_qt_activity_type, ar_qt_customer_type, date_previous_start, date_previous_end),
+                    'data': self.sale_order_filter_amount_untaxed(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_start,
+                        date_end
+                    ),
+                    'data_previous': self.sale_order_filter_amount_untaxed(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_previous_start,
+                        date_previous_end
+                    ),
                     'text': '',
                     'increment': 0,
                     'color': ''
@@ -48,9 +58,9 @@ class SlackChannelDailyReport(models.Model):
                         # possitive-neggative
                         if data_item['increment'] > 0:
                             data_item['text'] += '+'
-                            data_item['color'] = '#36a64f'# green
+                            data_item['color'] = '#36a64f'
                         else:
-                            data_item['color'] = '#ff0000'# red
+                            data_item['color'] = '#ff0000'
                         #add and close
                         data_item['text'] = '%s (%s%s)' % (
                             data_item['text'],
@@ -92,8 +102,18 @@ class SlackChannelDailyReport(models.Model):
             data[ar_qt_activity_type] = {}
             for ar_qt_customer_type in ar_qt_customer_types:
                 data_item = {
-                    'data': self.sale_order_filter_count(ar_qt_activity_type, ar_qt_customer_type, date_start, date_end),
-                    'data_previous': self.sale_order_filter_count(ar_qt_activity_type, ar_qt_customer_type, date_previous_start, date_previous_end),
+                    'data': self.sale_order_filter_count(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_start,
+                        date_end
+                    ),
+                    'data_previous': self.sale_order_filter_count(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_previous_start,
+                        date_previous_end
+                    ),
                     'text': '',
                     'increment': 0,
                     'color': ''
@@ -102,7 +122,7 @@ class SlackChannelDailyReport(models.Model):
                 data_item['text'] = str(data_item['data'])
                 # increment
                 if data_item['data'] > 0 or data_item['data_previous'] > 0:
-                    data_item['color'] = '#fbff00'# define color (yellow)
+                    data_item['color'] = '#fbff00'
                     # increment
                     data_item['increment'] = data_item['data']-data_item['data_previous']
                     # increment_percent
@@ -118,10 +138,10 @@ class SlackChannelDailyReport(models.Model):
                         # possitive-neggative
                         if data_item['increment'] > 0:
                             data_item['text'] += '+'
-                            data_item['color'] = '#36a64f'# green
+                            data_item['color'] = '#36a64f'
                         else:
                             data_item['text'] += '-'
-                            data_item['color'] = '#ff0000'# red
+                            data_item['color'] = '#ff0000'
                         # add and close
                         data_item['text'] = '%s (%s%s)' % (
                             data_item['text'],
@@ -158,14 +178,28 @@ class SlackChannelDailyReport(models.Model):
                 'items': []
             }
             # user_ids_item
-            user_ids_item = self.sale_order_filter_get_user_ids(ar_qt_activity_type, date_previous_start, date_end)
+            user_ids_item = self.sale_order_filter_get_user_ids(
+                ar_qt_activity_type,
+                date_previous_start,
+                date_end
+            )
             if user_ids_item:
                 for user_id_item in user_ids_item:
                     data_item2 = {
                         'user_name': user_id_item['name'],
                         'user_id': user_id_item['id'],
-                        'data': self.sale_order_filter_get_user_id(ar_qt_activity_type, user_id_item['id'], date_start, date_end),
-                        'data_previous': self.sale_order_filter_get_user_id(ar_qt_activity_type, user_id_item['id'], date_previous_start, date_previous_end),
+                        'data': self.sale_order_filter_get_user_id(
+                            ar_qt_activity_type,
+                            user_id_item['id'],
+                            date_start,
+                            date_end
+                        ),
+                        'data_previous': self.sale_order_filter_get_user_id(
+                            ar_qt_activity_type,
+                            user_id_item['id'],
+                            date_previous_start,
+                            date_previous_end
+                        ),
                         'text': '',
                         'increment': 0,
                         'color': ''                            
@@ -174,7 +208,7 @@ class SlackChannelDailyReport(models.Model):
                     data_item2['text'] = str(data_item2['data'])
                     # increment
                     if data_item2['data'] > 0 or data_item2['data_previous'] > 0:
-                        data_item2['color'] = '#fbff00'# define color (yellow)
+                        data_item2['color'] = '#fbff00'
                         # increment
                         data_item2['increment'] = data_item2['data']-data_item2['data_previous']
                         # increment_percent
@@ -190,10 +224,10 @@ class SlackChannelDailyReport(models.Model):
                             # possitive-neggative
                             if data_item2['increment'] > 0:
                                 data_item2['text'] += '+'
-                                data_item2['color'] = '#36a64f'# green
+                                data_item2['color'] = '#36a64f'
                             else:
                                 data_item['text'] += '-'
-                                data_item2['color'] = '#ff0000'# red
+                                data_item2['color'] = '#ff0000'
                             # add and close
                             data_item2['text'] = '%s (%s%s)' % (
                                 data_item2['text'],
@@ -255,8 +289,18 @@ class SlackChannelDailyReport(models.Model):
         data = {}
         for ar_qt_activity_type in ar_qt_activity_types:
             data_item = {
-                'data': self.stock_picking_filter_count(ar_qt_activity_type, 7, date_start, date_end),
-                'data_previous': self.stock_picking_filter_count(ar_qt_activity_type, 7, date_previous_start, date_previous_end),
+                'data': self.stock_picking_filter_count(
+                    ar_qt_activity_type,
+                    7,
+                    date_start,
+                    date_end
+                ),
+                'data_previous': self.stock_picking_filter_count(
+                    ar_qt_activity_type,
+                    7,
+                    date_previous_start,
+                    date_previous_end
+                ),
                 'text': '',
                 'increment': 0,
                 'color': ''
@@ -265,7 +309,7 @@ class SlackChannelDailyReport(models.Model):
             data_item['text'] = str(data_item['data'])
             # increment
             if data_item['data'] > 0 or data_item['data_previous'] > 0:
-                data_item['color'] = '#fbff00'# define color (yellow)
+                data_item['color'] = '#fbff00'
                 # increment
                 data_item['increment'] = data_item['data']-data_item['data_previous']
                 # increment_percent
@@ -281,10 +325,10 @@ class SlackChannelDailyReport(models.Model):
                     # possitive-neggative
                     if data_item['increment'] > 0:
                         data_item['text'] += '+'
-                        data_item['color'] = '#36a64f'# green
+                        data_item['color'] = '#36a64f'
                     else:
                         data_item['text'] += '-'
-                        data_item['color'] = '#ff0000'# red
+                        data_item['color'] = '#ff0000'
                     # add and close
                     data_item['text'] = '%s (%s%s)' % (
                         data_item['text'],
@@ -318,8 +362,18 @@ class SlackChannelDailyReport(models.Model):
             data[ar_qt_activity_type] = {}
             for ar_qt_customer_type in ar_qt_customer_types:
                 data_item = {
-                    'data': self.res_partner_filter_count(ar_qt_activity_type, ar_qt_customer_type, date_start, date_end),
-                    'data_previous': self.res_partner_filter_count(ar_qt_activity_type, ar_qt_customer_type, date_previous_start, date_previous_end),
+                    'data': self.res_partner_filter_count(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_start,
+                        date_end
+                    ),
+                    'data_previous': self.res_partner_filter_count(
+                        ar_qt_activity_type,
+                        ar_qt_customer_type,
+                        date_previous_start,
+                        date_previous_end
+                    ),
                     'text': '',
                     'increment': 0,
                     'color': ''
@@ -328,7 +382,7 @@ class SlackChannelDailyReport(models.Model):
                 data_item['text'] = str(data_item['data'])
                 # increment
                 if data_item['data'] > 0 or data_item['data_previous'] > 0:
-                    data_item['color'] = '#fbff00'# define color (yellow)
+                    data_item['color'] = '#fbff00'
                     # increment
                     data_item['increment'] = data_item['data']-data_item['data_previous']
                     # increment_percent
@@ -344,10 +398,10 @@ class SlackChannelDailyReport(models.Model):
                         # possitive-neggative
                         if data_item['increment'] > 0:
                             data_item['text'] += '+'
-                            data_item['color'] = '#36a64f'# green
+                            data_item['color'] = '#36a64f'
                         else:
                             data_item['text'] += '-'
-                            data_item['color'] = '#ff0000'# red
+                            data_item['color'] = '#ff0000'
                         # add and close
                         data_item['text'] = '%s (%s%s)' % (
                             data_item['text'],
@@ -386,7 +440,12 @@ class SlackChannelDailyReport(models.Model):
             date_before_yesterday = date_yesterday + relativedelta(days=-1)            
             # all info
             # bi_pedidos_confirmados_dia
-            bi_pedidos_confirmados_dia = self.bi_pedidos_confirmados_dia(date_yesterday, date_yesterday, date_before_yesterday, date_before_yesterday)                                
+            bi_pedidos_confirmados_dia = self.bi_pedidos_confirmados_dia(
+                date_yesterday,
+                date_yesterday,
+                date_before_yesterday,
+                date_before_yesterday
+            )
             # bi_pedidos_confirmados_dia > attachments
             for ar_qt_activity_type in ar_qt_activity_types:
                 if ar_qt_activity_type in bi_pedidos_confirmados_dia:
@@ -402,7 +461,12 @@ class SlackChannelDailyReport(models.Model):
                             }
                             attachments.append(attachment_item)
             # total_pedidos_dia
-            total_pedidos_dia = self.total_pedidos_dia(date_yesterday, date_yesterday, date_before_yesterday, date_before_yesterday)
+            total_pedidos_dia = self.total_pedidos_dia(
+                date_yesterday,
+                date_yesterday,
+                date_before_yesterday,
+                date_before_yesterday
+            )
             # total_pedidos_dia > attachments
             for ar_qt_activity_type in ar_qt_activity_types:
                 if ar_qt_activity_type in total_pedidos_dia:
@@ -418,7 +482,12 @@ class SlackChannelDailyReport(models.Model):
                             }
                             attachments.append(attachment_item)
             # total_pedidos_dia_por_comercial
-            total_pedidos_dia_por_comercial = self.total_pedidos_dia_por_comercial(date_yesterday, date_yesterday, date_before_yesterday, date_before_yesterday)
+            total_pedidos_dia_por_comercial = self.total_pedidos_dia_por_comercial(
+                date_yesterday,
+                date_yesterday,
+                date_before_yesterday,
+                date_before_yesterday
+            )
             # total_pedidos_dia_por_comercial > attachments
             for ar_qt_activity_type in ar_qt_activity_types:
                 if ar_qt_activity_type in total_pedidos_dia:
@@ -435,7 +504,12 @@ class SlackChannelDailyReport(models.Model):
                             }
                             attachments.append(attachment_item)
             # total_muestras_enviadas > attachments
-            total_muestras_enviadas = self.total_muestras_enviadas(date_yesterday, date_yesterday, date_before_yesterday, date_before_yesterday)    
+            total_muestras_enviadas = self.total_muestras_enviadas(
+                date_yesterday,
+                date_yesterday,
+                date_before_yesterday,
+                date_before_yesterday
+            )
             for ar_qt_activity_type in ar_qt_activity_types:
                 if ar_qt_activity_type in total_muestras_enviadas:
                     attachment_item = {
@@ -447,7 +521,12 @@ class SlackChannelDailyReport(models.Model):
                     }
                     attachments.append(attachment_item)
             # total_clientes_nuevos
-            total_clientes_nuevos = self.total_clientes_nuevos(date_yesterday, date_yesterday, date_before_yesterday, date_before_yesterday)
+            total_clientes_nuevos = self.total_clientes_nuevos(
+                date_yesterday,
+                date_yesterday,
+                date_before_yesterday,
+                date_before_yesterday
+            )
             for ar_qt_activity_type in ar_qt_activity_types:
                 if ar_qt_activity_type in total_clientes_nuevos:
                     for ar_qt_customer_type in ar_qt_customer_types:
@@ -462,13 +541,18 @@ class SlackChannelDailyReport(models.Model):
                             }
                             attachments.append(attachment_item)
             # msg
-            msg = '*Reporte diario* ['+str(date_yesterday.strftime("%d/%m/%Y"))+' vs '+str(date_before_yesterday.strftime("%d/%m/%Y"))+']'
+            msg = '*Reporte diario* [%s vs %s]' % (
+                date_yesterday.strftime("%d/%m/%Y"),
+                date_before_yesterday.strftime("%d/%m/%Y")
+            )
             # slack_message_vals
             vals = {
                 'attachments': attachments,
                 'model': 'slack.channel.daily.report',
                 'res_id': 0,
                 'msg': str(msg),
-                'channel': self.env['ir.config_parameter'].sudo().get_param('slack_arelux_report_channel'),                                                         
+                'channel': self.env['ir.config_parameter'].sudo().get_param(
+                    'slack_arelux_report_channel'
+                ),
             }                        
             self.env['slack.message'].sudo().create(vals)

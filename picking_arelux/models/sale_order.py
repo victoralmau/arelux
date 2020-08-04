@@ -61,6 +61,10 @@ class SaleOrder(models.Model):
                                     if stock_picking_type_ids:
                                         picking_id.picking_type_id = stock_picking_type_ids[0].id
                                         picking_id.name = self.env['ir.sequence'].next_by_code(
-                                            self.env['stock.picking.type'].search([('id', '=', picking_id.picking_type_id.id)])[0].sequence_id.code)
+                                            self.env['stock.picking.type'].search(
+                                                [
+                                                    ('id', '=', picking_id.picking_type_id.id)
+                                                ]
+                                            )[0].sequence_id.code)
         # return
         return return_data

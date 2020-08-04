@@ -10,11 +10,11 @@
     "license": "AGPL-3",
     "depends": [
         "base",
-        "account_invoice_auto_send_mail",
+        "account_invoice_auto_send_mail",  # https://github.com/OdooNodrizaTech/account
         "arelux_partner_questionnaire"
     ],
     "data": [
         "views/account_journal_view.xml",
     ],
-    "installable": True,
+    "installable": True
 }

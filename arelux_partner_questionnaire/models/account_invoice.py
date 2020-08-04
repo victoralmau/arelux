@@ -27,15 +27,17 @@ class AccountInvoice(models.Model):
     
     @api.model
     def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
-        return_prepare_refund = super(AccountInvoice, self)._prepare_refund(invoice, date_invoice, date, description, journal_id)
-        return_prepare_refund['ar_qt_activity_type'] = invoice.ar_qt_activity_type
-        return_prepare_refund['ar_qt_customer_type'] = invoice.ar_qt_customer_type
+        res = super(AccountInvoice, self)._prepare_refund(
+            invoice, date_invoice, date, description, journal_id
+        )
+        res['ar_qt_activity_type'] = invoice.ar_qt_activity_type
+        res['ar_qt_customer_type'] = invoice.ar_qt_customer_type
         return return_prepare_refund    
 
     @api.multi
     def action_invoice_open(self):
         # action
-        return_account_invoice = super(AccountInvoice, self).action_invoice_open()
+        res = super(AccountInvoice, self).action_invoice_open()
         # operations
         for item in self:
             if not item.ar_qt_customer_type:
@@ -74,4 +76,4 @@ class AccountInvoice(models.Model):
                             item.ar_qt_activity_type = account_invoice_id.ar_qt_activity_type
                             item.ar_qt_customer_type = account_invoice_id.ar_qt_customer_type
         # return
-        return return_account_invoice
+        return res

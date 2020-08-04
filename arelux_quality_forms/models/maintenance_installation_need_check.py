@@ -48,4 +48,4 @@ class MaintenanceInstallationNeedCheck(models.Model):
     )
     month_12 = fields.Boolean(        
         string='Diciembre'
-    )        
+    )

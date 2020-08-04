@@ -6,4 +6,4 @@ from . import stock_quant
 from . import stock_inventory_line
 from . import stock_picking
 from . import stock_production_lot
-from . import stock_scrap 
+from . import stock_scrap

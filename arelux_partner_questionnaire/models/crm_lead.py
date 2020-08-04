@@ -1,9 +1,9 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, fields
-from odoo.exceptions import Warning
-
 import logging
+from odoo import api, models, fields, _
+from odoo.exceptions import Warning
 _logger = logging.getLogger(__name__)
+
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
@@ -24,7 +24,7 @@ class CrmLead(models.Model):
         size=15, 
         string='Tipo de actividad'
     )
-    ar_qt_todocesped_pf_customer_type = fields.Selection(        
+    ar_qt_todocesped_pf_customer_type = fields.Selection(
         [
             ('warehouse_construction', 'Almacen de construccion'),
             ('architect', 'Arquitecto'),
@@ -79,8 +79,9 @@ class CrmLead(models.Model):
         # return
         return return_item
         
-    @api.one
-    def fix_copy_custom_field_sale_orders(self, update_user_id=True):                    
+    @api.multi
+    def fix_copy_custom_field_sale_orders(self, update_user_id=True):
+        self.ensure_one()
         sale_order_ids = self.env['sale.order'].search(
             [
                 ('opportunity_id', '=', self.id)
@@ -128,7 +129,9 @@ class CrmLead(models.Model):
                 )
                 if sale_quote_template_obj:
                     allow_create = False
-                    raise Warning("No se puede crear otro flujo para el mismo contacto, tipo de actividad y tipo de cliente si ya existe uno abierto")
+                    raise Warning(
+                        _("No se puede crear otro flujo para el mismo contacto, tipo de actividad y tipo de cliente si ya existe uno abierto")
+                    )
         # operations
         if allow_create:
             return_object = super(CrmLead, self).create(values)
@@ -169,13 +172,17 @@ class CrmLead(models.Model):
                 
                 if team_id_obj.ar_qt_activity_type and team_id_obj.ar_qt_activity_type != ar_qt_activity_type_check:
                     allow_write = False
-                    raise Warning("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de actividad")
+                    raise Warning(
+                        _("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de actividad")
+                    )
                 elif team_id_obj.ar_qt_activity_type and team_id_obj.ar_qt_customer_type and team_id_obj.ar_qt_customer_type != ar_qt_customer_type_check:
                     allow_write = False
-                    raise Warning("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de cliente")
+                    raise Warning(
+                        _("No puedes cambiar el equipo de ventas a uno que no corresponde de este tipo de cliente")
+                    )
         # allow_write
         if allow_write:
             return_object = super(CrmLead, self).write(vals)
             self.fix_copy_custom_field_sale_orders(True)                                                                                                                            
             # return
-            return return_object                                        
+            return return_object

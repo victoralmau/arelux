@@ -17,8 +17,9 @@ class SurveyUserinput(models.Model):
         string='Lead Id Evert'
     )
     
-    @api.one    
+    @api.multi
     def action_generate_lead_evert_slack(self):
+        self.ensure_one()
         return super(SurveyUserinput, self).action_generate_lead_evert_slack()
     
     @api.model
@@ -31,4 +32,4 @@ class SurveyUserinput(models.Model):
                     if order_id.installer_id:
                         self.installer_id = order_id.installer_id.id
         # return
-        return return_object                                                              
+        return return_object

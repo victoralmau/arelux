@@ -1,9 +1,9 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import logging
 from odoo import api, fields, models
 import operator
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class AreluxSaleReportLine(models.Model):
     _name = 'arelux.sale.report.line'
@@ -23,19 +23,19 @@ class AreluxSaleReportLine(models.Model):
     )                                       
     ar_qt_activity_type = fields.Selection(
         selection=[
-            ('none','Ninguno'), 
-            ('arelux','Arelux'), 
-            ('todocesped','Todocesped'),
-            ('evert','Evert')                         
+            ('none', 'Ninguno'),
+            ('arelux', 'Arelux'),
+            ('todocesped', 'Todocesped'),
+            ('evert', 'Evert')
         ],
         string='Tipo de actividad',
         default='none'
     )
     ar_qt_customer_type = fields.Selection(
         selection=[
-            ('none','Ninguno'), 
-            ('particular','Particular'), 
-            ('profesional','Profesional')                         
+            ('none', 'Ninguno'),
+            ('particular', 'Particular'),
+            ('profesional', 'Profesional')
         ],
         string='Tipo de cliente',
         default='none'
@@ -73,28 +73,29 @@ class AreluxSaleReportLine(models.Model):
     
     @api.one
     def remove_all_user_line(self):
-        arelux_sale_report_line_user_ids = self.env['arelux.sale.report.line.user'].search(
+        line_user_ids = self.env['arelux.sale.report.line.user'].search(
             [
                 ('arelux_sale_report_line_id', '=', self.id)
             ]
         )
-        if arelux_sale_report_line_user_ids:
-            for arelux_sale_report_line_user_id in arelux_sale_report_line_user_ids:
-                arelux_sale_report_line_user_id.unlink()
+        if line_user_ids:
+            for line_user_id in line_user_ids:
+                line_user_id.unlink()
                 
     @api.one
     def remove_all_sale_order_line(self):
-        arelux_sale_report_line_sale_order_ids = self.env['arelux.sale.report.line.sale.order'].search(
+        line_sale_order_ids = self.env['arelux.sale.report.line.sale.order'].search(
             [
                 ('arelux_sale_report_line_id', '=', self.id)
             ]
         )
-        if arelux_sale_report_line_sale_order_ids:
-            for arelux_sale_report_line_sale_order_id in arelux_sale_report_line_sale_order_ids:
-                arelux_sale_report_line_sale_order_id.unlink()                        
+        if line_sale_order_ids:
+            for line_sale_order_id in line_sale_order_ids:
+                line_sale_order_id.unlink()
     
-    @api.one
+    @api.multi
     def _get_line_info_real(self, custom_type):
+        self.ensure_one()
         return_values = {
             'response_type': '',
             'response_result_value': ''
@@ -636,10 +637,10 @@ class AreluxSaleReportLine(models.Model):
         
         return return_values
     
-    @api.one
-    def _get_line_info(self):        
+    @api.multi
+    def _get_line_info(self):
+        self.ensure_one()
         if self.arelux_sale_report_type_id:
-            
             if self.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                 if not self.group_by_user:
                     return_values_sale_order_done_muestras = self._get_line_info_real('sale_order_done_muestras')[0]
@@ -649,7 +650,7 @@ class AreluxSaleReportLine(models.Model):
                     ratio_muestras = 0
                     
                     if return_values_sale_order_done_muestras['count'] > 0 and return_values_sale_order_sent_count['count'] >0 :
-                        ratio_muestras = (float(return_values_sale_order_done_muestras['count'])/float(return_values_sale_order_sent_count['count']))*100  
+                        ratio_muestras = (float(return_values_sale_order_done_muestras['count'])/float(return_values_sale_order_sent_count['count']))*100
                     
                     ratio_muestras = "{0:.2f}".format(ratio_muestras)
                     
@@ -685,5 +686,5 @@ class AreluxSaleReportLine(models.Model):
                 self.response_type = return_values['response_type']
                 self.response_result_value = return_values['response_result_value']
                                                                                                        
-        #_logger.info(response)
-        #return response
+        # _logger.info(response)
+        # return response

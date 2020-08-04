@@ -1,8 +1,9 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
 
 import logging
+from odoo import api, fields, models
 _logger = logging.getLogger(__name__)
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -48,7 +49,7 @@ class ResPartner(models.Model):
     )
     days_from_last_message = fields.Integer(
         string="Dias desde contacto",
-        help="Nº de dias desde el ultimo contacto (Generalmente mensaje enviado como remitente el comercial)",#Fix para evitar facturas
+        help="Nº de dias desde el ultimo contacto (Generalmente mensaje enviado como remitente el comercial)",
         default=0,
         readonly=True
     )

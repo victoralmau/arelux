@@ -8,17 +8,26 @@ class AccountJournal(models.Model):
 
     invoice_mail_template_id_arelux = fields.Many2one(
         comodel_name='mail.template',
-        domain=[('model_id.model', '=', 'account.invoice'),('ar_qt_activity_type', '=', 'arelux')],
+        domain=[
+            ('model_id.model', '=', 'account.invoice'),
+            ('ar_qt_activity_type', '=', 'arelux')
+        ],
         string='Invoice mail template id Arelux'
     )
     invoice_mail_template_id_todocesped = fields.Many2one(
         comodel_name='mail.template',
-        domain=[('model_id.model', '=', 'account.invoice'),('ar_qt_activity_type', '=', 'todocesped')],
+        domain=[
+            ('model_id.model', '=', 'account.invoice'),
+            ('ar_qt_activity_type', '=', 'todocesped')
+        ],
         string='Invoice mail template id Todocesped'
     )
     invoice_mail_template_id_evert = fields.Many2one(
         comodel_name='mail.template',
-        domain=[('model_id.model', '=', 'account.invoice'),('ar_qt_activity_type', '=', 'evert')],
+        domain=[
+            ('model_id.model', '=', 'account.invoice'),
+            ('ar_qt_activity_type', '=', 'evert')
+        ],
         string='Invoice mail template id Evert'
     )
     invoice_mail_template_id_both = fields.Many2one(

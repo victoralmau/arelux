@@ -10,7 +10,7 @@ class CrmLead(models.Model):
     def get_survey_id(self):
         survey_id = 0
         if self.ar_qt_activity_type and self.partner_id.ar_qt_customer_type:
-            survey_survey_ids = self.env['survey.survey'].search(
+            survey_ids = self.env['survey.survey'].search(
                 [
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type),
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type),
@@ -19,7 +19,7 @@ class CrmLead(models.Model):
                     ('active', '=', True)
                 ]
             )
-            if survey_survey_ids:
-                survey_id = survey_survey_ids[0].id
+            if survey_ids:
+                survey_id = survey_ids[0].id
                     
         return survey_id

@@ -1,15 +1,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models, tools
-
 import logging
-_logger = logging.getLogger(__name__)
-
+from odoo import api, fields, models, tools
 import requests, json
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
 import boto3
 from botocore.exceptions import ClientError
+_logger = logging.getLogger(__name__)
+
 
 class ContactFormSubmission(models.Model):
     _name = 'contact.form.submission'
@@ -56,8 +54,10 @@ class ContactFormSubmission(models.Model):
     )
     ar_qt_todocesped_pr_type_surface = fields.Many2one(
         comodel_name='res.partner.type.surface',
-        domain=[('filter_company', 'in', ('all', 'todocesped')),
-                ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))],
+        domain=[
+            ('filter_company', 'in', ('all', 'todocesped')),
+            ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
+        ],
         string='TC - Tipo de superficie',
     )
     category_id = fields.Many2one(
@@ -136,7 +136,6 @@ class ContactFormSubmission(models.Model):
     sessionAdSetCF7 = fields.Char(
         string='sessionAdSetCF7'
     )
-    #final
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Partner Id'
@@ -146,8 +145,9 @@ class ContactFormSubmission(models.Model):
         string='Lead Id'
     )
 
-    @api.one
+    @api.multi
     def tracking_session_addProperties(self):
+        self.ensure_one()
         if self.lead_id:
             if self.tracking_profile_uuid and self.tracking_session_uuid:
                 headers = {
@@ -163,40 +163,42 @@ class ContactFormSubmission(models.Model):
                 response = requests.post(url, data=json.dumps(data), headers=headers)
                 return response.status_code
 
-    @api.one
+    @api.multi
     def operations_item(self):
-        # country_id
-        if self.country_id.id == 0:
-            self.country_id = 69# Spain
-        # date_deadline
-        if self.date_deadline == 0:
-            self.date_deadline = 90
-        # team_id
-        if self.user_id:
-            if self.user_id.sale_team_id:
-                self.team_id = self.user_id.sale_team_id.id# Force team_id user (correct)
-        # operations
-        self.operations_item_partner_id()
-        self.operations_item_lead_id()
-        self.operations_item_extra()
+        for item in self:
+            # country_id
+            if item.country_id.id == 0:
+                item.country_id = 69
+            # date_deadline
+            if item.date_deadline == 0:
+                item.date_deadline = 90
+            # team_id
+            if item.user_id:
+                if item.user_id.sale_team_id:
+                    item.team_id = item.user_id.sale_team_id.id
+            # operations
+            item.operations_item_partner_id()
+            item.operations_item_lead_id()
+            item.operations_item_extra()
 
-    @api.one
+    @api.multi
     def operations_item_partner_id(self):
+        self.ensure_one()
         # partner_id
         if self.partner_id.id == 0:
             # search
             if not self.phone and not self.mobile:
-                res_partner_ids = self.env['res.partner'].search(
+                partner_ids = self.env['res.partner'].search(
                     [
                         ('email', '=', str(self.email)),
                         ('active', '=', True),
                         ('supplier', '=', False)
                     ]
                 )
-                if res_partner_ids:
-                    self.partner_id = res_partner_ids[0].id
+                if partner_ids:
+                    self.partner_id = partner_ids[0].id
             elif not self.phone :
-                res_partner_ids = self.env['res.partner'].search(
+                partner_ids = self.env['res.partner'].search(
                     [
                         ('email', '=', str(self.email)),
                         ('phone', '=', str(self.phone)),
@@ -204,10 +206,10 @@ class ContactFormSubmission(models.Model):
                         ('supplier', '=', False)
                     ]
                 )
-                if res_partner_ids:
-                    self.partner_id = res_partner_ids[0].id
+                if partner_ids:
+                    self.partner_id = partner_ids[0].id
             elif not self.mobile:
-                res_partner_ids = self.env['res.partner'].search(
+                partner_ids = self.env['res.partner'].search(
                     [
                         ('email', '=', str(self.email)),
                         ('mobile', '=', str(self.mobile)),
@@ -215,8 +217,8 @@ class ContactFormSubmission(models.Model):
                         ('supplier', '=', False)
                     ]
                 )
-                if res_partner_ids:
-                    self.partner_id = res_partner_ids[0].id
+                if partner_ids:
+                    self.partner_id = partner_ids[0].id
             # create
             if self.partner_id.id == 0:
                 # vals
@@ -226,7 +228,8 @@ class ContactFormSubmission(models.Model):
                     'email': str(self.email),
                     'ar_qt_activity_type': str(self.ar_qt_activity_type),
                     'ar_qt_customer_type': str(self.ar_qt_customer_type),
-                    'ar_qt_todocesped_pf_install_artificial_grass': self.ar_qt_todocesped_pf_install_artificial_grass
+                    'ar_qt_todocesped_pf_install_artificial_grass':
+                        self.ar_qt_todocesped_pf_install_artificial_grass
                 }
                 # country_id
                 if self.country_id:
@@ -246,13 +249,15 @@ class ContactFormSubmission(models.Model):
                     vals['user_id'] = self.user_id.id
                 # ar_qt_todocesped_pr_type_surface
                 if self.ar_qt_todocesped_pr_type_surface:
-                    vals['ar_qt_todocesped_pr_type_surface'] = [(4, self.ar_qt_todocesped_pr_type_surface.id)]
+                    vals['ar_qt_todocesped_pr_type_surface'] = \
+                        [(4, self.ar_qt_todocesped_pr_type_surface.id)]
                 # category_id
                 if self.category_id:
                     vals['category_id'] = [(4, self.category_id.id)]
                 # ar_qt_todocesped_contact_form
                 if self.ar_qt_todocesped_contact_form:
-                    vals['ar_qt_todocesped_contact_form'] = [(4, self.ar_qt_todocesped_contact_form.id)]
+                    vals['ar_qt_todocesped_contact_form'] = \
+                        [(4, self.ar_qt_todocesped_contact_form.id)]
                 # tracking_profile_uuid
                 if self.tracking_profile_uuid:
                     vals['tracking_profile_uuid'] = str(self.tracking_profile_uuid)
@@ -267,22 +272,27 @@ class ContactFormSubmission(models.Model):
                     vals['tracking_session_uuid'] = str(self.tracking_session_uuid)
                 # create_real
                 if self.user_id:
-                    res_partner_obj = self.env['res.partner'].sudo(self.user_id.id).create(vals)
+                    res_partner_obj = self.env['res.partner'].sudo(
+                        self.user_id.id
+                    ).create(vals)
                 else:
-                    res_partner_obj = self.env['res.partner'].sudo(self.create_uid.id).create(vals)
+                    res_partner_obj = self.env['res.partner'].sudo(
+                        self.create_uid.id
+                    ).create(vals)
                 # update
                 self.partner_id = res_partner_obj.id
                 # tr_oniad
                 if self.partner_id:
                     self.partner_id.tracking_user_identify()
 
-    @api.one
+    @api.multi
     def operations_item_lead_id(self):
+        self.ensure_one()
         current_date = datetime.today()
         # lead_id
         if self.lead_id.id == 0 and self.partner_id:
             # search
-            crm_lead_ids = self.env['crm.lead'].search(
+            lead_ids = self.env['crm.lead'].search(
                 [
                     ('partner_id', '=', self.partner_id.id),
                     ('active', '=', True),
@@ -293,12 +303,16 @@ class ContactFormSubmission(models.Model):
                     ('probability', '<', 100)
                 ]
             )
-            if crm_lead_ids:
-                self.lead_id = crm_lead_ids[0].id
+            if lead_ids:
+                self.lead_id = lead_ids[0].id
                 # update_description
                 if self.description:
                     if self.lead_id.description:
-                        self.lead_id.description += "\n\n" + str(current_date.strftime("%Y-%m-%d %H:%I:%S")) + "\n" + str(self.description)
+                        self.lead_id.description = "%s\n\n %s \n %s" % (
+                            self.lead_id.description,
+                            current_date.strftime("%Y-%m-%d %H:%I:%S"),
+                            self.description
+                        )
                     else:
                         self.lead_id.description = str(self.description)
             # create
@@ -313,13 +327,19 @@ class ContactFormSubmission(models.Model):
                     'ar_qt_customer_type': str(self.partner_id.ar_qt_customer_type)
                 }
                 # name
-                if self.m2>0:
+                if self.m2 > 0:
                     vals['name'] = str(self.m2)+' '
                 # state_id
                 if self.state_id:
-                    vals['name'] += str(self.state_id.name) + ' '
+                    vals['name'] = "%s %s " % (
+                        vals['name'],
+                        self.state_id.name
+                    )
                 # add_name
-                vals['name'] += str(self.partner_id.name) + ' '
+                vals['name'] = "%s %s " % (
+                    vals['name'],
+                    self.partner_id.name
+                )
                 # description
                 if self.description:
                     vals['description'] = str(self.description)
@@ -376,16 +396,20 @@ class ContactFormSubmission(models.Model):
                 if self.sessionAdSetCF7:
                     vals['sessionAdSetCF7'] = str(self.sessionAdSetCF7)
                 # create_real
-                crm_lead_obj = self.env['crm.lead'].sudo(self.create_uid.id).create(vals)
+                crm_lead_obj = self.env['crm.lead'].sudo(
+                    self.create_uid.id
+                ).create(vals)
                 self.lead_id = crm_lead_obj.id
                 # operations
                 if self.lead_id:
                     # mail_activity_type_id
                     if self.mail_activity_type_id and self.mail_activity_date_deadline > 0:
                         if self.lead_id.user_id:
-                            date_deadline_new = current_date + relativedelta(days=self.mail_activity_date_deadline)
+                            date_deadline_new = current_date + relativedelta(
+                                days=self.mail_activity_date_deadline
+                            )
                             # search
-                            mail_activity_ids = self.env['mail.activity'].sudo().search(
+                            activity_ids = self.env['mail.activity'].sudo().search(
                                 [
                                     ('activity_type_id', '=', self.mail_activity_type_id.id),
                                     ('date_deadline', '=', date_deadline_new.strftime("%Y-%m-%d %H:%M:%S")),
@@ -393,7 +417,7 @@ class ContactFormSubmission(models.Model):
                                     ('res_id', '=', self.lead_id.id)
                                 ]
                             )
-                            if len(mail_activity_ids) == 0:
+                            if len(activity_ids) == 0:
                                 # search
                                 ir_model_ids = self.env['ir.model'].sudo().search(
                                     [
@@ -410,7 +434,7 @@ class ContactFormSubmission(models.Model):
                                         'res_model_id': ir_model_id.id,
                                         'res_id': self.lead_id.id
                                     }
-                                    mail_activity_obj = self.env['mail.activity'].sudo(self.create_uid.id).create(vals)
+                                    self.env['mail.activity'].sudo(self.create_uid.id).create(vals)
                 # mail_followers_check (remove=True, add=False)
                 self.mail_followers_check('crm.lead', self.lead_id.id, False, True)
                 # partner_id (fix)
@@ -419,8 +443,9 @@ class ContactFormSubmission(models.Model):
                 if self.lead_id:
                     self.lead_id.tracking_session_addProperties()
 
-    @api.one
+    @api.multi
     def mail_followers_check(self, model, res_id, check_remove=True, check_add=True):
+        self.ensure_one()
         mail_follower_extra_need_create = False
         if check_add:
             mail_follower_extra_need_create = True
@@ -441,7 +466,7 @@ class ContactFormSubmission(models.Model):
                     if is_super_admin:
                         mail_followers_id.unlink()
                     else:
-                        if mail_followers_id.partner_id.id == self.create_uid.partner_id.id:  # remove create webservice user follower
+                        if mail_followers_id.partner_id.id == self.create_uid.partner_id.id:
                             mail_followers_id.unlink()
                         elif mail_followers_id.partner_id.id == self.partner_id.id:
                             if check_add:
@@ -456,8 +481,9 @@ class ContactFormSubmission(models.Model):
             }
             self.env['mail.followers'].sudo().create(vals)
 
-    @api.one
+    @api.multi
     def operations_item_extra(self):
+        self.ensure_one()
         # operations_welcome_email_lead_id
         if self.lead_id:
             need_send_mail = True
@@ -471,7 +497,8 @@ class ContactFormSubmission(models.Model):
                     if self.utm_website_id.mail_template_id:
                         template_id = self.utm_website_id.mail_template_id.id
                 # fix profesional
-                if self.ar_qt_activity_type == 'todocesped' and self.ar_qt_customer_type == 'profesional':
+                if self.ar_qt_activity_type == 'todocesped' \
+                        and self.ar_qt_customer_type == 'profesional':
                     template_id = 135
                 # fix
                 if template_id == 0:
@@ -482,56 +509,60 @@ class ContactFormSubmission(models.Model):
                 self.mail_followers_check('crm.lead', self.lead_id.id, True, False)
         # operations sale_oders
         if self.lead_id:
-            if self.ar_qt_activity_type == 'todocesped' and self.ar_qt_customer_type == 'particular' and self.m2 > 0:
-                self.create_sale_order(2)# presupuesto_muestras
-                self.create_sale_order(3)# presupuesto_extra
+            if self.ar_qt_activity_type == 'todocesped' \
+                    and self.ar_qt_customer_type == 'particular' \
+                    and self.m2 > 0:
+                self.create_sale_order(2)
+                self.create_sale_order(3)
 
-    @api.one
+    @api.multi
     def send_mail(self, template_id):
+        self.ensure_one()
         if self.lead_id:
             # create
             if self.user_id:
-                mail_compose_message_obj = self.env['mail.compose.message'].sudo(self.user_id.id).create({})
+                message_obj = self.env['mail.compose.message'].sudo(self.user_id.id).create({})
             else:
-                mail_compose_message_obj = self.env['mail.compose.message'].sudo(self.create_uid.id).create({})
+                message_obj = self.env['mail.compose.message'].sudo(self.create_uid.id).create({})
             # onchange_template_id
-            res = mail_compose_message_obj.onchange_template_id(template_id, 'comment', 'crm.lead', self.lead_id.id)
+            res = message_obj.onchange_template_id(template_id, 'comment', 'crm.lead', self.lead_id.id)
             # update
             if 'value' in res:
-                mail_compose_message_obj.composition_mode = 'comment'
-                mail_compose_message_obj.model = 'crm.lead'
-                mail_compose_message_obj.res_id = self.lead_id.id
-                mail_compose_message_obj.template_id = template_id
-                mail_compose_message_obj.body = res['value']['body']
-                mail_compose_message_obj.subject = res['value']['subject']
-                mail_compose_message_obj.record_name = res['value']['subject']
+                message_obj.composition_mode = 'comment'
+                message_obj.model = 'crm.lead'
+                message_obj.res_id = self.lead_id.id
+                message_obj.template_id = template_id
+                message_obj.body = res['value']['body']
+                message_obj.subject = res['value']['subject']
+                message_obj.record_name = res['value']['subject']
                 # email_from
                 if 'email_from' in res['value']:
-                    mail_compose_message_obj.email_from = res['value']['email_from']
+                    message_obj.email_from = res['value']['email_from']
                 # reply_to
                 if 'reply_to' in res['value']:
-                    mail_compose_message_obj.reply_to = res['value']['reply_to']
+                    message_obj.reply_to = res['value']['reply_to']
                 # action
-                mail_compose_message_obj.send_mail_action()
-    @api.one
+                message_obj.send_mail_action()
+    @api.multi
     def create_sale_order(self, id):
-        sale_order_template_ids = self.env['sale.order.template'].search(
+        self.ensure_one()
+        order_template_ids = self.env['sale.order.template'].search(
             [
                 ('id', '=', id)
             ]
         )
-        if sale_order_template_ids:
-            sale_order_template_id = sale_order_template_ids[0]
+        if order_template_ids:
+            order_template_id = order_template_ids[0]
             # find previously
-            sale_order_ids = self.env['sale.order'].sudo().search(
+            order_ids = self.env['sale.order'].sudo().search(
                 [
                     ('ar_qt_activity_type', '=', str(self.lead_id.ar_qt_customer_type)),
                     ('ar_qt_customer_type', '=', str(self.lead_id.ar_qt_customer_type)),
                     ('opportunity_id', '=', self.lead_id.id),
-                    ('template_id', '=', sale_quote_template_id.id)
+                    ('template_id', '=', order_template_id.id)
                 ]
             )
-            if len(sale_order_ids) == 0:
+            if len(order_ids) == 0:
                 # vals
                 vals = {
                     'partner_id': self.lead_id.partner_id.id,
@@ -546,7 +577,7 @@ class ContactFormSubmission(models.Model):
                     'ar_qt_activity_type': str(self.lead_id.ar_qt_activity_type),
                     'ar_qt_customer_type': str(self.lead_id.ar_qt_customer_type),
                     'carrier_id': sale_order_template_id.delivery_carrier_id.id,
-                    'require_payment': sale_order_template_id.require_payment,
+                    'require_payment': order_template_id.require_payment,
                     'state': 'draft'
                 }
                 # fix user_id
@@ -566,51 +597,55 @@ class ContactFormSubmission(models.Model):
                 if self.lead_id.tracking_session_uuid:
                     vals['tracking_session_uuid'] = str(self.lead_id.tracking_session_uuid)
                 # sale_order_template_line_ids
-                if sale_order_template_id.sale_order_template_line_ids:
+                if order_template_id.sale_order_template_line_ids:
                     vals['order_line'] = []
-                    for sale_order_template_line_id in sale_order_template_id.sale_order_template_line_ids:
+                    for order_template_line_id in order_template_id.sale_order_template_line_ids:
                         data_sale_order_line = {
-                            'name': str(sale_order_template_line_id.name),
-                            'product_id': sale_order_template_line_id.product_id.id,
-                            'product_uom': sale_order_template_line_id.product_uom_id.id,
-                            'product_uom_qty': sale_order_template_line_id.product_uom_qty,
-                            'discount': sale_order_template_line_id.discount,
+                            'name': str(order_template_line_id.name),
+                            'product_id': order_template_line_id.product_id.id,
+                            'product_uom': order_template_line_id.product_uom_id.id,
+                            'product_uom_qty': order_template_line_id.product_uom_qty,
+                            'discount': order_template_line_id.discount,
                         }
                         # fix
-                        if sale_order_template_id.id == 3:  # Pto especial, cambiamos cosas
+                        if order_template_id.id == 3:  # Pto especial, cambiamos cosas
                             data_sale_order_line['product_uom_qty'] = self.m2
                             # product_id
-                            if sale_order_template_line_id.product_id.id in [70, 73]:  # Articulo extra o Cepillo
+                            if order_template_line_id.product_id.id in [70, 73]:  # Articulo extra o Cepillo
                                 data_sale_order_line['product_uom_qty'] = 1
-                            elif sale_order_template_line_id.product_id.id == 63:  # Banda autoadhesiva
+                            elif order_template_line_id.product_id.id == 63:  # Banda autoadhesiva
                                 data_sale_order_line['product_uom_qty'] = 1
                                 if self.m2 > 40:
                                     data_sale_order_line['product_uom_qty'] = int((self.m2 / 40))
-                            elif sale_order_template_line_id.product_id.id == 71:  # Clavos
+                            elif order_template_line_id.product_id.id == 71:  # Clavos
                                 data_sale_order_line['product_uom_qty'] = 1
                                 if self.m2 > 50:
                                     data_sale_order_line['product_uom_qty'] = int((self.m2 / 50))
                         # append
                         vals['order_line'].append((0, 0, data_sale_order_line))
                 # sale_order_template_option_ids
-                if sale_order_template_id.sale_order_template_option_ids:
+                if order_template_id.sale_order_template_option_ids:
                     vals['options'] = []
-                    for sale_order_template_option_id in sale_order_template_id.sale_order_template_option_ids:
+                    for order_template_option_id in order_template_id.sale_order_template_option_ids:
                         data_sale_order_option = {
-                            'name': str(sale_order_template_option_id.name),
-                            'product_id': sale_order_template_option_id.product_id.id,
-                            'discount': sale_order_template_option_id.discount,
-                            'price_unit': sale_order_template_option_id.price_unit,
-                            'uom_id': sale_order_template_option_id.uom_id.id,
-                            'quantity': sale_order_template_option_id.quantity,
+                            'name': str(order_template_option_id.name),
+                            'product_id': order_template_option_id.product_id.id,
+                            'discount': order_template_option_id.discount,
+                            'price_unit': order_template_option_id.price_unit,
+                            'uom_id': order_template_option_id.uom_id.id,
+                            'quantity': order_template_option_id.quantity,
                         }
                         # append
                         vals['options'].append((0, 0, data_sale_order_option))
                 # create
                 if self.lead_id.user_id:
-                    sale_order_obj = self.env['sale.order'].sudo(self.lead_id.user_id.id).create(vals)
+                    sale_order_obj = self.env['sale.order'].sudo(
+                        self.lead_id.user_id.id
+                    ).create(vals)
                 else:
-                    sale_order_obj = self.env['sale.order'].sudo(self.create_uid.id).create(vals)
+                    sale_order_obj = self.env['sale.order'].sudo(
+                        self.create_uid.id
+                    ).create(vals)
                 # mail_followers_check (remove=True, add=True)
                 self.mail_followers_check('sale.order', sale_order_obj.id, True, True)
                 # return
@@ -626,8 +661,6 @@ class ContactFormSubmission(models.Model):
 
     @api.model
     def cron_sqs_contact_form_submission(self):
-        _logger.info('cron_sqs_contact_form_submission')
-
         sqs_url = tools.config.get('sqs_contact_form_submission_url')
         AWS_ACCESS_KEY_ID = tools.config.get('aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = tools.config.get('aws_secret_key_id')
@@ -671,75 +704,86 @@ class ContactFormSubmission(models.Model):
                     for field_need_check in fields_need_check:
                         if field_need_check not in message_body:
                             result_message['statusCode'] = 500
-                            result_message['return_body'] = 'No existe el campo %s' % field_need_check
+                            result_message['return_body'] = \
+                                _('No existe el campo %s') % field_need_check
                     # operations
                     if result_message['statusCode'] == 200:
                         # params
-                        contact_form_submission_vals = {}
+                        vals = {}
                         # params_need_check_str
-                        params_need_check_str = ['name', 'email', 'description', 'odoo_lang', 'phone', 'mobile', 'odoo_ar_qt_activity_type', 'odoo_ar_qt_activity_type', 'tracking_profile_uuid', 'tracking_cookie_uuid', 'tracking_user_uuid', 'tracking_session_uuid', 'sessionAdGroupCF7', 'sessionAdSetCF7']
+                        params_need_check_str = [
+                            'name', 'email', 'description', 'odoo_lang', 'phone', 'mobile',
+                            'odoo_ar_qt_activity_type', 'odoo_ar_qt_activity_type',
+                            'tracking_profile_uuid', 'tracking_cookie_uuid', 'tracking_user_uuid',
+                            'tracking_session_uuid', 'sessionAdGroupCF7', 'sessionAdSetCF7'
+                        ]
                         for param_need_check_str in params_need_check_str:
                             if param_need_check_str in message_body:
                                 if message_body[param_need_check_str] != '':
                                     # replace+assign
                                     key_val = str(param_need_check_str.replace('odoo_', ''))
-                                    contact_form_submission_vals[key_val] = str(message_body[param_need_check_str])
+                                    vals[key_val] = str(message_body[param_need_check_str])
                         # params_need_check_int
-                        params_need_check_int = ['m2', 'odoo_country_id', 'odoo_state_id', 'odoo_user_id', 'odoo_ar_qt_todocesped_pr_type_surface', 'odoo_partner_category_id', 'odoo_ar_qt_todocesped_contact_form', 'odoo_team_id', 'odoo_medium_id', 'odoo_source_id', 'odoo_utm_website_id', 'odoo_date_deadline', 'odoo_next_activity_id', 'date_action']
+                        params_need_check_int = [
+                            'm2', 'odoo_country_id', 'odoo_state_id', 'odoo_user_id',
+                            'odoo_ar_qt_todocesped_pr_type_surface', 'odoo_partner_category_id',
+                            'odoo_ar_qt_todocesped_contact_form', 'odoo_team_id', 'odoo_medium_id',
+                            'odoo_source_id', 'odoo_utm_website_id', 'odoo_date_deadline',
+                            'odoo_next_activity_id', 'date_action'
+                        ]
                         for param_need_check_int in params_need_check_int:
                             if param_need_check_int in message_body:
                                 if message_body[param_need_check_int] > 0:
                                     # replace+assign
                                     key_val = str(param_need_check_int.replace('odoo_', ''))
-                                    contact_form_submission_vals[key_val] = int(message_body[param_need_check_int])
+                                    vals[key_val] = int(message_body[param_need_check_int])
                         # params_need_check_not_format (bool)
                         params_need_check_not_format = ['ar_qt_todocesped_pf_install_artificial_grass']
                         for param_need_check_not_format in params_need_check_not_format:
                             if param_need_check_not_format in message_body:
                                 # replace+assign
                                 key_val = str(param_need_check_not_format.replace('odoo_', ''))
-                                contact_form_submission_vals[key_val] = message_body[param_need_check_not_format]                                                                                
+                                vals[key_val] = message_body[param_need_check_not_format]
                         # replace
-                        if 'partner_category_id' in contact_form_submission_vals:
-                            contact_form_submission_vals['category_id'] = contact_form_submission_vals['partner_category_id']
-                            del contact_form_submission_vals['partner_category_id']
+                        if 'partner_category_id' in vals:
+                            vals['category_id'] = vals['partner_category_id']
+                            del vals['partner_category_id']
                         # ar_qt_todocesped_pr_type_surface (check imposible)
-                        if 'ar_qt_todocesped_pr_type_surface' in contact_form_submission_vals:
-                            res_partner_type_surface_ids = self.env['res.partner.type.surface'].search(
+                        if 'ar_qt_todocesped_pr_type_surface' in vals:
+                            partner_type_surface_ids = self.env['res.partner.type.surface'].search(
                                 [
-                                    ('id', '=', int(contact_form_submission_vals['ar_qt_todocesped_pr_type_surface']))
+                                    ('id', '=', int(vals['ar_qt_todocesped_pr_type_surface']))
                                 ]
                             )
-                            if len(res_partner_type_surface_ids) == 0:
-                                del contact_form_submission_vals['ar_qt_todocesped_pr_type_surface']
+                            if len(partner_type_surface_ids) == 0:
+                                del vals['ar_qt_todocesped_pr_type_surface']
                         # category_id (check imposible)
-                        if 'category_id' in contact_form_submission_vals:
-                            res_partner_category_ids = self.env['res.partner.category'].search(
+                        if 'category_id' in vals:
+                            partner_category_ids = self.env['res.partner.category'].search(
                                 [
-                                    ('id', '=', int(contact_form_submission_vals['category_id']))
+                                    ('id', '=', int(vals['category_id']))
                                 ]
                             )
-                            if len(res_partner_category_ids) == 0:
-                                del contact_form_submission_vals['category_id']
+                            if len(partner_category_ids) == 0:
+                                del vals['category_id']
                         # ar_qt_todocesped_contact_form (check imposible)
-                        if 'ar_qt_todocesped_contact_form' in contact_form_submission_vals:
-                            res_partner_contact_form_ids = self.env['res.partner.contact.form'].search(
+                        if 'ar_qt_todocesped_contact_form' in vals:
+                            partner_contact_form_ids = self.env['res.partner.contact.form'].search(
                                 [
-                                    ('id', '=', int(contact_form_submission_vals['ar_qt_todocesped_contact_form']))
+                                    ('id', '=', int(vals['ar_qt_todocesped_contact_form']))
                                 ]
                             )
-                            if len(res_partner_contact_form_ids) == 0:
-                                del contact_form_submission_vals['category_id']                                                            
+                            if len(partner_contact_form_ids) == 0:
+                                del vals['category_id']
                         # final_operations
-                        result_message['data'] = contact_form_submission_vals
+                        result_message['data'] = vals
                         _logger.info(result_message)
                         # create-write
                         if result_message['statusCode'] == 200:  # error, data not exists
-                            contact_form_submission_obj = self.env['contact.form.submission'].sudo(6).create(contact_form_submission_vals)
-                            _logger.info(contact_form_submission_obj)
+                            self.env['contact.form.submission'].sudo(6).create(vals)
                         # remove_message
                         if result_message['statusCode'] == 200:
-                            response_delete_message = sqs.delete_message(
+                            sqs.delete_message(
                                 QueueUrl=sqs_url,
                                 ReceiptHandle=message['ReceiptHandle']
                             )

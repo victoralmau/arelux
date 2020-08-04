@@ -13,19 +13,19 @@ class StockProductionLot(models.Model):
     @api.model
     def create(self, vals):
         return_object = super(StockProductionLot, self).create(vals)
-        return_object.product_qty_store = 0# Fix
+        return_object.product_qty_store = 0
         # return
         return return_object
     
-    @api.multi    
-    def cron_odoo_stock_production_lot_product_qty_store(self, cr=None, uid=False, context=None):
-        stock_production_lot_ids = self.env['stock.production.lot'].search(
+    @api.model
+    def cron_odoo_stock_production_lot_product_qty_store(self):
+        lot_ids = self.env['stock.production.lot'].search(
             [
                 ('id', '>', 0)
             ]
         )
-        if stock_production_lot_ids:
-            product_ids = stock_production_lot_ids.mapped('product_id')
-            if len(product_ids) > 0:
+        if lot_ids:
+            product_ids = lot_ids.mapped('product_id')
+            if product_ids:
                 for product_id in product_ids:
-                    product_id.regenerate_stock_production_lot_product_qty_store()                           
+                    product_id.regenerate_stock_production_lot_product_qty_store()

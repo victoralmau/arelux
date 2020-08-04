@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="fire_drill_form_view" model="ir.ui.view">
             <field name="name">Simulacro</field>
             <field name="model">fire.drill</field>
@@ -28,7 +29,8 @@
                     </sheet>                    
                 </form>                
             </field>
-        </record>                           
+        </record>
+
         <record id="fire_drill_tree" model="ir.ui.view">
             <field name="name">Simulacros</field>
             <field name="model">fire.drill</field>            
@@ -39,7 +41,8 @@
                     <field name="drill"/>                                        
                 </tree>
             </field>            
-        </record>                
+        </record>
+
         <record model="ir.actions.act_window" id="fire_drill_action">
             <field name="name">Simulacros</field>
             <field name="type">ir.actions.act_window</field>
@@ -47,6 +50,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="fire_drill_tree"/>
-        </record>                        
+        </record>
+
     </data>
 </odoo>

@@ -20,4 +20,4 @@ class FireDrillDecision(models.Model):
     )
     close_measurement = fields.Date(        
         string='Cierre de la medida'
-    )                                                        
+    )

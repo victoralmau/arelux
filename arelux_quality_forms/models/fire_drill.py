@@ -12,8 +12,8 @@ class FireDrill(models.Model):
     )    
     emergency_type = fields.Selection(
         selection=[
-            ('general','General'), 
-            ('partial','Parcial')                          
+            ('general', 'General'),
+            ('partial', 'Parcial')
         ],
         string='Tipo de emergencia'
     )

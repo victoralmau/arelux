@@ -15,4 +15,4 @@ class SaleOrderTemplate(models.Model):
         ],
         size=15, 
         string='Tipo de actividad'
-    )                                                                                                                                                                    
+    )

@@ -6,11 +6,11 @@ class StockQuant(models.Model):
     
     lot_ref = fields.Char( 
         string='Referencia interna',
-        compute='_get_lot_ref',
+        compute='_compute_lot_ref',
         store=False
     )
     
-    @api.one        
-    def _get_lot_ref(self):
-        for stock_quant in self:                              
-            stock_quant.lot_ref = stock_quant.lot_id.ref                                                                                                                   
+    @api.multi
+    def _compute_lot_ref(self):
+        for item in self:
+            item.lot_ref = item.lot_id.ref

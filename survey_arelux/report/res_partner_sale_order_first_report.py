@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import api, fields, models, tools
 
-import logging
-_logger = logging.getLogger(__name__)
 
 class ResPartnerSaleOrderFirstReport(models.Model):
     _name = 'res.partner.sale.order.first.report'
@@ -55,4 +53,4 @@ class ResPartnerSaleOrderFirstReport(models.Model):
                 WHERE so.claim = FALSE AND so.amount_total > 0 AND STATE IN ('sale', 'done') AND order_id IS NOT NULL
                 GROUP BY so.partner_invoice_id
                 ORDER BY confirmation_date DESC
-            )""")       
+            )""")

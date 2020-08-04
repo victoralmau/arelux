@@ -1,18 +1,18 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
-_logger = logging.getLogger(__name__)
-
 from odoo import api, models
-
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import pytz
+_logger = logging.getLogger(__name__)
+
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
-    @api.one
+    @api.multi
     def automation_proces(self, params):
+        self.ensure_one()
         _logger.info('Aplicando automatizaciones del flujo')
         _logger.info(self.id)
         # example params
@@ -58,7 +58,7 @@ class CrmLead(models.Model):
                     self.partner_id.user_id = user_id_random
         # mail_activity
         if 'mail_activity' in params:
-            if params['mail_activity'] :
+            if params['mail_activity']:
                 if self.user_id:
                     # search
                     mail_activity_ids = self.env['mail.activity'].sudo().search(
@@ -93,12 +93,14 @@ class CrmLead(models.Model):
                                 'model': 'crm.lead',
                                 'res_id': self.id,
                                 'category': 'crm_lead',
-                                'action': 'mail_activity_type_id_' + str(params['mail_activity_type_id']),
+                                'action': 'mail_activity_type_id_%s' % params['mail_activity_type_id'],
                             }
                             self.env['automation.log'].sudo().create(vals)
         # send_mail
         if 'mail_template_id' in params:
-            self.action_send_mail_with_template_id(int(params['mail_template_id']))
+            self.action_send_mail_with_template_id(
+                int(params['mail_template_id'])
+            )
             # save_log
             vals = {
                 'model': 'crm.lead',
@@ -130,13 +132,18 @@ class CrmLead(models.Model):
             # Fix user_id
             if self.user_id:
                 vals['author_id'] = self.user_id.partner_id.id
-                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(vals)
+                message_obj = self.env['mail.compose.message'].with_context().sudo(self.user_id.id).create(vals)
             else:
-                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
+                message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
 
-            res = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', 'crm.lead', self.id)
+            res = message_obj.onchange_template_id(
+                mail_template_item.id,
+                'comment',
+                'crm.lead',
+                self.id
+            )
             # mail_compose_message_obj_vals
-            mail_compose_message_obj_vals = {
+            vals = {
                 'author_id': vals['author_id'],
                 'template_id': mail_template_item.id,
                 'composition_mode': 'comment',
@@ -149,23 +156,22 @@ class CrmLead(models.Model):
                 'no_auto_thread': False,
             }
             # partner_ids
-            if 'email_from' in return_onchange_template_id['value']:
-                mail_compose_message_obj_vals['email_from'] = return_onchange_template_id['value']['email_from']
+            if 'email_from' in res['value']:
+                vals['email_from'] = res['value']['email_from']
             # partner_ids
-            if 'partner_ids' in return_onchange_template_id['value']:
-                mail_compose_message_obj_vals['partner_ids'] = return_onchange_template_id['value']['partner_ids']
+            if 'partner_ids' in res['value']:
+                vals['partner_ids'] = res['value']['partner_ids']
             # update
-            mail_compose_message_obj.update(mail_compose_message_obj_vals)
+            message_obj.update(vals)
             # send_mail_action
-            mail_compose_message_obj.send_mail_action()
+            message_obj.send_mail_action()
             # return
             return True
 
     @api.model    
     def cron_automation_todocesped_profesional_potenciales(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        tomorrow_date = current_date + relativedelta(days=+1)                
-        
+        tomorrow_date = current_date + relativedelta(days=+1)
         partners = {}
         res_partner_ids = self.env['res.partner'].search(
             [
@@ -201,13 +207,11 @@ class CrmLead(models.Model):
                 # crm_lead_6_months
                 start_date = current_date + relativedelta(months=-6)
                 end_date = current_date
-                
                 for res_partner_id_potencial in res_partner_ids_potencial:
                     partner_item = partners[res_partner_id_potencial]
-                                    
                     crm_activity_report_ids = self.env['crm.activity.report'].search(
                         [
-                            ('subtype_id', 'in', (1,2,4)),
+                            ('subtype_id', 'in', (1, 2, 4)),
                             ('partner_id', '=', partner_item.id),
                             ('lead_id', '!=', False),
                             ('date', '>=', start_date.strftime("%Y-%m-%d")),
@@ -236,14 +240,15 @@ class CrmLead(models.Model):
                                 'ar_qt_customer_type': partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                                                  
                             }
-                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(vals)
+                            crm_lead_obj = self.env['crm.lead'].sudo(
+                                partner_item.user_id.id
+                            ).create(vals)
                             crm_lead_obj._onchange_partner_id()
         
-    @api.multi    
-    def cron_automation_todocesped_profesional_potenciales_activo(self, cr=None, uid=False, context=None):
+    @api.model
+    def cron_automation_todocesped_profesional_potenciales_activo(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        tomorrow_date = current_date + relativedelta(days=+1)                                                                                                                                                                                                                          
-        
+        tomorrow_date = current_date + relativedelta(days=+1)
         partners = {}
         res_partner_ids = self.env['res.partner'].search(
             [
@@ -279,10 +284,8 @@ class CrmLead(models.Model):
                 # crm_lead_3_months
                 start_date = current_date + relativedelta(months=-3)
                 end_date = current_date
-                
                 for res_partner_id_potencial_activo in res_partner_ids_potencial_activo:
                     partner_item = partners[res_partner_id_potencial_activo]
-                    
                     crm_activity_report_ids = self.env['crm.activity.report'].search(
                         [
                             ('subtype_id', 'in', (1,2,4)),
@@ -314,23 +317,25 @@ class CrmLead(models.Model):
                                 'ar_qt_customer_type': partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                  
                             }
-                            crm_lead_obj = self.env['crm.lead'].sudo(partner_item.user_id.id).create(vals)
+                            crm_lead_obj = self.env['crm.lead'].sudo(
+                                partner_item.user_id.id
+                            ).create(vals)
                             crm_lead_obj._onchange_partner_id()
                             
-    @api.multi    
-    def cron_automation_todocesped_profesional_puntuales(self, cr=None, uid=False, context=None):
+    @api.model
+    def cron_automation_todocesped_profesional_puntuales(self):
         _logger.info('cron_automation_todocesped_profesional_puntuales')
         
-    @api.multi    
-    def cron_automation_todocesped_profesional_recurrentes(self, cr=None, uid=False, context=None):
+    @api.model
+    def cron_automation_todocesped_profesional_recurrentes(self):
         _logger.info('cron_automation_todocesped_profesional_recurrentes')
         
-    @api.multi    
-    def cron_automation_todocesped_profesional_fidelizados(self, cr=None, uid=False, context=None):
+    @api.model
+    def cron_automation_todocesped_profesional_fidelizados(self):
         _logger.info('cron_automation_todocesped_profesional_fidelizados')                
 
-    @api.multi    
-    def cron_automation_todocesped_profesional(self, cr=None, uid=False, context=None):
+    @api.model
+    def cron_automation_todocesped_profesional(self):
         #potenciales
         #self.cron_automation_todocesped_profesional_potenciales()
         #potenciales_activo

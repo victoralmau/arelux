@@ -1,9 +1,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-import logging
-_logger = logging.getLogger(__name__)
 
 from odoo import api, models, fields
-from odoo.exceptions import Warning
+
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
@@ -49,7 +47,7 @@ class AccountInvoice(models.Model):
                             
         return return_object                                    
     
-    @api.one
+    @api.multi
     def write(self, vals):
         # write
         return_object = super(AccountInvoice, self).write(vals)
@@ -58,19 +56,20 @@ class AccountInvoice(models.Model):
         # return
         return return_object
         
-    @api.one
+    @api.multi
     def check_message_follower_ids(self):
-        if self.user_id.id:
-            for message_follower_id in self.message_follower_ids:
-                if message_follower_id.partner_id.user_ids:
-                    for user_id in message_follower_id.partner_id.user_ids:
-                        if user_id.id == self.user_id.id or user_id.id == 1:
-                            message_follower_id.sudo().unlink()
+        for item in self:
+            if item.user_id.id:
+                for message_follower_id in item.message_follower_ids:
+                    if message_follower_id.partner_id.user_ids:
+                        for user_id in message_follower_id.partner_id.user_ids:
+                            if user_id.id == item.user_id.id or user_id.id == 1:
+                                message_follower_id.sudo().unlink()
             
-    @api.one    
+    @api.multi
     def action_send_account_invoice_create_message_slack(self):
         return True
         
-    @api.one    
+    @api.multi
     def action_send_account_invoice_out_refund_create_message_slack(self):
-        return True                                                                                                                                                                
+        return True

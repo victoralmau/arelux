@@ -17,4 +17,4 @@ class ResPartnerTodocespedPrValuationThing(models.Model):
 
     name = fields.Char(
         string="Nombre"
-    )                                                 
+    )

@@ -35,4 +35,4 @@ class ResPartnerStockCapacity(models.Model):
     )
     other = fields.Boolean(
         string="Otro"
-    )                                                                                   
+    )

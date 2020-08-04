@@ -1,9 +1,9 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
-_logger = logging.getLogger(__name__)
-
 from odoo import api, models, fields
 from odoo.exceptions import Warning
+_logger = logging.getLogger(__name__)
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -32,23 +32,23 @@ class SaleOrder(models.Model):
         string='Desactivar auto facturar'
     )    
     partner_id_email = fields.Char(
-        compute='_partner_id_email',
+        compute='_compute_partner_id_email',
         store=False,
         string='Email'
     )
     partner_id_phone = fields.Char(
-        compute='_partner_id_phone',
+        compute='_compute_partner_id_phone',
         store=False,
         string='Telefono'
     )
     partner_id_mobile = fields.Char(
-        compute='_partner_id_mobile',
+        compute='_compute_partner_id_mobile',
         store=False,
         string='Movil'
     )
     partner_id_state_id = fields.Many2one(
         comodel_name='res.country.state',
-        compute='_get_partner_id_state_id',
+        compute='_compute_partner_id_state_id',
         store=False,
         string='Provincia'
     )
@@ -58,17 +58,17 @@ class SaleOrder(models.Model):
         if self.partner_id:
             self.payment_mode_id = self.partner_id.customer_payment_mode_id.id or False
             # partner_shipping_id
-            res_partner_ids = self.env['res.partner'].search(
+            partner_ids = self.env['res.partner'].search(
                 [
                     ('parent_id', '=', self.partner_id.id),
                     ('active', '=', True), 
                     ('type', '=', 'delivery')
                  ]
             )
-            if len(res_partner_ids) > 1:
+            if len(partner_ids) > 1:
                 self.partner_shipping_id = 0
-            elif len(res_partner_ids) == 1:
-                self.partner_shipping_id = res_partner_ids[0].id
+            elif len(partner_ids) == 1:
+                self.partner_shipping_id = partner_ids[0].id
     
     @api.model
     def fix_copy_custom_field_opportunity_id(self):
@@ -83,17 +83,16 @@ class SaleOrder(models.Model):
     
     @api.model
     def create(self, values):            
-        return_val = super(SaleOrder, self).create(values)            
+        res = super(SaleOrder, self).create(values)
         
-        if return_val.user_id.id and return_val.partner_id.user_id.id and self.user_id.id != return_val.partner_id.user_id.id:
-            return_val.user_id = return_val.partner_id.user_id.id                        
+        if res.user_id.id and res.partner_id.user_id.id and self.user_id.id != res.partner_id.user_id.id:
+            res.user_id = return_val.partner_id.user_id.id
         
-        if return_val.user_id.id == 6:
-            return_val.user_id = 0
+        if res.user_id.id == 6:
+            res.user_id = 0
         
-        return_val.fix_copy_custom_field_opportunity_id()# Fix copy fields opportunity
-                        
-        return return_val                                
+        res.fix_copy_custom_field_opportunity_id()
+        return res
     
     @api.multi
     def write(self, vals):
@@ -102,7 +101,6 @@ class SaleOrder(models.Model):
             vals['date_order_management'] = fields.datetime.now()                            
                                         
         return_object = super(SaleOrder, self).write(vals)
-    
         if self.user_id.id:
             for message_follower_id in self.message_follower_ids:
                 if message_follower_id.partner_id.user_ids:
@@ -112,36 +110,44 @@ class SaleOrder(models.Model):
                                                             
         return return_object                    
     
-    @api.one        
-    def _get_partner_id_state_id(self):
-        for sale_order_obj in self:
-            sale_order_obj.partner_id_state_id = sale_order_obj.partner_id.state_id.id
+    @api.multi
+    @api.depends('partner_id')
+    def _compute_partner_id_state_id(self):
+        for item in self:
+            item.partner_id_state_id = item.partner_id.state_id.id
     
-    @api.one        
-    def _partner_id_email(self):
-        for sale_order_obj in self:
-            sale_order_obj.partner_id_email = sale_order_obj.partner_id.email
+    @api.multi
+    @api.depends('partner_id')
+    def _compute_partner_id_email(self):
+        for item in self:
+            item.partner_id_email = item.partner_id.email
             
-    @api.one        
-    def _partner_id_phone(self):
-        for sale_order_obj in self:
-            sale_order_obj.partner_id_phone = sale_order_obj.partner_id.phone
+    @api.multi
+    @api.depends('partner_id')
+    def _compute_partner_id_phone(self):
+        for item in self:
+            item.partner_id_phone = item.partner_id.phone
             
-    @api.one        
-    def _partner_id_mobile(self):
-        for sale_order_obj in self:
-            sale_order_obj.partner_id_mobile = sale_order_obj.partner_id.mobile                                                  
+    @api.multi
+    @api.depends('partner_id')
+    def _compute_partner_id_mobile(self):
+        for item in self:
+            item.partner_id_mobile = item.partner_id.mobile
     
+    @api.multi
     @api.onchange('user_id')
-    def change_user_id(self):                    
-        if self.user_id:
-            if self.user_id.sale_team_id:
-                self.team_id = self.user_id.sale_team_id.id
+    def change_user_id(self):
+        for item in self:
+            if item.user_id:
+                if item.user_id.sale_team_id:
+                    item.team_id = item.user_id.sale_team_id.id
                                                         
+    @api.multi
     @api.onchange('template_id')
     def change_template_id(self):
-        if self.template_id:
-            if self.template_id.delivery_carrier_id:
-                self.carrier_id = self.template_id.delivery_carrier_id
-            else:
-                self.carrier_id = False
+        for item in self:
+            if item.template_id:
+                if item.template_id.delivery_carrier_id:
+                    item.carrier_id = item.template_id.delivery_carrier_id
+                else:
+                    item.carrier_id = False

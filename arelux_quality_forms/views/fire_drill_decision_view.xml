@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="fire_drill_decision_form_view" model="ir.ui.view">
             <field name="name">Decision simulacro</field>
             <field name="model">fire.drill.decision</field>
@@ -15,7 +16,8 @@
                     </sheet>                    
                 </form>                
             </field>
-        </record>                           
+        </record>
+
         <record id="fire_drill_decision_tree" model="ir.ui.view">
             <field name="name">Decisiones simulacros</field>
             <field name="model">fire.drill.decision</field>            
@@ -26,7 +28,8 @@
                     <field name="close_measurement"/>                                        
                 </tree>
             </field>            
-        </record>                
+        </record>
+
         <record model="ir.actions.act_window" id="fire_drill_decision_action">
             <field name="name">Decisiones simulacros</field>
             <field name="type">ir.actions.act_window</field>
@@ -34,6 +37,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="fire_drill_decision_tree"/>
-        </record>                        
+        </record>
+
     </data>
 </odoo>

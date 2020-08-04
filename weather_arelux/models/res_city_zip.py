@@ -1,13 +1,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
 from odoo import api, exceptions, fields, models, tools
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import json
 import requests
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class ResCityZip(models.Model):
     _inherit = 'res.city.zip'
@@ -33,7 +33,7 @@ class ResCityZip(models.Model):
         if response.status_code != 200:
             return_response['statusCode'] = response.status_code
             if response.status_code != 204:
-                return_response['body'] =  response.json()        
+                return_response['body'] = response.json()
         else:
             return_response['statusCode'] = 200
             return_response['body'] =  response.json()
@@ -58,7 +58,7 @@ class ResCityZip(models.Model):
         if response.status_code != 200:
             return_response['statusCode'] = response.status_code
             if response.status_code != 204:
-                return_response['body'] =  response.json()        
+                return_response['body'] = response.json()
         else:
             return_response['statusCode'] = 200
             return_response['body'] = response.json()
@@ -117,7 +117,11 @@ class ResCityZip(models.Model):
         # define
         current_date = datetime.today()
         date_from = current_date + relativedelta(months=-1, day=1)
-        date_to = datetime(date_from.year, date_from.month, 1) + relativedelta(months=1, days=-1)
+        date_to = datetime(
+            date_from.year,
+            date_from.month,
+            1
+        ) + relativedelta(months=1, days=-1)
         # define strftime
         date_from = date_from.strftime("%Y-%m-%d")
         date_to = date_to.strftime("%Y-%m-%d")
@@ -157,8 +161,8 @@ class ResCityZip(models.Model):
     @api.model    
     def cron_weather_station_history_all_years(self):
         # define
-        years = [2015,2016,2017,2018,2019]
-        months = ['01','02','03','04','05','06','07','08','09','10','11','12']
+        years = [2015, 2016, 2017, 2018, 2019]
+        months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         # all
         country_codes = ['ES']
         for country_code in country_codes:
@@ -174,7 +178,10 @@ class ResCityZip(models.Model):
                     )
                     if weather_history_ids:
                         for weather_history_id in weather_history_ids:
-                            new_key = '%s-%s' % (weather_history_id.date_from, weather_history_id.date_to)
+                            new_key = '%s-%s' % (
+                                weather_history_id.date_from,
+                                weather_history_id.date_to
+                            )
                             weather_history_items.append(new_key)
                     # all_years
                     for year in years:
@@ -189,7 +196,11 @@ class ResCityZip(models.Model):
                             # api_call
                             new_key = '%s-%s' % (date_from, date_to)
                             if new_key not in weather_history_items:
-                                response = self.api_call_weather_history(weather_station_uuid, date_from, date_to)
+                                response = self.api_call_weather_history(
+                                    weather_station_uuid,
+                                    date_from,
+                                    date_to
+                                )
                                 if response['statusCode'] == 200:
                                     # save_weather_history
                                     vals = {

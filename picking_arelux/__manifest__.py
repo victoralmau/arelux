@@ -3,18 +3,19 @@
 {
     "name": "Picking Arelux",
     "version": "12.0.1.0.0",
-    "author": "Odoo Nodriza Tech (ONT)",
+    "author": "Odoo Nodriza Tech (ONT), "
+              "Odoo Community Association (OCA)",
     "website": "https://nodrizatech.com/",
     "category": "Tools",
     "license": "AGPL-3",
     "depends": [
         "base",
-        "ont_base_picking",
+        "ont_base_picking",  # https://github.com/OdooNodrizaTech/ont
         "delivery",
         "sale",
         "stock",
         "account",
-        "shipping_expedition",
+        "shipping_expedition",  # https://github.com/OdooNodrizaTech/stock
         "sale_stock"
     ],
     "data": [

@@ -35,4 +35,4 @@ class ResPartnerValuationThing(models.Model):
     )
     other = fields.Boolean(
         string="Otro"
-    ) 
+    )

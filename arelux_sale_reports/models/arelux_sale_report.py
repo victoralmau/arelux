@@ -1,12 +1,12 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
 from odoo import api, fields, models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import operator
-
-import logging
 _logger = logging.getLogger(__name__)
+
 
 class AreluxSaleReport(models.Model):
     _name = 'arelux.sale.report'
@@ -43,9 +43,9 @@ class AreluxSaleReport(models.Model):
     )
     state = fields.Selection(
         selection=[
-            ('new','Nuevo'),
-            ('generate','Generado'),
-            ('sent','Enviado')                                                                           
+            ('new', 'Nuevo'),
+            ('generate', 'Generado'),
+            ('sent', 'Enviado')
         ],
         string='Estado',
         default='new'
@@ -64,8 +64,8 @@ class AreluxSaleReport(models.Model):
     )
     order_way = fields.Selection(
         selection=[
-            ('asc','ASC'),
-            ('desc','DESC')                                                                           
+            ('asc', 'ASC'),
+            ('desc', 'DESC')
         ],
         string='Order way',
         default='asc'
@@ -110,8 +110,9 @@ class AreluxSaleReport(models.Model):
                                 
         return metrics_info_sorted            
         
-    @api.one   
-    def get_table_info(self):        
+    @api.multi
+    def get_table_info(self):
+        self.ensure_one()
         metrics_info = {}        
         table_info = {}
         for report_line_item in self.report_line:
@@ -166,7 +167,10 @@ class AreluxSaleReport(models.Model):
                         'value': 0
                     })
             # sort_metrics
-            table_info[table_info_key]['metrics'] = sorted(table_info[table_info_key]['metrics'], key=operator.itemgetter('position'))                                                            
+            table_info[table_info_key]['metrics'] = sorted(
+                table_info[table_info_key]['metrics'],
+                key=operator.itemgetter('position')
+            )
         # sort_all
         table_info_sorted = []
         for table_info_key in table_info:
@@ -179,14 +183,22 @@ class AreluxSaleReport(models.Model):
             table_info_sorted.append(table_info_item)        
         
         if self.order_way == 'asc':
-            table_info = sorted(table_info_sorted, key=operator.itemgetter(self.order_by))
+            table_info = sorted(
+                table_info_sorted,
+                key=operator.itemgetter(self.order_by)
+            )
         else:
-            table_info = sorted(table_info_sorted, key=operator.itemgetter(self.order_by), reverse=True)                                                                     
+            table_info = sorted(
+                table_info_sorted,
+                key=operator.itemgetter(self.order_by),
+                reverse=True
+            )
 
         return table_info
         
-    @api.one   
+    @api.multi
     def get_table_info_total(self):
+        self.ensure_one()
         metrics_info = {}
         for report_line_item in self.report_line:
             if report_line_item.show_in_table_format:
@@ -209,7 +221,9 @@ class AreluxSaleReport(models.Model):
                         metrics_info[report_line_item.arelux_sale_report_type_id.custom_type]['value'] += value_user
         # fix percents
         for report_line_item in self.report_line:
-            if report_line_item.show_in_table_format and report_line_item.group_by_user and report_line_item.response_type == 'percent':
+            if report_line_item.show_in_table_format \
+                    and report_line_item.group_by_user \
+                    and report_line_item.response_type == 'percent':
                 if report_line_item.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                     numerador = metrics_info['sale_order_done_muestras']['value']
                     denominador = metrics_info['sale_order_sent_count']['value']                                                                                                    
@@ -233,11 +247,18 @@ class AreluxSaleReport(models.Model):
                                 
         return metrics_info_sorted                        
     
-    @api.one
+    @api.multi
     def change_state_to_generate(self):
+        self.ensure_one()
         if self.state == 'new':
-            self.date_from_filter = datetime.strptime(self.date_from+' 00:00:00', '%Y-%m-%d %H:%M:%S') + relativedelta(hours=-2)            
-            self.date_to_filter = datetime.strptime(self.date_to+' 23:59:59', '%Y-%m-%d %H:%M:%S') + relativedelta(hours=-2)
+            self.date_from_filter = datetime.strptime(
+                '%s 00:00:00' % self.date_from,
+                '%Y-%m-%d %H:%M:%S'
+            ) + relativedelta(hours=-2)
+            self.date_to_filter = datetime.strptime(
+                '%s 23:59:59' % self.date_to,
+                '%Y-%m-%d %H:%M:%S'
+            ) + relativedelta(hours=-2)
         
             for report_line_item in self.report_line:
                 report_line_item._get_line_info()
@@ -328,24 +349,32 @@ class AreluxSaleReport(models.Model):
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
     
-    @api.one 
+    @api.multi
     def auto_send_mail_item(self):
+        self.ensure_one()
         if self.state == 'generate':
-            arelux_sale_report_mail_template_id = int(self.env['ir.config_parameter'].sudo().get_param('arelux_sale_report_mail_template_id'))
+            template_id = int(
+                self.env['ir.config_parameter'].sudo().get_param(
+                    'arelux_sale_report_mail_template_id'
+                )
+            )
             if arelux_sale_report_mail_template_id > 0:
                 mail_template_item = self.env['mail.template'].search(
                     [
-                        ('id', '=', arelux_sale_report_mail_template_id)
+                        ('id', '=', template_id)
                     ]
                 )[0]
                 vals = {
                     'record_name': self.name,                                                                                                                                                                                           
                 }
-                mail_compose_message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
-                res = mail_compose_message_obj.onchange_template_id(mail_template_item.id, 'comment', self._name, self.id)
-                                
-                mail_compose_message_obj.update({
-                    #'author_id': account_invoice_auto_send_mail_author_id,
+                message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
+                res = message_obj.onchange_template_id(
+                    mail_template_item.id,
+                    'comment',
+                    self._name,
+                    self.id
+                )
+                message_obj.update({
                     'template_id': mail_template_item.id,                    
                     'composition_mode': 'comment',                    
                     'model': self._name,
@@ -357,17 +386,18 @@ class AreluxSaleReport(models.Model):
                     'record_name': self.name,
                     'no_auto_thread': False,                     
                 })                                                   
-                mail_compose_message_obj.send_mail_action()
-                
+                message_obj.send_mail_action()
                 self.state = 'sent'        
     
-    @api.one
+    @api.multi
     def action_cancel_report(self):
-        if self.state != "sent":
-            self.state = 'new'                                
+        for item in self:
+            if item.state != "sent":
+                item.state = 'new'
             
-    @api.one
+    @api.multi
     def action_send_mail(self):
-        self.auto_send_mail_item()            
+        for item in self:
+            item.auto_send_mail_item()
     
-        return True                                       
+        return True

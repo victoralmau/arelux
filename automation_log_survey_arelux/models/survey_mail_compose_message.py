@@ -6,8 +6,9 @@ from odoo import api, models
 class SurveyMailComposeMessage(models.TransientModel):
     _inherit = 'survey.mail.compose.message'    
     
-    @api.one
+    @api.multi
     def arelux_create_survey_user_input_log(self, survey_user_input):
+        self.ensure_one()
         vals = {
             'model': 'survey.user_input',
             'res_id': survey_user_input.id,

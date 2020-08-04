@@ -84,4 +84,4 @@ class CrmLeadReport(models.Model):
                 WHERE cl.TYPE = 'opportunity'
                 GROUP BY cl.id
                 ORDER BY last_date_order_management DESC
-            )""")       
+            )""")

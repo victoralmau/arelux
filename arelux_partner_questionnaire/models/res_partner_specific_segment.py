@@ -35,4 +35,4 @@ class ResPartnerSpecificSegment(models.Model):
     )
     other = fields.Boolean(
         string="Otro"
-    )                                                                                   
+    )
