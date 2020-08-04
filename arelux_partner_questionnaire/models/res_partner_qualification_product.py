@@ -32,7 +32,7 @@ class ResPartnerQualificationProduct(models.Model):
     )
     position = fields.Integer(
         string="Posicion"
-    ) 
+    )
     other = fields.Boolean(
         string="Otro"
     )

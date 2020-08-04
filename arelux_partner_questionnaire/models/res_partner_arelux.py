@@ -4,15 +4,16 @@ from odoo import api, models, fields
 import logging
 _logger = logging.getLogger(__name__)
 
+
 class ResPartnerArelux(models.Model):
     _inherit = 'res.partner'
-    
+
     '''General'''
     ar_qt_arelux_interest_product_1 = fields.Many2one(
-        comodel_name='product.template', 
+        comodel_name='product.template',
         domain=[
             ('sale_ok', '=', True),
-            ('product_brand_id','=', 1)
+            ('product_brand_id', '=', 1)
         ],
         string='AR - Productos relacionados que le podrían encajar',
     )
@@ -20,21 +21,21 @@ class ResPartnerArelux(models.Model):
         comodel_name='product.template',
         domain=[
             ('sale_ok', '=', True),
-            ('product_brand_id','=', 1)
+            ('product_brand_id', '=', 1)
         ],
     )
     ar_qt_arelux_interest_product_3 = fields.Many2one(
         comodel_name='product.template',
         domain=[
             ('sale_ok', '=', True),
-            ('product_brand_id','=', 1)
+            ('product_brand_id', '=', 1)
         ],
     )
     ar_qt_arelux_interest_product_4 = fields.Many2one(
         comodel_name='product.template',
         domain=[
             ('sale_ok', '=', True),
-            ('product_brand_id','=', 1)
+            ('product_brand_id', '=', 1)
         ],
     )
     ar_qt_arelux_interest_product_all = fields.Boolean(

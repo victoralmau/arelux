@@ -29,8 +29,8 @@ class AccountInvoice(models.Model):
     def _prepare_refund(self,
                         invoice,
                         date_invoice=None,
-                        date=None, description
-                        =None,
+                        date=None,
+                        description=None,
                         journal_id=None
                         ):
         res = super(AccountInvoice, self)._prepare_refund(
@@ -38,7 +38,7 @@ class AccountInvoice(models.Model):
         )
         res['ar_qt_activity_type'] = invoice.ar_qt_activity_type
         res['ar_qt_customer_type'] = invoice.ar_qt_customer_type
-        return return_prepare_refund    
+        return res
 
     @api.multi
     def action_invoice_open(self):

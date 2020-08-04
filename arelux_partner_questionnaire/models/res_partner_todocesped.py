@@ -7,25 +7,37 @@ _logger = logging.getLogger(__name__)
 
 class ResPartnerTodocesped(models.Model):
     _inherit = 'res.partner'
-    
+
     '''General'''
-    ar_qt_todocesped_interest_product_1 = fields.Many2one(                
+    ar_qt_todocesped_interest_product_1 = fields.Many2one(
         comodel_name='product.template',
-        domain=[('sale_ok', '=', True),('product_brand_id','=', 5)], 
+        domain=[
+            ('sale_ok', '=', True),
+            ('product_brand_id', '=', 5)
+        ],
         string='TC - Modelos que más le interesan',
     )                                                        
     ar_qt_todocesped_interest_product_2 = fields.Many2one(
         comodel_name='product.template',
-        domain=[('sale_ok', '=', True),('product_brand_id','=', 5)], 
-    )                    
+        domain=[
+            ('sale_ok', '=', True),
+            ('product_brand_id', '=', 5)
+        ],
+    )
     ar_qt_todocesped_interest_product_3 = fields.Many2one(
         comodel_name='product.template',
-        domain=[('sale_ok', '=', True),('product_brand_id','=', 5)], 
-    )    
+        domain=[
+            ('sale_ok', '=', True),
+            ('product_brand_id', '=', 5)
+        ],
+    )
     ar_qt_todocesped_interest_product_4 = fields.Many2one(  
         comodel_name='product.template',
-        domain=[('sale_ok', '=', True),('product_brand_id','=', 5)],
-    )    
+        domain=[
+            ('sale_ok', '=', True),
+            ('product_brand_id', '=', 5)]
+        ,
+    )
     ar_qt_todocesped_interest_product_all = fields.Boolean(
         string="TC - Modelos que más le interesan - Todos"
     )

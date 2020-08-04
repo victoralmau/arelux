@@ -16,18 +16,18 @@ class ResPartnerReasonBuy(models.Model):
             ('all', 'Todas'),
             ('todocesped', 'Todocesped'),
             ('evert', 'Evert'),
-            ('arelux', 'Arelux'),        
-        ], 
-        string='Empresa', 
+            ('arelux', 'Arelux'),
+        ],
+        string='Empresa',
         default='all'
     )
     filter_ar_qt_customer_type = fields.Selection(
         [
             ('all', 'Todas'),
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
-        string='Empresa', 
+            ('profesional', 'Profesional'),
+        ],
+        string='Empresa',
         default='particular'
     )
     position = fields.Integer(
