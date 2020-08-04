@@ -113,8 +113,8 @@ class SaleOrder(models.Model):
                                 'model': 'sale.prder',
                                 'res_id': self.opportunity_id.id,
                                 'category': 'sale_order',
-                                'action': 'mail_activity_type_id_%s' 
-                                          % params['mail_activity_type_id'],
+                                'action': 'mail_activity_type_id_%s' %
+                                          params['mail_activity_type_id'],
                             }
                             self.env['automation.log'].sudo().create(vals)
         # send_mail
@@ -134,7 +134,7 @@ class SaleOrder(models.Model):
             self.write({
                 'state': 'sent',
                 'date_order_send_mail': fields.datetime.now()
-            })                    
+            })
         # send_sms
         if 'sms_template_id' in params:
             self.action_generate_sale_order_link_tracker()  # Fix generate link-tracker
@@ -161,9 +161,9 @@ class SaleOrder(models.Model):
                 'action': 'change_stage_id'
             }
             self.env['automation.log'].sudo().create(vals)
-    
+
     @api.model
-    def cron_automation_profesional_sale_orders_sens_sms(self):    
+    def cron_automation_profesional_sale_orders_sens_sms(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # skip_cron
         skip_cron = True
@@ -177,40 +177,40 @@ class SaleOrder(models.Model):
             '4': ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
         }
         if str(weekday) in hours_allow_by_weekday:
-            hours_allow = hours_allow_by_weekday[str(weekday)]        
-            if current_date_hour in hours_allow:            
-                skip_cron = False                      
-        
+            hours_allow = hours_allow_by_weekday[str(weekday)]
+            if current_date_hour in hours_allow:
+                skip_cron = False
+
         if not skip_cron:
             sms_template_id_todocesped = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped'
+                    'arelux_automation_tc_prof_so_sms_template_id_todocesped'
                 )
             )
             sms_template_id_arelux = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_arelux'
+                    'arelux_automation_tc_prof_so_sms_template_id_arelux'
                 )
             )
             sms_template_id_both = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_both'
+                    'arelux_automation_tc_prof_so_sms_template_id_both'
                 )
             )
             # retira_cliente
             sms_template_id_rc_todocesped = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped'
+                    'arelux_automation_tc_prof_so_sms_template_id_rc_todocesped'
                 )
             )
             sms_template_id_rc_arelux = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux'
+                    'arelux_automation_tc_prof_so_sms_template_id_rc_arelux'
                 )
             )
             sms_template_id_rc_both = int(
                 self.env['ir.config_parameter'].sudo().get_param(
-                    'arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both'
+                    'arelux_automation_tc_prof_so_sms_template_id_rc_both'
                 )
             )
 
@@ -224,8 +224,8 @@ class SaleOrder(models.Model):
             sale_order_ids_get_not_in = automation_log_ids.mapped('res_id')
             # confirmation_date
             confirmation_date_start = current_date + relativedelta(days=-5)
-            confirmation_date_end = current_date + relativedelta(hours=-4)            
-                    
+            confirmation_date_end = current_date + relativedelta(hours=-4)
+
             sale_order_ids = self.env['sale.order'].search(
                 [
                     ('state', 'in', ['sale', 'done']),
@@ -245,8 +245,8 @@ class SaleOrder(models.Model):
                     ),
                     ('partner_id.mobile', '!=', False),
                     ('partner_id.mobile_code_res_country_id', '!=', False),
-                    ('id', 'not in', sale_order_ids_get_not_in)                    
-                 ]
+                    ('id', 'not in', sale_order_ids_get_not_in)
+                ]
             )
             if sale_order_ids:
                 for sale_order_id in sale_order_ids:
@@ -257,7 +257,7 @@ class SaleOrder(models.Model):
                             sms_template_id = sms_template_id_rc_arelux
                         else:
                             sms_template_id = sms_template_id_rc_both
-                    else:                
+                    else:
                         if sale_order_id.ar_qt_activity_type == 'todocesped':
                             sms_template_id = sms_template_id_todocesped
                         elif sale_order_id.ar_qt_activity_type == 'arelux':
@@ -275,8 +275,8 @@ class SaleOrder(models.Model):
                         'action': 'send_sms_done'
                     }
                     self.env['automation.log'].sudo().create(vals)
-                                
-    @api.model    
+
+    @api.model
     def cron_automation_todocesped_particular_sale_orders(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # skip_cron
@@ -292,10 +292,10 @@ class SaleOrder(models.Model):
             '5': ['11', '12', '13', '14'],
         }
         if str(weekday) in hours_allow_by_weekday:
-            hours_allow = hours_allow_by_weekday[str(weekday)]        
-            if current_date_hour in hours_allow:            
-                skip_cron = False                      
-        
+            hours_allow = hours_allow_by_weekday[str(weekday)]
+            if current_date_hour in hours_allow:
+                skip_cron = False
+
         if not skip_cron:
             so_qty_from = int(
                 self.env['ir.config_parameter'].sudo().get_param(
@@ -345,12 +345,12 @@ class SaleOrder(models.Model):
                     'arelux_automation_tc_part_sale_orders_sms_template_id'
                 )
             )
-            
+
             if ',' in so_user_ids:
                 user_ids = so_user_ids.split(',')
             else:
                 user_ids = [so_user_ids]
-                                                
+
             date_now_hours_diference = current_date + relativedelta(
                 hours=-so_hours_since_creation
             )
@@ -370,13 +370,13 @@ class SaleOrder(models.Model):
                     ),
                     ('opportunity_id', '!=', False),
                     ('opportunity_id.active', '=', True),
-                    ('opportunity_id.type', '=', 'opportunity'),                    
+                    ('opportunity_id.type', '=', 'opportunity'),
                     ('opportunity_id.probability', '>', 0),
                     ('opportunity_id.stage_id', '=', so_stage_id),
                     ('opportunity_id.lead_m2', '>=', so_qty_from),
                     ('opportunity_id.lead_m2', '<=', so_qty_to),
                     ('opportunity_id.user_id', '=', False)
-                 ]
+                ]
             )        
             if order_ids:
                 for order_id in order_ids:
@@ -384,18 +384,18 @@ class SaleOrder(models.Model):
                     # params
                     sale_order_params = {
                         'user_id': user_id_random,
-                        'next_activity': False,                        
+                        'next_activity': False,
                         'mail_template_id': so_template_id,
                         'sms_template_id': so_sms_template_id,
                         'lead_stage_id': so_change_stage_id
-                    }                    
+                    }
                     # Fix 15m
                     if order_id.opportunity_id.lead_m2 < 15:
                         sale_order_params['mail_template_id'] = so_template_id_less_15_m
                     # automation_proces
                     order_id.automation_proces(sale_order_params)
-        
-    @api.model    
+
+    @api.model
     def cron_automation_todocesped_particular_sale_orders_mail2(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # skip_cron
@@ -411,10 +411,10 @@ class SaleOrder(models.Model):
             '5': ['11', '12', '13', '14', '15', '16'],
         }
         if str(weekday) in hours_allow_by_weekday:
-            hours_allow = hours_allow_by_weekday[str(weekday)]        
-            if current_date_hour in hours_allow:            
-                skip_cron = False                      
-        
+            hours_allow = hours_allow_by_weekday[str(weekday)]
+            if current_date_hour in hours_allow:
+                skip_cron = False
+
         if not skip_cron:
             mail_template_id = int(
                 self.env['ir.config_parameter'].sudo().get_param(
@@ -451,14 +451,15 @@ class SaleOrder(models.Model):
                     ('id', 'not in', order_ids_get_not_in),
                     (
                         'date_order_management',
-                        '<=',
-                        date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S")
+                        '<=', date_order_management_filter.strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
                     ),
                     ('opportunity_id', '!=', False),
                     ('opportunity_id.probability', '>', 0),
-                    ('opportunity_id.probability', '<', 100)                
-                 ]
-            )        
+                    ('opportunity_id.probability', '<', 100)
+                ]
+            )
             if order_ids:
                 for order_id in order_ids:
                     order_id.action_sale_order_mail2(mail_template_id)
@@ -467,11 +468,6 @@ class SaleOrder(models.Model):
     def cron_automation_todocesped_particular_repaso_mail(self):
         _logger.info('cron_automation_todocesped_particular_repaso_mail')
         # def
-        template_id = int(
-            self.env['ir.config_parameter'].sudo().get_param(
-                'arelux_automation_tc_part_repaso_mail_template_id'
-            )
-        )
         current_date = datetime.today()
         shipping_expedition_date = current_date + relativedelta(days=-4)
         # crm_lead
@@ -524,7 +520,9 @@ class SaleOrder(models.Model):
                         if picking_id.sale_id:
                             if picking_id.sale_id.opportunity_id:
                                 if picking_id.sale_id.opportunity_id.id not in lead_ids:
-                                    lead_ids.append(int(picking_id.sale_id.opportunity_id.id))
+                                    lead_ids.append(
+                                        int(picking_id.sale_id.opportunity_id.id)
+                                    )
                     # sale_order (with_sent_item)
                     order_ids_operations = self.env['sale.order'].sudo().search(
                         [
@@ -537,10 +535,16 @@ class SaleOrder(models.Model):
                     if order_ids_operations:
                         lead_ids_operations = self.env['crm.lead'].sudo().search(
                             [
-                                ('id', 'in', order_ids_operations.mapped('opportunity_id').ids)
+                                (
+                                    'id',
+                                    'in',
+                                    order_ids_operations.mapped('opportunity_id').ids
+                                )
                             ]
                         )
-                        _logger.info('Total items aplicados %s' % len(lead_ids_operations))
+                        _logger.info(
+                            _('Total items aplicados %s') % len(lead_ids_operations)
+                        )
                         for lead_id in lead_ids_operations:
                             order_ids_operations = self.env['sale.order'].sudo().search(
                                 [
@@ -558,7 +562,7 @@ class SaleOrder(models.Model):
                                     _('Operaciones del presupuesto %s')
                                     % order_id_operations.name
                                 )
-    
+
     @api.multi
     def action_sale_order_mail2(self, template_id=False):
         self.ensure_one
@@ -577,14 +581,17 @@ class SaleOrder(models.Model):
                     days=-2, minutes=-5
                 )
                 
-                if self.date_order_management <= date_order_management_filter.strftime("%Y-%m-%d %H:%M:%S"):
+                if self.date_order_management <= date_order_management_filter.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                ):
                     need_send_mail = True
                     
                     date_order_management_check = datetime.strptime(
                         self.date_order_management,
                         "%Y-%m-%d %H:%M:%S"
                     ) + relativedelta(minutes=5)
-                    # 1- Que no exista un email enviado por nosotros desde el flujo o pto > fecha gestion
+                    # 1- Que no exista un email enviado por nosotros desde el flujo
+                    # o pto > fecha gestion
                     if self.user_id:
                         message_ids = self.env['mail.message'].search(
                             [
@@ -592,7 +599,9 @@ class SaleOrder(models.Model):
                                 ('res_id', '=', self.id),
                                 ('subtype_id', '=', 1),
                                 ('author_id', '=', self.user_id.partner_id.id),
-                                ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
+                                ('date', '>', date_order_management_check.strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ))
                              ]
                         )
                         if message_ids:
@@ -605,12 +614,15 @@ class SaleOrder(models.Model):
                                     ('res_id', '=', self.opportunity_id.id),
                                     ('subtype_id', '=', 1),
                                     ('author_id', '=', self.user_id.partner_id.id),
-                                    ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
+                                    ('date', '>', date_order_management_check.strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ))
                                  ]
                             )
                             if message_ids:
                                 need_send_mail = False
-                    # 2- Que no exista un email creado por el cliente (author_id) > a la fecha gestion
+                    # 2- Que no exista un email creado por el cliente (author_id)
+                    # > a la fecha gestion
                     if need_send_mail:
                         message_ids = self.env['mail.message'].search(
                             [
@@ -618,19 +630,24 @@ class SaleOrder(models.Model):
                                 ('res_id', '=', self.id),
                                 ('author_id', '=', self.partner_id.id),
                                 ('message_type', '=', 'email'),                                
-                                ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
+                                ('date', '>', date_order_management_check.strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ))
                              ]
                         )
                         if message_ids:
                             need_send_mail = False                                    
-                    # 3- Que no exista ninguna llamada en el flujo > a la fecha gestion
+                    # 3- Que no exista ninguna llamada en el flujo > a la
+                    # fecha gestion
                     if self.opportunity_id and need_send_mail:
                         message_ids = self.env['mail.message'].search(
                             [
                                 ('model', '=', 'crm.lead'),
                                 ('res_id', '=', self.opportunity_id.id),
                                 ('subtype_id', '=', 5),
-                                ('date', '>', date_order_management_check.strftime("%Y-%m-%d %H:%M:%S"))                
+                                ('date', '>', date_order_management_check.strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ))
                              ]
                         )
                         if message_ids:

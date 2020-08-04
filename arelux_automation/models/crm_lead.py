@@ -141,7 +141,7 @@ class CrmLead(models.Model):
             )
             vals = {
                 'author_id': 1,
-                'record_name': self.name,                                                                                                                                                                                           
+                'record_name': self.name
             }
             # Fix user_id
             if self.user_id:
@@ -183,7 +183,7 @@ class CrmLead(models.Model):
             # return
             return True
 
-    @api.model    
+    @api.model
     def cron_automation_todocesped_profesional_potenciales(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         partners = {}
@@ -195,29 +195,29 @@ class CrmLead(models.Model):
                 ('ar_qt_customer_type', '=', 'profesional'),
                 ('user_id', '!=', False),
                 ('create_date', '<', '2018-01-01')
-             ]
-        )                        
+            ]
+        )
         if res_partner_ids:
             partner_ids_potencial = []
             for res_partner_id in res_partner_ids:
                 if res_partner_id.ref:
                     partner_ids_potencial.append(res_partner_id.id)
-                    partners[res_partner_id.id] = res_partner_id                                    
+                    partners[res_partner_id.id] = res_partner_id
             # account_invoice
             invoice_ids = self.env['account.invoice'].search(
                 [
-                    ('state', 'in', ('open','paid')),
+                    ('state', 'in', ('open', 'paid')),
                     ('amount_total', '>', 0),
                     ('type', '=', 'out_invoice'),
                     ('partner_id', 'in', partner_ids_potencial)
-                 ]
-            )            
+                ]
+            )
             if invoice_ids:
                 for invoice_id in invoice_ids:
                     if invoice_id.partner_id.id in partner_ids_potencial:
                         partner_ids_potencial.remove(invoice_id.partner_id.id)
-            
-            if res_partner_ids_potencial:
+
+            if partner_ids_potencial:
                 # crm_lead_6_months
                 start_date = current_date + relativedelta(months=-6)
                 end_date = current_date
@@ -230,16 +230,24 @@ class CrmLead(models.Model):
                             ('lead_id', '!=', False),
                             ('date', '>=', start_date.strftime("%Y-%m-%d")),
                             ('date', '<=', end_date.strftime("%Y-%m-%d"))
-                         ]
+                        ]
                     )
                     if len(crm_activity_report_ids) == 0:
                         crm_lead_ids = self.env['crm.lead'].search(
                             [
                                 ('active', '=', True),
                                 ('probability', '<', 100),
-                                ('partner_id', '=', partner_item.id),                                
-                                ('ar_qt_activity_type', '=', partner_item.ar_qt_activity_type),
-                                ('ar_qt_customer_type', '=', partner_item.ar_qt_customer_type),                                
+                                ('partner_id', '=', partner_item.id),
+                                (
+                                    'ar_qt_activity_type',
+                                    '=',
+                                    partner_item.ar_qt_activity_type
+                                ),
+                                (
+                                    'ar_qt_customer_type',
+                                    '=',
+                                    partner_item.ar_qt_customer_type
+                                ),
                              ]
                         )
                         if len(crm_lead_ids) == 0:
@@ -250,8 +258,10 @@ class CrmLead(models.Model):
                                 'stage_id': 1,
                                 'name': partner_item.name,
                                 'partner_id': partner_item.id,
-                                'ar_qt_activity_type': partner_item.ar_qt_activity_type,
-                                'ar_qt_customer_type': partner_item.ar_qt_customer_type,
+                                'ar_qt_activity_type':
+                                    partner_item.ar_qt_activity_type,
+                                'ar_qt_customer_type':
+                                    partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                                                  
                             }
                             crm_lead_obj = self.env['crm.lead'].sudo(
@@ -262,7 +272,6 @@ class CrmLead(models.Model):
     @api.model
     def cron_automation_todocesped_profesional_potenciales_activo(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        tomorrow_date = current_date + relativedelta(days=+1)
         partners = {}
         res_partner_ids = self.env['res.partner'].search(
             [
@@ -273,8 +282,8 @@ class CrmLead(models.Model):
                 ('user_id', '!=', False),
                 ('ref', '=', False),
                 ('create_date', '>=', '2018-01-01')
-             ]
-        )            
+            ]
+        )
         if res_partner_ids:
             partner_ids_potencial_activo = []
             for res_partner_id in res_partner_ids:                    
@@ -283,18 +292,20 @@ class CrmLead(models.Model):
             # account_invoice
             invoice_ids = self.env['account.invoice'].search(
                 [
-                    ('state', 'in', ('open','paid')),
+                    ('state', 'in', ('open', 'paid')),
                     ('amount_total', '>', 0),
                     ('type', '=', 'out_invoice'),
                     ('partner_id', 'in', partner_ids_potencial_activo)
-                 ]
+                ]
             )                            
             if invoice_ids:
                 for invoice_id in invoice_ids:
                     if invoice_id.partner_id.id in partner_ids_potencial_activo:
-                        partner_ids_potencial_activo.remove(invoice_id.partner_id.id)
+                        partner_ids_potencial_activo.remove(
+                            invoice_id.partner_id.id
+                        )
             
-            if res_partner_ids_potencial_activo:
+            if partner_ids_potencial_activo:
                 # crm_lead_3_months
                 start_date = current_date + relativedelta(months=-3)
                 end_date = current_date
@@ -302,12 +313,12 @@ class CrmLead(models.Model):
                     partner_item = partners[partner_id_potencial_activo]
                     crm_activity_report_ids = self.env['crm.activity.report'].search(
                         [
-                            ('subtype_id', 'in', (1,2,4)),
+                            ('subtype_id', 'in', (1, 2, 4)),
                             ('partner_id', '=', partner_item.id),
                             ('lead_id', '!=', False),
                             ('date', '>=', start_date.strftime("%Y-%m-%d")),
                             ('date', '<=', end_date.strftime("%Y-%m-%d"))
-                         ]
+                        ]
                     )
                     if len(crm_activity_report_ids) == 0:
                         crm_lead_ids = self.env['crm.lead'].search(
@@ -315,8 +326,16 @@ class CrmLead(models.Model):
                                 ('active', '=', True),
                                 ('probability', '<', 100),
                                 ('partner_id', '=', partner_item.id),                                
-                                ('ar_qt_activity_type', '=', partner_item.ar_qt_activity_type),
-                                ('ar_qt_customer_type', '=', partner_item.ar_qt_customer_type),
+                                (
+                                    'ar_qt_activity_type',
+                                    '=',
+                                    partner_item.ar_qt_activity_type
+                                ),
+                                (
+                                    'ar_qt_customer_type',
+                                    '=',
+                                    partner_item.ar_qt_customer_type
+                                ),
                              ]
                         )
                         if len(crm_lead_ids) == 0:
@@ -327,8 +346,10 @@ class CrmLead(models.Model):
                                 'stage_id': 1,
                                 'name': partner_item.name,
                                 'partner_id': partner_item.id,
-                                'ar_qt_activity_type': partner_item.ar_qt_activity_type,
-                                'ar_qt_customer_type': partner_item.ar_qt_customer_type,
+                                'ar_qt_activity_type':
+                                    partner_item.ar_qt_activity_type,
+                                'ar_qt_customer_type':
+                                    partner_item.ar_qt_customer_type,
                                 'user_id': partner_item.user_id.id                                                                  
                             }
                             crm_lead_obj = self.env['crm.lead'].sudo(

@@ -57,33 +57,33 @@
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_todocesped</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_todocesped" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_todocesped</field>
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_arelux" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_arelux</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_arelux" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_arelux</field>
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_both" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_both</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_both" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_both</field>
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_todocesped</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_rc_todocesped" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_rc_todocesped</field>
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_arelux</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_rc_arelux" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_rc_arelux</field>
             <field name="value">1</field>
         </record>
 
-        <record id="arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both" model="ir.config_parameter">
-            <field name="key">arelux_automation_tc_prof_sale_orders_sms_template_id_retira_cliente_both</field>
+        <record id="arelux_automation_tc_prof_so_sms_template_id_rc_both" model="ir.config_parameter">
+            <field name="key">arelux_automation_tc_prof_so_sms_template_id_rc_both</field>
             <field name="value">1</field>
         </record>
 

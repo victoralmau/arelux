@@ -283,7 +283,8 @@ class AreluxAutomationProcess(models.Model):
                                 vals['mail_activity_type_id'] = \
                                     item.mail_activity_type_id.id
                                 vals['mail_activity_date_deadline'] = activity_dd
-                                vals['mail_activity_summary'] = item.mail_activity_summary
+                                vals['mail_activity_summary'] = \
+                                    item.mail_activity_summary
                             # lead_stage_id
                             if item.stage_id:
                                 vals['lead_stage_id'] = item.stage_id.id
@@ -317,7 +318,8 @@ class AreluxAutomationProcess(models.Model):
                                 vals['mail_activity_type_id'] = \
                                     item.mail_activity_type_id.id
                                 vals['mail_activity_date_deadline'] = activity_dd
-                                vals['mail_activity_summary'] = item.mail_activity_summary
+                                vals['mail_activity_summary'] = \
+                                    item.mail_activity_summary
                             # sms_template_id
                             if item.sms_template_id:
                                 vals['sms_template_id'] = item.sms_template_id.id
