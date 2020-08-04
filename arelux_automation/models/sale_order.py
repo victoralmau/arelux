@@ -377,7 +377,7 @@ class SaleOrder(models.Model):
                     ('opportunity_id.lead_m2', '<=', so_qty_to),
                     ('opportunity_id.user_id', '=', False)
                 ]
-            )        
+            )
             if order_ids:
                 for order_id in order_ids:
                     user_id_random = int(random.choice(user_ids))
@@ -580,12 +580,12 @@ class SaleOrder(models.Model):
                 date_order_management_filter = current_date + relativedelta(
                     days=-2, minutes=-5
                 )
-                
+
                 if self.date_order_management <= date_order_management_filter.strftime(
                         "%Y-%m-%d %H:%M:%S"
                 ):
                     need_send_mail = True
-                    
+
                     date_order_management_check = datetime.strptime(
                         self.date_order_management,
                         "%Y-%m-%d %H:%M:%S"
@@ -602,11 +602,11 @@ class SaleOrder(models.Model):
                                 ('date', '>', date_order_management_check.strftime(
                                     "%Y-%m-%d %H:%M:%S"
                                 ))
-                             ]
+                            ]
                         )
                         if message_ids:
                             need_send_mail = False
-                        
+
                         if self.opportunity_id and need_send_mail:
                             message_ids = self.env['mail.message'].search(
                                 [
@@ -617,7 +617,7 @@ class SaleOrder(models.Model):
                                     ('date', '>', date_order_management_check.strftime(
                                         "%Y-%m-%d %H:%M:%S"
                                     ))
-                                 ]
+                                ]
                             )
                             if message_ids:
                                 need_send_mail = False
@@ -629,14 +629,14 @@ class SaleOrder(models.Model):
                                 ('model', '=', 'sale.order'),
                                 ('res_id', '=', self.id),
                                 ('author_id', '=', self.partner_id.id),
-                                ('message_type', '=', 'email'),                                
+                                ('message_type', '=', 'email'),
                                 ('date', '>', date_order_management_check.strftime(
                                     "%Y-%m-%d %H:%M:%S"
                                 ))
-                             ]
+                            ]
                         )
                         if message_ids:
-                            need_send_mail = False                                    
+                            need_send_mail = False
                     # 3- Que no exista ninguna llamada en el flujo > a la
                     # fecha gestion
                     if self.opportunity_id and need_send_mail:
@@ -648,11 +648,11 @@ class SaleOrder(models.Model):
                                 ('date', '>', date_order_management_check.strftime(
                                     "%Y-%m-%d %H:%M:%S"
                                 ))
-                             ]
+                            ]
                         )
                         if message_ids:
-                            need_send_mail = False                                                    
-        
+                            need_send_mail = False
+
         if need_send_mail:
             self.action_send_mail_with_template_id(template_id)
             # save_log
@@ -663,7 +663,7 @@ class SaleOrder(models.Model):
                 'action': 'send_mail2'
             }
             self.env['automation.log'].sudo().create(vals)
-                                        
+
     @api.multi
     def action_send_mail_with_template_id(self, template_id=False):
         self.ensure_one()
@@ -675,7 +675,7 @@ class SaleOrder(models.Model):
             )[0]
             vals = {
                 'author_id': self.user_id.partner_id.id,
-                'record_name': self.name,                                                                                                                                                                                           
+                'record_name': self.name
             }
             message_obj = self.env['mail.compose.message'].with_context().sudo(
                 self.user_id.id

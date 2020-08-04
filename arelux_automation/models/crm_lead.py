@@ -248,12 +248,12 @@ class CrmLead(models.Model):
                                     '=',
                                     partner_item.ar_qt_customer_type
                                 ),
-                             ]
+                            ]
                         )
                         if len(crm_lead_ids) == 0:
                             # Auto-create lead
                             vals = {
-                                'active': True,                                
+                                'active': True,
                                 'type': 'opportunity',
                                 'stage_id': 1,
                                 'name': partner_item.name,
@@ -262,13 +262,13 @@ class CrmLead(models.Model):
                                     partner_item.ar_qt_activity_type,
                                 'ar_qt_customer_type':
                                     partner_item.ar_qt_customer_type,
-                                'user_id': partner_item.user_id.id                                                                                                  
+                                'user_id': partner_item.user_id.id
                             }
                             crm_lead_obj = self.env['crm.lead'].sudo(
                                 partner_item.user_id.id
                             ).create(vals)
                             crm_lead_obj._onchange_partner_id()
-        
+
     @api.model
     def cron_automation_todocesped_profesional_potenciales_activo(self):
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
@@ -276,7 +276,7 @@ class CrmLead(models.Model):
         res_partner_ids = self.env['res.partner'].search(
             [
                 ('active', '=', True),
-                ('type', '=', 'contact'),                    
+                ('type', '=', 'contact'),
                 ('ar_qt_activity_type', '=', 'todocesped'),
                 ('ar_qt_customer_type', '=', 'profesional'),
                 ('user_id', '!=', False),
@@ -286,9 +286,9 @@ class CrmLead(models.Model):
         )
         if res_partner_ids:
             partner_ids_potencial_activo = []
-            for res_partner_id in res_partner_ids:                    
+            for res_partner_id in res_partner_ids:
                 partner_ids_potencial_activo.append(res_partner_id.id)
-                partners[res_partner_id.id] = res_partner_id                    
+                partners[res_partner_id.id] = res_partner_id
             # account_invoice
             invoice_ids = self.env['account.invoice'].search(
                 [
@@ -297,14 +297,14 @@ class CrmLead(models.Model):
                     ('type', '=', 'out_invoice'),
                     ('partner_id', 'in', partner_ids_potencial_activo)
                 ]
-            )                            
+            )
             if invoice_ids:
                 for invoice_id in invoice_ids:
                     if invoice_id.partner_id.id in partner_ids_potencial_activo:
                         partner_ids_potencial_activo.remove(
                             invoice_id.partner_id.id
                         )
-            
+
             if partner_ids_potencial_activo:
                 # crm_lead_3_months
                 start_date = current_date + relativedelta(months=-3)
@@ -325,7 +325,7 @@ class CrmLead(models.Model):
                             [
                                 ('active', '=', True),
                                 ('probability', '<', 100),
-                                ('partner_id', '=', partner_item.id),                                
+                                ('partner_id', '=', partner_item.id),
                                 (
                                     'ar_qt_activity_type',
                                     '=',
@@ -336,12 +336,12 @@ class CrmLead(models.Model):
                                     '=',
                                     partner_item.ar_qt_customer_type
                                 ),
-                             ]
+                            ]
                         )
                         if len(crm_lead_ids) == 0:
                             # Auto-create lead
                             vals = {
-                                'active': True,                                
+                                'active': True,
                                 'type': 'opportunity',
                                 'stage_id': 1,
                                 'name': partner_item.name,
@@ -350,24 +350,24 @@ class CrmLead(models.Model):
                                     partner_item.ar_qt_activity_type,
                                 'ar_qt_customer_type':
                                     partner_item.ar_qt_customer_type,
-                                'user_id': partner_item.user_id.id                                                                  
+                                'user_id': partner_item.user_id.id
                             }
                             crm_lead_obj = self.env['crm.lead'].sudo(
                                 partner_item.user_id.id
                             ).create(vals)
                             crm_lead_obj._onchange_partner_id()
-                            
+
     @api.model
     def cron_automation_todocesped_profesional_puntuales(self):
         _logger.info('cron_automation_todocesped_profesional_puntuales')
-        
+
     @api.model
     def cron_automation_todocesped_profesional_recurrentes(self):
         _logger.info('cron_automation_todocesped_profesional_recurrentes')
-        
+
     @api.model
     def cron_automation_todocesped_profesional_fidelizados(self):
-        _logger.info('cron_automation_todocesped_profesional_fidelizados')                
+        _logger.info('cron_automation_todocesped_profesional_fidelizados')
 
     @api.model
     def cron_automation_todocesped_profesional(self):
@@ -381,4 +381,4 @@ class CrmLead(models.Model):
         # self.cron_automation_todocesped_profesional_recurrentes()
         # fidelizados
         # self.cron_automation_todocesped_profesional_fidelizados()
-        _logger.info('cron_automation_todocesped_profesional')                                                                                                              
+        _logger.info('cron_automation_todocesped_profesional')

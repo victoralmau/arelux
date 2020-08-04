@@ -5,28 +5,34 @@ from odoo import api, models, fields
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
-    
+
     ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
-            ('evert', 'Evert'),                    
+            ('evert', 'Evert'),
         ],
-        size=15, 
+        size=15,
         string='Tipo de actividad',
         store=True
     )
     ar_qt_customer_type = fields.Selection(
         [
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ],        
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo de cliente',
         store=True
     )
-    
+
     @api.model
-    def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
+    def _prepare_refund(self,
+                        invoice,
+                        date_invoice=None,
+                        date=None, description
+                        =None,
+                        journal_id=None
+                        ):
         res = super(AccountInvoice, self)._prepare_refund(
             invoice, date_invoice, date, description, journal_id
         )
@@ -51,29 +57,29 @@ class AccountInvoice(models.Model):
 
             if item.origin:
                 origins = item.origin.split(',')
-                sale_order_ids = self.env['sale.order'].sudo().search(
+                order_ids = self.env['sale.order'].sudo().search(
                     [
                         ('name', '=', origins[0])
                     ]
                 )
                 find_sale_order_ids = False
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
-                        item.ar_qt_activity_type = sale_order_id.ar_qt_activity_type
-                        item.ar_qt_customer_type = sale_order_id.ar_qt_customer_type
+                if order_ids:
+                    for order_id in order_ids:
+                        item.ar_qt_activity_type = order_id.ar_qt_activity_type
+                        item.ar_qt_customer_type = order_id.ar_qt_customer_type
 
                         find_sale_order_ids = True
 
                 if not find_sale_order_ids:
-                    account_invoice_ids = self.env['account.invoice'].sudo().search(
+                    invoice_ids = self.env['account.invoice'].sudo().search(
                         [
                             ('number', '=', origins[0]),
                             ('type', '=', 'out_invoice')
                         ]
                     )
-                    if account_invoice_ids:
-                        for account_invoice_id in account_invoice_ids:
-                            item.ar_qt_activity_type = account_invoice_id.ar_qt_activity_type
-                            item.ar_qt_customer_type = account_invoice_id.ar_qt_customer_type
+                    if invoice_ids:
+                        for invoice_id in invoice_ids:
+                            item.ar_qt_activity_type = invoice_id.ar_qt_activity_type
+                            item.ar_qt_customer_type = invoice_id.ar_qt_customer_type
         # return
         return res

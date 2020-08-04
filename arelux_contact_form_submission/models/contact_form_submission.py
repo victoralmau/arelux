@@ -1,6 +1,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
-from odoo import api, fields, models, tools
+from odoo import api, fields, models, tools, _
 import requests
 import json
 from dateutil.relativedelta import relativedelta
@@ -492,19 +492,19 @@ class ContactFormSubmission(models.Model):
             ]
         )
         if mail_followers_ids:
-            for mail_followers_id in mail_followers_ids:
+            for follower_id in mail_followers_ids:
                 is_super_admin = False
                 if self.create_uid.id == 1 \
-                        and mail_followers_id.partner_id.id == self.create_uid.partner_id.id:
+                        and follower_id.partner_id.id == self.create_uid.partner_id.id:
                     is_super_admin = True
                 # check_remove
                 if check_remove:
                     if is_super_admin:
-                        mail_followers_id.unlink()
+                        follower_id.unlink()
                     else:
-                        if mail_followers_id.partner_id.id == self.create_uid.partner_id.id:
-                            mail_followers_id.unlink()
-                        elif mail_followers_id.partner_id.id == self.partner_id.id:
+                        if follower_id.partner_id.id == self.create_uid.partner_id.id:
+                            follower_id.unlink()
+                        elif follower_id.partner_id.id == self.partner_id.id:
                             if check_add:
                                 mail_follower_extra_need_create = False
         # mail_follower_extra_need_create
@@ -588,6 +588,7 @@ class ContactFormSubmission(models.Model):
                     message_obj.reply_to = res['value']['reply_to']
                 # action
                 message_obj.send_mail_action()
+
     @api.multi
     def create_sale_order(self, id):
         self.ensure_one()
@@ -624,7 +625,7 @@ class ContactFormSubmission(models.Model):
                     'utm_website_id': self.lead_id.utm_website_id.id,
                     'partner_invoice_id': self.lead_id.partner_id.id,
                     'partner_shipping_id': self.lead_id.partner_id.id,
-                    'sale_order_template_id': sale_order_template_id.id,
+                    'sale_order_template_id': order_template_id.id,
                     'opportunity_id': self.lead_id.id,
                     'team_id': self.lead_id.team_id.id,
                     'ar_qt_activity_type':
@@ -632,12 +633,12 @@ class ContactFormSubmission(models.Model):
                     'ar_qt_customer_type':
                         str(self.lead_id.ar_qt_customer_type),
                     'carrier_id':
-                        sale_order_template_id.delivery_carrier_id.id,
+                        order_template_id.delivery_carrier_id.id,
                     'require_payment': order_template_id.require_payment,
                     'state': 'draft'
                 }
                 # fix user_id
-                sale_order_vals['user_id'] = 0
+                vals['user_id'] = 0
                 if self.lead_id.user_id:
                     vals['user_id'] = self.lead_id.user_id.id
                 # tracking_profile_uuid
@@ -683,7 +684,7 @@ class ContactFormSubmission(models.Model):
                                 if self.m2 > 40:
                                     vals_line['product_uom_qty'] = int((self.m2 / 40))
                             elif line_id.product_id.id == 71:
-                                vals_lines['product_uom_qty'] = 1
+                                vals_line['product_uom_qty'] = 1
                                 if self.m2 > 50:
                                     vals_line['product_uom_qty'] = int((self.m2 / 50))
                         # append
@@ -786,10 +787,12 @@ class ContactFormSubmission(models.Model):
                         vals = {}
                         # params_need_check_str
                         params_need_check_str = [
-                            'name', 'email', 'description', 'odoo_lang', 'phone', 'mobile',
-                            'odoo_ar_qt_activity_type', 'odoo_ar_qt_activity_type',
-                            'tracking_profile_uuid', 'tracking_cookie_uuid', 'tracking_user_uuid',
-                            'tracking_session_uuid', 'sessionAdGroupCF7', 'sessionAdSetCF7'
+                            'name', 'email', 'description', 'odoo_lang', 'phone',
+                            'mobile', 'odoo_ar_qt_activity_type',
+                            'odoo_ar_qt_activity_type', 'tracking_profile_uuid',
+                            'tracking_cookie_uuid', 'tracking_user_uuid',
+                            'tracking_session_uuid', 'sessionAdGroupCF7',
+                            'sessionAdSetCF7'
                         ]
                         for pnd in params_need_check_str:
                             if pnd in message_body:
@@ -799,11 +802,13 @@ class ContactFormSubmission(models.Model):
                                     vals[key_val] = str(message_body[pnd])
                         # params_need_check_int
                         params_need_check_int = [
-                            'm2', 'odoo_country_id', 'odoo_state_id', 'odoo_user_id',
-                            'odoo_ar_qt_todocesped_pr_type_surface', 'odoo_partner_category_id',
-                            'odoo_ar_qt_todocesped_contact_form', 'odoo_team_id', 'odoo_medium_id',
-                            'odoo_source_id', 'odoo_utm_website_id', 'odoo_date_deadline',
-                            'odoo_next_activity_id', 'date_action'
+                            'm2', 'odoo_country_id', 'odoo_state_id',
+                            'odoo_user_id', 'odoo_ar_qt_todocesped_pr_type_surface',
+                            'odoo_partner_category_id',
+                            'odoo_ar_qt_todocesped_contact_form', 'odoo_team_id',
+                            'odoo_medium_id', 'odoo_source_id', 'odoo_utm_website_id',
+                            'odoo_date_deadline', 'odoo_next_activity_id',
+                            'date_action'
                         ]
                         for pnd in params_need_check_int:
                             if pnd in message_body:
@@ -812,7 +817,9 @@ class ContactFormSubmission(models.Model):
                                     key_val = str(pnd.replace('odoo_', ''))
                                     vals[key_val] = int(message_body[pnd])
                         # params_need_check_not_format (bool)
-                        params_need_check_not_format = ['ar_qt_todocesped_pf_install_artificial_grass']
+                        params_need_check_not_format = [
+                            'ar_qt_todocesped_pf_install_artificial_grass'
+                        ]
                         for pnd in params_need_check_not_format:
                             if pnd in message_body:
                                 # replace+assign
@@ -826,7 +833,11 @@ class ContactFormSubmission(models.Model):
                         if 'ar_qt_todocesped_pr_type_surface' in vals:
                             ids = self.env['res.partner.type.surface'].search(
                                 [
-                                    ('id', '=', int(vals['ar_qt_todocesped_pr_type_surface']))
+                                    (
+                                        'id',
+                                        '=',
+                                        int(vals['ar_qt_todocesped_pr_type_surface'])
+                                    )
                                 ]
                             )
                             if len(ids) == 0:
@@ -844,7 +855,10 @@ class ContactFormSubmission(models.Model):
                         if 'ar_qt_todocesped_contact_form' in vals:
                             ids = self.env['res.partner.contact.form'].search(
                                 [
-                                    ('id', '=', int(vals['ar_qt_todocesped_contact_form']))
+                                    (
+                                        'id',
+                                        '=',
+                                        int(vals['ar_qt_todocesped_contact_form']))
                                 ]
                             )
                             if len(ids) == 0:

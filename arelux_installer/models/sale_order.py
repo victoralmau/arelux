@@ -7,7 +7,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     installer_id = fields.Many2one(
-        comodel_name='res.partner',         
+        comodel_name='res.partner',
         string='Installer',
         domain="[('installer', '=', True)]"
     )

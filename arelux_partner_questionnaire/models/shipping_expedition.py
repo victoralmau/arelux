@@ -5,7 +5,7 @@ from odoo import models, fields
 
 class ShippingExpedition(models.Model):
     _inherit = 'shipping.expedition'
-        
+
     ar_qt_activity_type = fields.Selection(
         related='picking_id.ar_qt_activity_type',
         string='Tipo de actividad',

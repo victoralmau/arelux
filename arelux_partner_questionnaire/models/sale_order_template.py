@@ -5,14 +5,14 @@ from odoo import models, fields
 
 class SaleOrderTemplate(models.Model):
     _inherit = 'sale.order.template'
-    
+
     ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
             ('evert', 'Evert'),
-            ('both', 'Ambos'),                    
+            ('both', 'Ambos'),
         ],
-        size=15, 
+        size=15,
         string='Tipo de actividad'
     )

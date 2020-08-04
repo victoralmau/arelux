@@ -11,6 +11,7 @@ class ResPartnerAreluxParticularContactForm(models.Model):
         string="Nombre"
     )
 
+
 class ResPartnerAreluxParticularValuationThing(models.Model):
     _name = 'res.partner.arelux.particular.valuation.thing'
     _description = 'Res Partner Arelux Particular Valuation Thing'

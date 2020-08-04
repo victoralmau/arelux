@@ -5,7 +5,7 @@ from odoo import models, fields
 
 class ResPartnerSage(models.Model):
     _inherit = 'res.partner'
-           
+
     installer = fields.Boolean(
         string="Installer"
     )
