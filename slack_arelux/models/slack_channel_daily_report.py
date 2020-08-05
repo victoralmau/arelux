@@ -83,7 +83,7 @@ class SlackChannelDailyReport(models.Model):
         # return
         return data
 
-    @api.model        
+    @api.model
     def sale_order_filter_amount_untaxed(self,
                                          ar_qt_activity_type,
                                          ar_qt_customer_type,
@@ -189,8 +189,8 @@ class SlackChannelDailyReport(models.Model):
                 data[a_type][c_type] = data_item
         # return
         return data
-        
-    @api.model    
+
+    @api.model
     def sale_order_filter_count(self,
                                 ar_qt_activity_type,
                                 ar_qt_customer_type,
@@ -260,7 +260,7 @@ class SlackChannelDailyReport(models.Model):
                         ),
                         'text': '',
                         'increment': 0,
-                        'color': ''                            
+                        'color': ''
                     }
                     # text
                     data_item2['text'] = str(data_item2['data'])
@@ -300,12 +300,12 @@ class SlackChannelDailyReport(models.Model):
                                 data_item2['increment_percent']
                             )
                     # append
-                    data_item['items'].append(data_item2)           
+                    data_item['items'].append(data_item2)
             # data_item
-            data[ar_qt_activity_type] = data_item                
+            data[ar_qt_activity_type] = data_item
         # return
         return data
-    
+
     @api.model
     def sale_order_filter_get_user_ids(self,
                                        ar_qt_activity_type,
@@ -313,7 +313,6 @@ class SlackChannelDailyReport(models.Model):
                                        date_to
                                        ):
         data = []
-        user_ids = []
         order_ids = self.env['sale.order'].search(
             [
                 ('state', 'in', ('sale', 'done')),
@@ -345,7 +344,7 @@ class SlackChannelDailyReport(models.Model):
                     })
         # return
         return data
-        
+
     @api.model
     def sale_order_filter_get_user_id(self,
                                       ar_qt_activity_type,
@@ -374,7 +373,7 @@ class SlackChannelDailyReport(models.Model):
                 ]
             )
         )
-    
+
     @api.model
     def total_muestras_enviadas(self,
                                 date_start,
@@ -445,7 +444,7 @@ class SlackChannelDailyReport(models.Model):
             data[ar_qt_activity_type] = data_item
         # return
         return data
-    
+
     @api.model
     def stock_picking_filter_count(self,
                                    ar_qt_activity_type,
@@ -471,7 +470,7 @@ class SlackChannelDailyReport(models.Model):
                 ]
             )
         )
-        
+
     @api.model
     def total_clientes_nuevos(self,
                               date_start,
@@ -545,8 +544,8 @@ class SlackChannelDailyReport(models.Model):
                 data[a_type][c_type] = data_item
         # return
         return data
-    
-    @api.model        
+
+    @api.model
     def res_partner_filter_count(self,
                                  ar_qt_activity_type,
                                  ar_qt_customer_type,
@@ -573,10 +572,10 @@ class SlackChannelDailyReport(models.Model):
             )
         )
 
-    @api.model    
+    @api.model
     def cron_odoo_slack_channel_daily_report(self):
         weekday = datetime.today().weekday()
-        weekdays_without_report = [0,6]
+        weekdays_without_report = [0, 6]
         if weekday not in weekdays_without_report:
             # define (general thingsa)
             ar_qt_activity_types = ['todocesped', 'arelux']
@@ -585,7 +584,7 @@ class SlackChannelDailyReport(models.Model):
             # dates
             current_date = datetime.today()
             date_yesterday = current_date + relativedelta(days=-1)
-            date_before_yesterday = date_yesterday + relativedelta(days=-1)            
+            date_before_yesterday = date_yesterday + relativedelta(days=-1)
             # all info
             # bi_pedidos_confirmados_dia
             bi_pedidos_confirmados_dia = self.bi_pedidos_confirmados_dia(
@@ -605,7 +604,8 @@ class SlackChannelDailyReport(models.Model):
                                     c_type.title(),
                                     bi_pedidos_confirmados_dia[a_type][c_type]['text']
                                 ),
-                                "color": bi_pedidos_confirmados_dia[a_type][c_type]['color'],
+                                "color":
+                                    bi_pedidos_confirmados_dia[a_type][c_type]['color'],
                             }
                             attachments.append(attachment_item)
             # total_pedidos_dia

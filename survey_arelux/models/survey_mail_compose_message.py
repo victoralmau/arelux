@@ -16,7 +16,7 @@ class SurveyMailComposeMessage(models.TransientModel):
     def arelux_create_survey_user_input_log(self, survey_user_input):
         self.ensure_one()
         return False
-                
+
     @api.multi
     def arelux_send_partner_mails(self):
         self.ensure_one()
@@ -24,7 +24,7 @@ class SurveyMailComposeMessage(models.TransientModel):
         def create_survey_user_input(survey_survey, partner, order_id):
             response_ids = self.env['survey.user_input'].search([
                 ('survey_id', '=', survey_survey.id),
-                ('state', 'in', ['new', 'skip']),                
+                ('state', 'in', ['new', 'skip']),
                 ('order_id', '=', order_id.id),
                 '|',
                 ('partner_id', '=', partner.id),
@@ -32,7 +32,7 @@ class SurveyMailComposeMessage(models.TransientModel):
             )
             if response_ids:
                 return response_ids[0]
-                
+
             token = uuid.uuid4().__str__()
             # create response with token
             vals = {
@@ -45,7 +45,7 @@ class SurveyMailComposeMessage(models.TransientModel):
                 'user_id': order_id.user_id.id,
                 'installer_id': order_id.installer_id.id,
                 'partner_id': partner.id,
-                'email': partner.email                                                                                                                                                                      
+                'email': partner.email
             }
             # deadline
             if survey_survey.deadline_days > 0:
@@ -56,7 +56,7 @@ class SurveyMailComposeMessage(models.TransientModel):
                 vals['deadline'] = deadline
             # survey_user_input_obj
             return self.env['survey.user_input'].sudo().create(vals)
-            
+
         def create_response_and_send_mail(smcm, user_input):
             # url
             url = '%s/%s' % (
@@ -76,10 +76,10 @@ class SurveyMailComposeMessage(models.TransientModel):
                 'message_type': 'email',
                 'email_from': smcm.email_from,
                 'email_to': user_input.partner_id.email,
-                'partner_ids': user_input.partner_id.id and [(4, user_input.partner_id.id)] or None
+                'partner_ids': [(4, user_input.partner_id.id)]
             }
             mail_mail_obj = self.env['mail.mail'].sudo().create(vals)
-            mail_mail_obj.send()            
+            mail_mail_obj.send()
             self.action_send_survey_mail_message_slack(user_input)
 
         survey_ids = self.env['survey.survey'].search(
@@ -89,9 +89,8 @@ class SurveyMailComposeMessage(models.TransientModel):
         )
         if survey_ids:
             survey_id = survey_ids[0]
-                            
             for partner_id in self.partner_ids:
-                for order_id in partner_ids_orders[partner_id.id]:
+                for order_id in partner[partner_id.id]:
                     survey_user_input = create_survey_user_input(
                         survey_id,
                         partner_id,

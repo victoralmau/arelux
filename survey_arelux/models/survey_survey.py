@@ -148,9 +148,9 @@ class SurveySurvey(models.Model):
                             ('id', 'in', order_ids_mapped.ids)
                         ]
                     )
-                
+
         return order_ids
-        
+
     @api.multi
     def get_res_partner_ids_satisfaction_recurrent(self):
         self.ensure_one()
@@ -188,7 +188,7 @@ class SurveySurvey(models.Model):
                                 self.ar_qt_customer_type
                             ),
                             ('partner_id.ar_qt_arelux_pf_customer_type', '!=', False),
-                            ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),                                        
+                            ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),
                             ('date_done_picking', '!=', False),
                             (
                                 'date_done_picking', '>',
@@ -216,8 +216,16 @@ class SurveySurvey(models.Model):
                                 '=',
                                 self.ar_qt_customer_type
                             ),
-                            ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', False),
-                            ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),                                        
+                            (
+                                'partner_id.ar_qt_todocesped_pf_customer_type',
+                                '!=',
+                                False
+                            ),
+                            (
+                                'partner_id.ar_qt_todocesped_pf_customer_type',
+                                '!=',
+                                'other'
+                            ),
                             ('date_done_picking', '!=', False),
                             (
                                 'date_done_picking',
@@ -257,8 +265,16 @@ class SurveySurvey(models.Model):
                             # survey_user_input_ids
                             user_input_ids = self.env['survey.user_input'].search(
                                 [
-                                    ('survey_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                                    ('survey_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
+                                    (
+                                        'survey_id.ar_qt_activity_type',
+                                        '=',
+                                        self.ar_qt_activity_type
+                                    ),
+                                    (
+                                        'survey_id.ar_qt_customer_type',
+                                        '=',
+                                        self.ar_qt_customer_type
+                                    ),
                                     ('survey_id.survey_type', '=', self.survey_type),
                                     ('survey_id.survey_subtype', '=', self.survey_subtype),                                        
                                     ('partner_id', 'in', partner_ids_mapped)                                        
@@ -282,7 +298,10 @@ class SurveySurvey(models.Model):
                                                 date_create_item_format
                             # operations
                             partner_ids_final = []
-                            b = datetime.strptime(date_filter_end.strftime("%Y-%m-%d"), "%Y-%m-%d")
+                            b = datetime.strptime(
+                                date_filter_end.strftime("%Y-%m-%d"),
+                                "%Y-%m-%d"
+                            )
                             frequence_days_item = survey_frequence_days[self.survey_frequence]
                             for partner_id in partner_ids_max_date_sui:
                                 partner_id_item = res_partner_ids_max_date_sui[partner_id]
@@ -339,7 +358,11 @@ class SurveySurvey(models.Model):
                     sale_order_ids_new = self.env['sale.order'].search(
                         [
                             ('id', 'in', sale_order_ids.ids),
-                            ('id', 'not in', survey_user_input_ids.mapped('order_id').ids)
+                            (
+                                'id',
+                                'not in',
+                                survey_user_input_ids.mapped('order_id').ids
+                            )
                         ]
                     )
                     sale_order_ids = sale_order_ids_new

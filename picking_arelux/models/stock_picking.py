@@ -107,6 +107,7 @@ class StockPicking(models.Model):
                 )
                 if picking_ids_get:
                     picking_id_origin = picking_ids_get[0]
+                    pick_pop_ids = picking_id_origin.pack_operation_product_ids
                     if picking_id_origin.sale_id:
                         need_create_out_invoice = True
                         crm_claim_ids_get = self.env['crm.claim'].search(
@@ -175,25 +176,28 @@ class StockPicking(models.Model):
                                                 invoice_id.partner_bank_id.id
                                         # mandate_id
                                         if invoice_id.mandate_id:
-                                            vals['mandate_id'] = invoice_id.mandate_id.id
+                                            vals['mandate_id'] = \
+                                                invoice_id.mandate_id.id
                                         # create
                                         invoice_obj = self.env[
                                             'account.invoice'
                                         ].sudo().create(vals)
                                         # lines
-                                        for product_id in \
-                                                picking_id_origin.pack_operation_product_ids:
-                                            product_info = products_info[product_id.product_id.id]
+                                        for p_id in pick_pop_ids:
+                                            p_info = \
+                                                products_info[p_id.product_id.id]
                                             line_vals = {
                                                 'invoice_id': invoice_obj.id,
-                                                'product_id': product_id.product_id.id,
-                                                'quantity': product_id.qty_done,
-                                                'price_unit': product_info['price_unit'],
-                                                'discount': product_info['discount'],
-                                                'account_id': product_info['account_id'],
-                                                'name': product_info['name']
+                                                'product_id': p_id.product_id.id,
+                                                'quantity': p_id.qty_done,
+                                                'price_unit': p_info['price_unit'],
+                                                'discount': p_info['discount'],
+                                                'account_id': p_info['account_id'],
+                                                'name': p_info['name']
                                             }
-                                            line_obj = self.env['account.invoice.line'].sudo().create(
+                                            line_obj = self.env[
+                                                'account.invoice.line'
+                                            ].sudo().create(
                                                 line_vals
                                             )
                                             line_obj._onchange_product_id()
@@ -202,19 +206,25 @@ class StockPicking(models.Model):
                                             price_unit_clean = line_vals['price_unit']
 
                                             if line_vals['discount'] > 0:
-                                                pud = (line_vals['price_unit']/100)*line_vals['discount']
-                                                price_unit_clean = line_vals['price_unit']-pud
+                                                op1 = (line_vals['price_unit']/100)
+                                                pud = op1*line_vals['discount']
+                                                price_unit_clean = \
+                                                    line_vals['price_unit']-pud
 
-                                            price_subtotal = price_unit_clean*line_vals['quantity']
+                                            price_subtotal = \
+                                                price_unit_clean*line_vals['quantity']
 
                                             line_obj.update({
-                                                'price_unit': round(line_vals['price_unit'], 4),
-                                                'price_subtotal': round(price_subtotal, 4),
+                                                'price_unit':
+                                                    round(line_vals['price_unit'], 4),
+                                                'price_subtotal':
+                                                    round(price_subtotal, 4),
                                             })
                                         # compute_taxes
                                         invoice_obj.compute_taxes()
                                         invoice_obj.action_invoice_open()
                                         # update_stock_picking
-                                        picking_id_origin.out_refund_invoice_id = invoice_obj.id
+                                        picking_id_origin.out_refund_invoice_id = \
+                                            invoice_obj.id
                                         # action_send_account_invoice_out_refund
                                         picking_id_origin.action_send_account_invoice_out_refund()

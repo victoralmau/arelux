@@ -24,14 +24,14 @@ class StockPicking(models.Model):
             )
             attachments = [
                 {
-                    "title":
-                        _('The refund invoice has been created automatically'),
+                    "title": _('The refund invoice has been created automatically'),
                     "text": self.out_refund_invoice_id.number,
                     "color": "#36a64f",
-                    "fallback": _('View invoice %s %s') % (
-                        self.out_refund_invoice_id.number,
-                        url_item
-                    ),
+                    "fallback":
+                        _('View invoice %s %s') % (
+                            self.out_refund_invoice_id.number,
+                            url_item
+                        ),
                     "actions": [
                         {
                             "type": "button",

@@ -72,7 +72,7 @@ class ResCityZip(models.Model):
                 [
                     ('city_id.country_id.code', '=', country_code),
                     ('weather_station_uuid', '=', False)
-                 ],
+                ],
                 limit=1000
             )
             if res_city_zip_ids:
@@ -161,11 +161,11 @@ class ResCityZip(models.Model):
                             vals = {
                                 'weather_station_uuid': weather_station_uuid,
                                 'date_from': date_from,
-                                'date_to': date_to                                                                                                                                                                                           
+                                'date_to': date_to
                             }
                             self.env['weather.history'].sudo().create(vals)
-        
-    @api.model    
+
+    @api.model
     def cron_weather_station_history_all_years(self):
         # define
         years = [2015, 2016, 2017, 2018, 2019]
@@ -208,7 +208,7 @@ class ResCityZip(models.Model):
                             date_to = date_to.strftime("%Y-%m-%d")
                             # define strftime
                             date_from = date_from.strftime("%Y-%m-%d")
-                            date_to = date_to.strftime("%Y-%m-%d")                    
+                            date_to = date_to.strftime("%Y-%m-%d")
                             # api_call
                             new_key = '%s-%s' % (date_from, date_to)
                             if new_key not in weather_history_items:
@@ -222,6 +222,6 @@ class ResCityZip(models.Model):
                                     vals = {
                                         'weather_station_uuid': weather_station_uuid,
                                         'date_from': date_from,
-                                        'date_to': date_to                                                                                                                                                                                           
+                                        'date_to': date_to
                                     }
                                     self.env['weather.history'].sudo().create(vals)

@@ -53,8 +53,8 @@ class WeatherHistory(models.Model):
             '081750-99999', '600150-99999', '600200-99999', '603200-99999',
             '083010-99999', '080144-99999', '083730-99999', '082900-99999'
         ]
-    
-    @api.model    
+
+    @api.model
     def cron_weather_station_history_previous_month(self):
         # define
         current_date = datetime.today()
@@ -79,8 +79,8 @@ class WeatherHistory(models.Model):
             response = self.action_weather_sns_send(message)
             if not response['send']:
                 _logger.info(response['error'])
-        
-    @api.model    
+
+    @api.model
     def cron_weather_station_history_all_years(self):
         years = [2015, 2016, 2017, 2018, 2019]
         months = [
@@ -111,4 +111,4 @@ class WeatherHistory(models.Model):
                     # sns_send
                     response = self.action_weather_sns_send(message)
                     if not response['send']:
-                        _logger.info(response['error'])                                                                                           
+                        _logger.info(response['error'])
