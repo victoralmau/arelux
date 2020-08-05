@@ -232,13 +232,6 @@ class ResPartnerTodocesped(models.Model):
         ],
         string='TC - Que valora más',
     )
-
-    @api.multi
-    @api.onchange('ar_qt_todocesped_pr_who_values_more')
-    def change_ar_qt_todocesped_pr_who_values_more(self):
-        for item in self:
-            item.ar_qt_todocesped_pr_who_values_more_other_show()
-
     ar_qt_todocesped_pr_who_values_more_other = fields.Char(
         string='TC - Que valora más - Otro',
         size=35
@@ -249,12 +242,18 @@ class ResPartnerTodocesped(models.Model):
     )
 
     @api.multi
-    def ar_qt_todocesped_pr_who_values_more_other_show(self):
+    def _compute_ar_qt_todocesped_pr_who_values_more_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pr_who_values_more_other_show = False
             for item2 in item.ar_qt_todocesped_pr_who_values_more:
                 if item2.other:
                     item.ar_qt_todocesped_pr_who_values_more_other_show = True
+
+    @api.multi
+    @api.onchange('ar_qt_todocesped_pr_who_values_more')
+    def change_ar_qt_todocesped_pr_who_values_more(self):
+        for item in self:
+            item._compute_ar_qt_todocesped_pr_who_values_more_other_show()
 
     # Profesional
     # 1

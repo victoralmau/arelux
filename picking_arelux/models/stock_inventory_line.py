@@ -7,11 +7,7 @@ class StockInventoryLine(models.Model):
 
     prod_lot_id_ref = fields.Char(
         string='Referencia interna',
-        compute='_compute_prod_lot_id_ref',
-        store=False
+        related='prod_lot_id.ref',
+        store=False,
+        readonly=True
     )
-
-    @api.multi
-    def _compute_prod_lot_id_ref(self):
-        for item in self:
-            item.prod_lot_id_ref = item.prod_lot_id.ref

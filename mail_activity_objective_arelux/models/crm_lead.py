@@ -25,9 +25,11 @@ class CrmLead(models.Model):
         string='Currency',
         default=lambda self: self.env.user.company_id.currency_id
     )
-    partner_id_total_sale_order = fields.Integer(
-        compute='_compute_partner_id_total_sale_order',
-        string="Nº Pedidos (cliente)",
+    partner_id_total_sale_order = Integer.Char(
+        string='Nº Pedidos (cliente)',
+        related='partner_id.total_sale_order',
+        store=False,
+        readonly=True
     )
     total_sale_order = fields.Integer(
         string="Nº Pedidos (oport)",
@@ -53,9 +55,11 @@ class CrmLead(models.Model):
         default=0,
         readonly=True
     )
-    partner_id_account_invoice_amount_untaxed_total = fields.Monetary(
-        compute='_compute_partner_id_account_invoice_amount_untaxed_total',
-        string="Facturación (cliente)"
+    partner_id_account_invoice_amount_untaxed_total = Integer.Monetary(
+        string='Facturación (cliente)',
+        related='partner_id.account_invoice_amount_untaxed_total',
+        store=False,
+        readonly=True
     )
     account_invoice_amount_untaxed_total = fields.Monetary(
         string="Facturación (oport)",
@@ -89,21 +93,6 @@ class CrmLead(models.Model):
     def _compute_activities_count(self):
         for item in self:
             item.activities_count = len(item.crm_activity_ids)
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_total_sale_order(self):
-        for item in self:
-            if item.partner_id:
-                item.partner_id_total_sale_order = item.partner_id.total_sale_order
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_account_invoice_amount_untaxed_total(self):
-        for item in self:
-            if item.partner_id:
-                item.partner_id_account_invoice_amount_untaxed_total = \
-                    item.partner_id.account_invoice_amount_untaxed_total
 
     @api.model
     def cron_odoo_crm_lead_fields_generate(self):
