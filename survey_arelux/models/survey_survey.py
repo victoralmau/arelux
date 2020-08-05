@@ -296,7 +296,8 @@ class SurveySurvey(models.Model):
                                         partner_ids_sui[input_id.partner_id.id] = \
                                             date_create_item_format
                                     else:
-                                        item_check = partner_ids_sui[input_id.partner_id.id]
+                                        item_check = \
+                                            partner_ids_sui[input_id.partner_id.id]
                                         if date_create_item_format > item_check:
                                             partner_ids_sui[input_id.partner_id.id] = \
                                                 date_create_item_format
@@ -306,10 +307,10 @@ class SurveySurvey(models.Model):
                                 date_filter_end.strftime("%Y-%m-%d"),
                                 "%Y-%m-%d"
                             )
-                            frequence_days_item = survey_frequence_days[self.survey_frequence]
+                            frequence_days_item = \
+                                survey_frequence_days[self.survey_frequence]
                             for partner_id in partner_ids_sui:
                                 partner_id_item = partner_ids_sui[partner_id]
-                                 # checks
                                 if partner_id_item is None:
                                     partner_ids_final.append(partner_id)
                                 else:
@@ -326,15 +327,15 @@ class SurveySurvey(models.Model):
                             )
         # return
         return partner_ids
-    
+
     @api.multi
     def send_survey_satisfaction_phone(self):
         self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # deadline
-        deadline = False                
+        deadline = False
         if self.deadline_days > 0:
-            deadline = current_date + relativedelta(days=self.deadline_days)                
+            deadline = current_date + relativedelta(days=self.deadline_days)
         # ANADIMOS LOS QUE CORRESPONDEN (NUEVOS)
         sale_order_ids = self.get_sale_order_ids_satisfaction()[0]
         if sale_order_ids:
@@ -390,15 +391,15 @@ class SurveySurvey(models.Model):
                         vals['deadline'] = deadline
                     # create
                     self.env['survey.user_input'].sudo().create(vals)
-    
+
     @api.multi
     def send_survey_satisfaction_recurrent_phone(self):
         self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
         # deadline
-        deadline = False                
+        deadline = False
         if self.deadline_days > 0:
-            deadline = current_date + relativedelta(days=self.deadline_days)                
+            deadline = current_date + relativedelta(days=self.deadline_days)
         # ANADIMOS LOS QUE CORRESPONDEN (NUEVOS)
         res_partner_ids = self.get_res_partner_ids_satisfaction_recurrent()[0]
         if res_partner_ids:
@@ -418,7 +419,7 @@ class SurveySurvey(models.Model):
                     vals['deadline'] = deadline
                 # create
                 self.env['survey.user_input'].sudo().create(vals)
-    
+
     # mail NOT recurrent
     @api.multi
     def send_survey_real_satisfaction_mail(self):
@@ -427,7 +428,7 @@ class SurveySurvey(models.Model):
         if sale_order_ids:
             for sale_order_id in sale_order_ids:
                 self.send_survey_real(self, sale_order_id)
-    
+
     @api.multi
     def send_survey_satisfaction_mail(self, user_input_expired_ids):
         self.ensure_one()
@@ -441,7 +442,7 @@ class SurveySurvey(models.Model):
             # query
             if user_input_ids:
                 order_ids = self.env['sale.order'].search(
-                    [ 
+                    [
                         ('id', 'in', user_input_expired_ids.mapped('order_id').ids),
                         ('id', 'not in', user_input_ids.mapped('order_id').ids)
                     ]
@@ -456,7 +457,7 @@ class SurveySurvey(models.Model):
             if order_ids:
                 for order_id in order_ids:
                     self.send_survey_real(self, order_id)
-    
+
     # mail recurrent
     @api.multi
     def send_survey_real_satisfaction_recurrent_mail(self):
@@ -465,7 +466,7 @@ class SurveySurvey(models.Model):
         if order_ids:
             for order_id in order_ids:
                 self.send_survey_real(self, order_id)
-    
+
     @api.multi
     def send_survey_satisfaction_recurrent_mail(self, user_input_expired_ids):
         self.ensure_one()
@@ -479,7 +480,7 @@ class SurveySurvey(models.Model):
             # query
             if user_input_ids:
                 order_ids = self.env['sale.order'].search(
-                    [ 
+                    [
                         ('id', 'in', user_input_expired_ids.mapped('order_id').ids),
                         ('id', 'not in', user_input_ids.mapped('order_id').ids)
                     ]
@@ -494,23 +495,23 @@ class SurveySurvey(models.Model):
             if order_ids:
                 for order_id in order_ids:
                     self.send_survey_real(self, order_id)
-                            
+
     @api.multi
     def get_phone_survey_surveys(self):
         self.ensure_one()
         return self.env['survey.survey'].search(
-            [ 
+            [
                 ('active', '=', True),
                 ('ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                ('ar_qt_customer_type', '=', self.ar_qt_customer_type),                
+                ('ar_qt_customer_type', '=', self.ar_qt_customer_type),
                 ('survey_type_origin', '=', 'none'),
                 ('survey_type', '=', 'phone'),
                 ('survey_subtype', '=', self.survey_subtype),
-                ('survey_filter_installer', '=', self.survey_filter_installer)                
+                ('survey_filter_installer', '=', self.survey_filter_installer)
             ]
-        )                                                            
-    
-    @api.multi    
+        )
+
+    @api.multi
     def send_survey_real(self, survey_survey, sale_order):
         self.ensure_one()
         vals = {
@@ -536,4 +537,4 @@ class SurveySurvey(models.Model):
         message_obj = self.env['survey.mail.compose.message'].sudo().create(vals)
         message_obj.arelux_send_partner_mails({
             sale_order.partner_id.id: sale_order
-        })  
+        })

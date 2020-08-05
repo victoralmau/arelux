@@ -102,19 +102,9 @@ class CrmLead(models.Model):
                 # update sqls prevent mail.message
                 if order_id.state in ['draft', 'sent']:
                     if self.user_id and update_user_id:
-                        self.env.cr.execute("""
-                        UPDATE sale_order SET user_id = %s WHERE id = %s
-                        """ % (
-                            self.user_id.id,
-                            order_id.id
-                        ))
+                        order_id.user_id = self.user_id.id
                     if self.team_id:
-                        self.env.cr.execute("""
-                        UPDATE sale_order SET team_id = %s WHERE id = %s
-                        """ % (
-                            self.team_id.id,
-                            order_id.id
-                        ))
+                        order_id.team_id = self.team_id.id
                 # ar_qt_activity_type
                 if self.ar_qt_activity_type:
                     if self.ar_qt_activity_type != 'both':

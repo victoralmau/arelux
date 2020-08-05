@@ -173,13 +173,14 @@ class CrmLead(models.Model):
         items = self._cr.fetchall()
         if len(items) > 0:
             for item in items:
-                self._cr.execute("""
-                UPDATE crm_lead SET %s ='%s' WHERE id = %s
-                """ % (
-                    'date_from_last_message',
-                    item[1],
-                    item[0]
-                ))
+                lead_ids = self.env['crm.lead'].search(
+                    [
+                        ('id', '=', item[0])
+                    ]
+                )
+                if lead_ids:
+                    lead_id = lead_ids[0]
+                    lead_id.date_from_last_message = item[1]
 
         self._cr.execute("""
             UPDATE crm_lead SET (mobile, phone) = (
