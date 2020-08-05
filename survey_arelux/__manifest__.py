@@ -19,6 +19,7 @@
         "arelux_partner_questionnaire"
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/survey_user_input_view.xml",
         "views/survey_survey_view.xml",
     ],
