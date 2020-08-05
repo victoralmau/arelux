@@ -590,11 +590,11 @@ class ContactFormSubmission(models.Model):
                 message_obj.send_mail_action()
 
     @api.multi
-    def create_sale_order(self, id):
+    def create_sale_order(self, item_id):
         self.ensure_one()
         order_template_ids = self.env['sale.order.template'].search(
             [
-                ('id', '=', id)
+                ('id', '=', item_id)
             ]
         )
         if order_template_ids:

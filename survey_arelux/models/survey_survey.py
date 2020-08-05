@@ -246,22 +246,22 @@ class SurveySurvey(models.Model):
                     for order_report_id in order_report_ids:
                         if order_report_id.partner_id.id not in partner_ids_all:
                             partner_ids_all[order_report_id.partner_id.id] = 0
-                            
+
                         partner_ids_all[order_report_id.partner_id.id] += 1
-                    
+
                     if len(partner_ids_all) > 0:
                         partner_ids_mapped = []
                         for partner_id_all in partner_ids_all:
                             partner_id_all_item = partner_ids_all[partner_id_all]
                             if partner_id_all_item > 1:
                                 partner_ids_mapped.append(partner_id_all)
-    
+
                         if len(partner_ids_mapped) > 0:
                             # operations
-                            partner_ids_max_date_sui = {}
+                            partner_ids_sui = {}
                             for partner_id_mapped in partner_ids_mapped:
-                                if partner_id_mapped not in partner_ids_max_date_sui:
-                                    partner_ids_max_date_sui[partner_id_mapped] = None
+                                if partner_id_mapped not in partner_ids_sui:
+                                    partner_ids_sui[partner_id_mapped] = None
                             # survey_user_input_ids
                             user_input_ids = self.env['survey.user_input'].search(
                                 [
@@ -276,10 +276,14 @@ class SurveySurvey(models.Model):
                                         self.ar_qt_customer_type
                                     ),
                                     ('survey_id.survey_type', '=', self.survey_type),
-                                    ('survey_id.survey_subtype', '=', self.survey_subtype),                                        
-                                    ('partner_id', 'in', partner_ids_mapped)                                        
+                                    (
+                                        'survey_id.survey_subtype',
+                                        '=',
+                                        self.survey_subtype
+                                    ),
+                                    ('partner_id', 'in', partner_ids_mapped)
                                 ]
-                            )                                
+                            )
                             if user_input_ids:
                                 # operations
                                 for input_id in user_input_ids:
@@ -287,14 +291,14 @@ class SurveySurvey(models.Model):
                                         input_id.date_create,
                                         "%Y-%m-%d %H:%M:%S"
                                     ).strftime('%Y-%m-%d')
-                                    
-                                    if partner_ids_max_date_sui[input_id.partner_id.id] is None:
-                                        partner_ids_max_date_sui[input_id.partner_id.id] = \
+
+                                    if partner_ids_sui[input_id.partner_id.id] is None:
+                                        partner_ids_sui[input_id.partner_id.id] = \
                                             date_create_item_format
                                     else:
-                                        item_check = partner_ids_max_date_sui[input_id.partner_id.id]
+                                        item_check = partner_ids_sui[input_id.partner_id.id]
                                         if date_create_item_format > item_check:
-                                            partner_ids_max_date_sui[input_id.partner_id.id] = \
+                                            partner_ids_sui[input_id.partner_id.id] = \
                                                 date_create_item_format
                             # operations
                             partner_ids_final = []
@@ -303,15 +307,15 @@ class SurveySurvey(models.Model):
                                 "%Y-%m-%d"
                             )
                             frequence_days_item = survey_frequence_days[self.survey_frequence]
-                            for partner_id in partner_ids_max_date_sui:
-                                partner_id_item = res_partner_ids_max_date_sui[partner_id]
+                            for partner_id in partner_ids_sui:
+                                partner_id_item = partner_ids_sui[partner_id]
                                  # checks
                                 if partner_id_item is None:
                                     partner_ids_final.append(partner_id)
                                 else:
-                                    a = datetime.strptime(partner_id_item, "%Y-%m-%d")                                
+                                    a = datetime.strptime(partner_id_item, "%Y-%m-%d")
                                     delta = b - a
-                                    difference_days = delta.days                                                                                                            
+                                    difference_days = delta.days
                                     if difference_days >= frequence_days_item:
                                         partner_ids_final.append(partner_id)
                             # final
@@ -321,7 +325,7 @@ class SurveySurvey(models.Model):
                                 ]
                             )
         # return
-        return res_partner_ids            
+        return partner_ids
     
     @api.multi
     def send_survey_satisfaction_phone(self):

@@ -227,4 +227,5 @@ class StockPicking(models.Model):
                                         picking_id_origin.out_refund_invoice_id = \
                                             invoice_obj.id
                                         # action_send_account_invoice_out_refund
-                                        picking_id_origin.action_send_account_invoice_out_refund()
+                                        p_id = picking_id_origin
+                                        p_id.action_send_account_invoice_out_refund()

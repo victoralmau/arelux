@@ -18,7 +18,7 @@ class SurveyMailComposeMessage(models.TransientModel):
         return False
 
     @api.multi
-    def arelux_send_partner_mails(self):
+    def arelux_send_partner_mails(self, partner_ids_orders):
         self.ensure_one()
 
         def create_survey_user_input(survey_survey, partner, order_id):
@@ -90,7 +90,7 @@ class SurveyMailComposeMessage(models.TransientModel):
         if survey_ids:
             survey_id = survey_ids[0]
             for partner_id in self.partner_ids:
-                for order_id in partner[partner_id.id]:
+                for order_id in partner_ids_orders[partner_id.id]:
                     survey_user_input = create_survey_user_input(
                         survey_id,
                         partner_id,
