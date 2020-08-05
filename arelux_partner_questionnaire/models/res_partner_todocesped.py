@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 class ResPartnerTodocesped(models.Model):
     _inherit = 'res.partner'
 
-    '''General'''
+    # General
     ar_qt_todocesped_interest_product_1 = fields.Many2one(
         comodel_name='product.template',
         domain=[
@@ -84,8 +84,8 @@ class ResPartnerTodocesped(models.Model):
         comodel_name='res.partner',
         string='TC - Quién nos recomendó',
     )
-    '''Particular'''
-    ''''1'''
+    # Particular
+    # 1
     ar_qt_todocesped_pr_where_install = fields.Selection(
         [
             ('garden', 'Jardin (planta baja)'),
@@ -120,11 +120,11 @@ class ResPartnerTodocesped(models.Model):
         string='TC - Dónde lo instala - Otro',
         size=35
     )
-    '''1b'''
+    # 1b
     ar_qt_todocesped_pr_budget_instalation = fields.Boolean(
         string="TC - Quiere presupuesto de instalación"
     )
-    '''2'''
+    # 2
     ar_qt_todocesped_pr_type_surface = fields.Many2many(
         comodel_name='res.partner.type.surface',
         domain=[
@@ -157,7 +157,7 @@ class ResPartnerTodocesped(models.Model):
                 if item2.other:
                     item.ar_qt_todocesped_pr_type_surface_other_show = True
 
-    '''3'''
+    # 3
     ar_qt_todocesped_pr_specific_segment = fields.Many2many(
         comodel_name='res.partner.specific.segment',
         domain=[
@@ -190,7 +190,7 @@ class ResPartnerTodocesped(models.Model):
                 if item2.other:
                     item.ar_qt_todocesped_pr_specific_segment_other_show = True
 
-    '''4'''
+    # 4
     ar_qt_todocesped_pr_why_install_it = fields.Many2many(
         comodel_name='res.partner.reason.install',
         domain=[
@@ -223,7 +223,7 @@ class ResPartnerTodocesped(models.Model):
                 if item2.other:
                     item.ar_qt_todocesped_pr_why_install_it_other_show = True
 
-    '''5'''
+    # 5
     ar_qt_todocesped_pr_who_values_more = fields.Many2many(
         comodel_name='res.partner.valuation.thing',
         domain=[
@@ -256,8 +256,8 @@ class ResPartnerTodocesped(models.Model):
                 if item2.other:
                     item.ar_qt_todocesped_pr_who_values_more_other_show = True
 
-    '''Profesional'''
-    '''1'''
+    # Profesional
+    # 1
     ar_qt_todocesped_pf_customer_type = fields.Selection(
         [
             ('warehouse_construction', 'Almacen de construccion'),
@@ -280,11 +280,11 @@ class ResPartnerTodocesped(models.Model):
         string='TC - Tipo de cliente - Otro',
         size=35
     )
-    '''2'''
+    # 2
     ar_qt_todocesped_pf_install_artificial_grass = fields.Boolean(
         string="TC - Instala el cesped artificial"
     )
-    '''3'''
+    # 3
     ar_qt_todocesped_pf_type_customers_sale = fields.Many2many(
         comodel_name='res.partner.type.customer.sale',
         domain=[
@@ -293,7 +293,7 @@ class ResPartnerTodocesped(models.Model):
         ],
         string='TC  A qué tipo de clientes vende nuestro cesped',
     )
-    '''4'''
+    # 4
     ar_qt_todocesped_pf_stock_capacity = fields.Many2many(
         comodel_name='res.partner.stock.capacity',
         domain=[
@@ -302,7 +302,7 @@ class ResPartnerTodocesped(models.Model):
         ],
         string='TC - Tiene capacidad de stockar',
     )
-    '''5'''
+    # 5
     ar_qt_todocesped_pf_valuation_thing = fields.Many2many(
         comodel_name='res.partner.valuation.thing',
         domain=[

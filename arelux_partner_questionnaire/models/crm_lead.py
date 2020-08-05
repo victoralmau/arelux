@@ -1,7 +1,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 from odoo import api, models, fields, _
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning as UserError
 _logger = logging.getLogger(__name__)
 
 
@@ -147,7 +147,7 @@ class CrmLead(models.Model):
                 )
                 if sale_quote_template_obj:
                     allow_create = False
-                    raise Warning(
+                    raise UserError(
                         _("No se puede crear otro flujo para el mismo contacto,"
                           " tipo de actividad y tipo de cliente si ya existe "
                           "uno abierto")
@@ -195,7 +195,7 @@ class CrmLead(models.Model):
                 if team_obj.ar_qt_activity_type \
                         and team_obj.ar_qt_activity_type != ar_qt_activity_type_check:
                     allow_write = False
-                    raise Warning(
+                    raise UserError(
                         _("No puedes cambiar el equipo de ventas a uno que "
                           "no corresponde de este tipo de actividad")
                     )
@@ -203,7 +203,7 @@ class CrmLead(models.Model):
                         and team_obj.ar_qt_customer_type \
                         and team_obj.ar_qt_customer_type != ar_qt_customer_type_check:
                     allow_write = False
-                    raise Warning(
+                    raise UserError(
                         _("No puedes cambiar el equipo de ventas a uno que "
                           "no corresponde de este tipo de cliente")
                     )

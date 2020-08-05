@@ -15,19 +15,6 @@ class CrmLead(models.Model):
         self.ensure_one()
         _logger.info('Aplicando automatizaciones del flujo')
         _logger.info(self.id)
-        # example params
-        '''
-        params = {
-            'action_log': 'custom_17_18_19_enero_2020',
-            'user_id': 1,
-            'mail_activity': True,
-            'mail_activity_type_id': 3,
-            'mail_activity_date_deadline': '2020-01-01',
-            'mail_activity_summary': 'Revisar flujo automatico',
-            'mail_template_id': 133
-            'lead_stage_id': 2
-        }
-        '''
         # special_log
         if 'action_log' in params:
             vals = {
@@ -133,8 +120,9 @@ class CrmLead(models.Model):
             }
             self.env['automation.log'].sudo().create(vals)
 
-    @api.one
+    @api.multi
     def action_send_mail_with_template_id(self, template_id=False):
+        self.ensure_one()
         if template_id:
             mail_template_item = self.env['mail.template'].browse(
                 template_id

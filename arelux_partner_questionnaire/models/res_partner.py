@@ -11,7 +11,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     ar_qt_samples = fields.Date(
-        compute='_ar_qt_samples',
+        compute='_compute_ar_qt_samples',
         string='Muestras',
     )
     ar_qt_profession = fields.Char(
@@ -60,7 +60,7 @@ class ResPartner(models.Model):
 
     @api.onchange('ar_qt_customer_type')
     def change_ar_qt_customer_type(self):
-        '''Todocesped'''
+        # Todocesped
         self.ar_qt_todocesped_interest_product_1 = 0
         self.ar_qt_todocesped_interest_product_2 = 0
         self.ar_qt_todocesped_interest_product_3 = 0
@@ -93,7 +93,7 @@ class ResPartner(models.Model):
         self.ar_qt_todocesped_pf_stock_capacity = []
         self.ar_qt_todocesped_pf_valuation_thing = []
         self.ar_qt_todocesped_pf_valuation_thing_other = ''
-        '''Arelux'''
+        # Arelux
         self.ar_qt_arelux_interest_product_1 = 0
         self.ar_qt_arelux_interest_product_2 = 0
         self.ar_qt_arelux_interest_product_3 = 0
@@ -151,7 +151,7 @@ class ResPartner(models.Model):
     is_potential_advertise_oniad = fields.Boolean(
         string="Potencial para OniAd"
     )
-    '''Profesional'''
+    # Profesional
     ar_qt_pf_frequency_customer_type = fields.Selection(
         [
             ('none', 'Cliente sin ventas'),
@@ -177,7 +177,7 @@ class ResPartner(models.Model):
     )
 
     @api.multi
-    def _ar_qt_samples(self):
+    def _compute_ar_qt_samples(self):
         for item in self:
             order_ids = self.env['sale.order'].search(
                 [

@@ -4,9 +4,9 @@ from odoo import models, fields
 
 
 class DeliveryCarrier(models.Model):
-    _inherit = 'delivery.carrier'    
+    _inherit = 'delivery.carrier'
     _order = 'position'
-    
+
     position = fields.Integer(
         string='Position'
     )

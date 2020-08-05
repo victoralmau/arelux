@@ -78,7 +78,7 @@ class ResPartner(models.Model):
             (rpr2.total_sale_order <> rp.total_sale_order)
             OR (rpr2.total_sale_order_last_30_days <> rp.total_sale_order_last_30_days)
             OR (rpr2.total_sale_order_last_90_days <> rp.total_sale_order_last_90_days)
-            OR (rpr2.total_sale_order_last_12_months  <> 
+            OR (rpr2.total_sale_order_last_12_months  <>
             rp.total_sale_order_last_12_months)
             OR (rp.date_from_last_sale_order IS NOT NULL
             AND rpr2.last_date_order_management <> rp.date_from_last_sale_order)

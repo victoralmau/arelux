@@ -71,27 +71,29 @@ class AreluxSaleReportLine(models.Model):
         copy=True
     )
 
-    @api.one
+    @api.multi
     def remove_all_user_line(self):
-        line_user_ids = self.env['arelux.sale.report.line.user'].search(
-            [
-                ('arelux_sale_report_line_id', '=', self.id)
-            ]
-        )
-        if line_user_ids:
-            for line_user_id in line_user_ids:
-                line_user_id.unlink()
+        for item in self:
+            line_user_ids = self.env['arelux.sale.report.line.user'].search(
+                [
+                    ('arelux_sale_report_line_id', '=', item.id)
+                ]
+            )
+            if line_user_ids:
+                for line_user_id in line_user_ids:
+                    line_user_id.unlink()
 
-    @api.one
+    @api.multi
     def remove_all_sale_order_line(self):
-        line_sale_order_ids = self.env['arelux.sale.report.line.sale.order'].search(
-            [
-                ('arelux_sale_report_line_id', '=', self.id)
-            ]
-        )
-        if line_sale_order_ids:
-            for line_sale_order_id in line_sale_order_ids:
-                line_sale_order_id.unlink()
+        for item in self:
+            order_ids = self.env['arelux.sale.report.line.sale.order'].search(
+                [
+                    ('arelux_sale_report_line_id', '=', item.id)
+                ]
+            )
+            if order_ids:
+                for order_id in order_ids:
+                    order_id.unlink()
 
     @api.multi
     def _get_line_info_real(self, custom_type):

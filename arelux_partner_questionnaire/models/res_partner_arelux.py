@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 class ResPartnerArelux(models.Model):
     _inherit = 'res.partner'
 
-    '''General'''
+    # General
     ar_qt_arelux_interest_product_1 = fields.Many2one(
         comodel_name='product.template',
         domain=[
@@ -96,8 +96,8 @@ class ResPartnerArelux(models.Model):
         comodel_name='res.partner',
         string='AR - Quién nos recomendó',
     )
-    '''Particular'''
-    ''''1'''
+    # Particular
+    # 1
     ar_qt_arelux_pr_ql_product = fields.Many2many(
         comodel_name='res.partner.qualification.product',
         string='AR - Clasificación segun producto',
@@ -113,7 +113,7 @@ class ResPartnerArelux(models.Model):
             item._get_ar_qt_arelux_pr_ql_product_surface_treatment_show()
             item._get_ar_qt_arelux_pr_ql_product_other_show()
 
-    '''1-Impermeabilizantes'''
+    # 1-Impermeabilizantes
     ar_qt_arelux_pr_ql_product_waterproofing = fields.Selection(
         [
             ('leaks', 'Filtraciones'),
@@ -141,7 +141,7 @@ class ResPartnerArelux(models.Model):
         string='AR - Impermeabilizantes - Otro',
         size=35
     )
-    '''1-Pinturas termincas'''
+    # 1-Pinturas termincas
     ar_qt_arelux_pr_ql_product_thermal_paints = fields.Selection(
         [
             ('saving', 'Ahorro (Reducir uso de calefaccion y aire acondicionado)'),
@@ -174,7 +174,7 @@ class ResPartnerArelux(models.Model):
         string='AR - Pinturas térmicas - Otro',
         size=35
     )
-    '''1-Aislantes reflexivos'''
+    # 1-Aislantes reflexivos
     ar_qt_arelux_pr_ql_product_reflective_insulators = fields.Selection(
         [
             ('insulation_little_space', 'Aislante que ocupa poco espacio'),
@@ -206,7 +206,7 @@ class ResPartnerArelux(models.Model):
         string='AR - Aislantes reflexivos - Otro',
         size=35
     )
-    '''1-Tratamiento de superficies'''
+    # 1-Tratamiento de superficies
     ar_qt_arelux_pr_ql_product_surface_treatment = fields.Selection(
         [
             ('parking', 'Garajes'),
@@ -254,11 +254,11 @@ class ResPartnerArelux(models.Model):
         string='AR - Otro',
         size=35
     )
-    '''1b'''
+    # 1b'
     ar_qt_arelux_pr_insall_the_same = fields.Boolean(
         string="AR - Lo aplica o instala ella/él mismo"
     )
-    '''2'''
+    # 2
     ar_qt_arelux_pr_reason_buy = fields.Many2many(
         comodel_name='res.partner.reason.buy',
         string='AR - Por qué lo compran',
@@ -328,9 +328,9 @@ class ResPartnerArelux(models.Model):
                     item.ar_qt_arelux_pr_valuation_thing_other_show = True
                     item.ar_qt_arelux_valuation_thing_other_show = True
 
-    '''7'''
-    '''Profesional'''
-    '''1'''
+    # 7
+    # Profesional
+    # 1
     ar_qt_arelux_pf_customer_type = fields.Selection(
         [
             ('warehouse_construction', 'Almacen de construccion / distribuidores'),
@@ -358,16 +358,16 @@ class ResPartnerArelux(models.Model):
         string='AR - Tipo de cliente - Otro',
         size=35
     )
-    '''1.b'''
+    # 1.b
     ar_qt_arelux_pf_install = fields.Boolean(
         string="AR - Hacen ellos la aplicación?"
     )
-    '''2'''
+    # 2
     ar_qt_arelux_pf_type_customers_sale = fields.Many2many(
         comodel_name='res.partner.type.customer.sale',
         string='AR - A que tipo de clientes vende nuestros productos',
     )
-    '''3'''
+    # 3
     ar_qt_arelux_pf_stock_capacity = fields.Many2many(
         comodel_name='res.partner.stock.capacity',
         string='AR - Tiene capacidad de stockar',

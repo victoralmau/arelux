@@ -90,7 +90,7 @@ class ResPartnerReport(models.Model):
                 SELECT partner_invoice_id, count(id) orders_number,
                 sum(amount_total) orders_amount
                 FROM sale_order
-                WHERE claim = false AND amount_total > 0 
+                WHERE claim = false AND amount_total > 0
                 AND STATE in ('sale', 'done')
                 AND confirmation_date
                 BETWEEN (now()::date - interval '12' month)::date and now()::date

@@ -6,8 +6,9 @@ from odoo import api, models
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.one
+    @api.multi
     def account_invoice_auto_send_mail_item_real(self, mail_template_id, author_id):
+        self.ensure_one()
         # change mail_template_id
         if self.ar_qt_activity_type == 'arelux':
             template_id = self.journal_id.invoice_mail_template_id_arelux

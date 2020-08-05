@@ -1,7 +1,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
-from odoo import api, models, fields
+from odoo import api, models, fields, _
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import pytz
@@ -26,7 +26,7 @@ class CrmLead(models.Model):
         default=lambda self: self.env.user.company_id.currency_id
     )
     partner_id_total_sale_order = fields.Integer(
-        compute='_partner_id_total_sale_order',
+        compute='_compute_partner_id_total_sale_order',
         string="Nº Pedidos (cliente)",
     )
     total_sale_order = fields.Integer(
@@ -54,7 +54,7 @@ class CrmLead(models.Model):
         readonly=True
     )
     partner_id_account_invoice_amount_untaxed_total = fields.Monetary(
-        compute='_partner_id_account_invoice_amount_untaxed_total',
+        compute='_compute_partner_id_account_invoice_amount_untaxed_total',
         string="Facturación (cliente)"
     )
     account_invoice_amount_untaxed_total = fields.Monetary(
@@ -92,14 +92,14 @@ class CrmLead(models.Model):
 
     @api.multi
     @api.depends('partner_id')
-    def _partner_id_total_sale_order(self):
+    def _compute_partner_id_total_sale_order(self):
         for item in self:
             if item.partner_id:
                 item.partner_id_total_sale_order = item.partner_id.total_sale_order
 
     @api.multi
     @api.depends('partner_id')
-    def _partner_id_account_invoice_amount_untaxed_total(self):
+    def _compute_partner_id_account_invoice_amount_untaxed_total(self):
         for item in self:
             if item.partner_id:
                 item.partner_id_account_invoice_amount_untaxed_total = \
@@ -173,7 +173,8 @@ class CrmLead(models.Model):
         items = self._cr.fetchall()
         if len(items) > 0:
             for item in items:
-                sql = "UPDATE crm_lead SET date_from_last_message ='%s' WHERE id = %s" % (
+                sql_item = "UPDATE crm_lead SET %s ='%s' WHERE id = %s" % (
+                    'date_from_last_message',
                     item[1],
                     item[0]
                 )
@@ -599,7 +600,7 @@ class CrmLead(models.Model):
                     _("No tienes flujos de objetivo Despertar sin siguiente "
                       "actividad para poder asignarte")
         # return
-        return response                                                                                                    
+        return response
 
     @api.model
     def cron_odoo_crm_lead_change_inactivos(self):
@@ -624,7 +625,7 @@ class CrmLead(models.Model):
                 ),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', False),
-                ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),                    
+                ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),
                 ('partner_id.total_sale_order', '=', 0),
                 ('active', '=', True),
                 ('probability', '>', 0),
@@ -655,7 +656,7 @@ class CrmLead(models.Model):
                 ('partner_id.ar_qt_activity_type', '=', 'arelux'),
                 ('partner_id.ar_qt_customer_type', '=', 'profesional'),
                 ('partner_id.ar_qt_arelux_pf_customer_type', '!=', False),
-                ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),                    
+                ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),
                 ('partner_id.total_sale_order', '=', 0),
                 ('active', '=', True),
                 ('probability', '>', 0),
@@ -746,7 +747,7 @@ class CrmLead(models.Model):
             if not lead_id:
                 lead_ids2 = self.env['crm.lead'].search(
                     [
-                        ('id', 'in', crm_lead_ids.ids)
+                        ('id', 'in', lead_ids.ids)
                     ]
                 )
                 if lead_ids2:

@@ -5,13 +5,13 @@ from odoo import api, models, fields
 
 class StockScrap(models.Model):
     _inherit = 'stock.scrap'
-    
+
     cost = fields.Float(
         compute='_compute_cost',
         string='Coste',
         store=False
     )
-    
+
     @api.multi
     def _compute_cost(self):
         for item in self:

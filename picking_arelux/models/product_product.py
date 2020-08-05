@@ -4,8 +4,8 @@ from odoo import api, models
 
 
 class ProductProduct(models.Model):
-    _inherit = 'product.product'                
-                
+    _inherit = 'product.product'
+
     @api.multi
     def regenerate_stock_production_lot_product_qty_store(self):
         for item in self:

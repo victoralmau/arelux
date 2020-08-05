@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <field name="to_refund" position="replace">
                 <field name="to_refund" invisible="1"/>
-	       </field>
+            </field>
         </field>
     </record>
 

@@ -89,8 +89,9 @@ class AreluxSaleReport(models.Model):
             'context': context
         }
 
-    @api.one
+    @api.multi
     def get_table_info_metrics(self):
+        self.ensure_one()
         metrics_info = {}
         for line in self.report_line:
             if line.show_in_table_format:

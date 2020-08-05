@@ -5,17 +5,17 @@ from odoo import api, models, fields
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
-    
-    name = fields.Char( 
+
+    name = fields.Char(
         compute='_compute_name',
         string='Descripcion',
         store=False
     )
-    qty_to_lot_id_domain = fields.Float( 
+    qty_to_lot_id_domain = fields.Float(
         compute='_compute_qty_to_lot_id_domain'
-    )    
-        
-    @api.one        
+    )
+
+    @api.one
     def _compute_name(self):
         for item in self:
             item.name = item.product_id.name
@@ -29,7 +29,7 @@ class StockMove(models.Model):
                     for order_line in item.picking_id.purchase_id.order_line:
                         if order_line.product_id.id == item.product_id.id:
                             item.name = order_line.name
-                        
+
     @api.multi
     def _compute_qty_to_lot_id_domain(self):
         for item in self:

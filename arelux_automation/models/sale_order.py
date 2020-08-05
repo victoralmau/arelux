@@ -565,7 +565,7 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_sale_order_mail2(self, template_id=False):
-        self.ensure_one
+        self.ensure_one()
         need_send_mail = False
         automation_log_ids = self.env['automation.log'].search(
             [
