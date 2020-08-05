@@ -14,6 +14,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/security.xml",
         "data/quality_team.xml",
         "data/waste_remove_product.xml",
         "data/maintenance_installation_need_check_data.xml",
