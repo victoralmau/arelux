@@ -5,11 +5,11 @@ from odoo import fields, models
 
 class WasteRemoveProduct(models.Model):
     _name = 'waste.remove.product'
-    _description = 'Waste Remove Product'        
+    _description = 'Waste Remove Product'
 
-    name = fields.Char(        
+    name = fields.Char(
         string='Nombre'
     )
-    uom = fields.Char(        
+    uom = fields.Char(
         string='Unidad de medida'
     )

@@ -16,7 +16,7 @@ class ResPartnerTodocesped(models.Model):
             ('product_brand_id', '=', 5)
         ],
         string='TC - Modelos que más le interesan',
-    )                                                        
+    )
     ar_qt_todocesped_interest_product_2 = fields.Many2one(
         comodel_name='product.template',
         domain=[
@@ -31,7 +31,7 @@ class ResPartnerTodocesped(models.Model):
             ('product_brand_id', '=', 5)
         ],
     )
-    ar_qt_todocesped_interest_product_4 = fields.Many2one(  
+    ar_qt_todocesped_interest_product_4 = fields.Many2one(
         comodel_name='product.template',
         domain=[
             ('sale_ok', '=', True),
@@ -51,7 +51,7 @@ class ResPartnerTodocesped(models.Model):
             item.ar_qt_todocesped_interest_product_3 = 0
             item.ar_qt_todocesped_interest_product_4 = 0
             item.ar_qt_todocesped_interest_products_not_yet = False
-                
+
     ar_qt_todocesped_interest_products_not_yet = fields.Boolean(
         string="TC - Modelos que más le interesan - Todavia no lo tiene claro"
     )
@@ -65,23 +65,23 @@ class ResPartnerTodocesped(models.Model):
             item.ar_qt_todocesped_interest_product_3 = 0
             item.ar_qt_todocesped_interest_product_4 = 0
             item.ar_qt_todocesped_interest_product_all = False
-    
+
     ar_qt_todocesped_contact_form = fields.Many2many(
         comodel_name='res.partner.contact.form',
         string='TC - Formas de contacto / Colectivo',
-    )                    
+    )
     ar_qt_todocesped_contact_form_other = fields.Char(
         string='TC - Formas de contacto / Colectivo - Otro',
         size=35
-    )    
+    )
     ar_qt_todocesped_contact_form_other_show = fields.Boolean(
         store=False
     )
     ar_qt_todocesped_is_recommendation = fields.Boolean(
         string="TC - Viene recomendado"
-    )        
+    )
     ar_qt_todocesped_recommendation_partner_id = fields.Many2one(
-        comodel_name='res.partner', 
+        comodel_name='res.partner',
         string='TC - Quién nos recomendó',
     )
     '''Particular'''
@@ -96,10 +96,10 @@ class ResPartnerTodocesped(models.Model):
             ('urbanization', 'Urbanizacion'),
             ('event', 'Evento/Feria'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=15,
-        string='TC - Dónde lo instala', 
-        copy=False, 
+        string='TC - Dónde lo instala',
+        copy=False,
         index=True
     )
 
@@ -115,7 +115,7 @@ class ResPartnerTodocesped(models.Model):
                 item.ar_qt_todocesped_pr_type_surface = [3]
             elif item.ar_qt_todocesped_pr_where_install == "event":
                 item.ar_qt_todocesped_pr_type_surface = [2]
-        
+
     ar_qt_todocesped_pr_where_install_other = fields.Char(
         string='TC - Dónde lo instala - Otro',
         size=35
@@ -123,7 +123,7 @@ class ResPartnerTodocesped(models.Model):
     '''1b'''
     ar_qt_todocesped_pr_budget_instalation = fields.Boolean(
         string="TC - Quiere presupuesto de instalación"
-    )  
+    )
     '''2'''
     ar_qt_todocesped_pr_type_surface = fields.Many2many(
         comodel_name='res.partner.type.surface',
@@ -139,24 +139,24 @@ class ResPartnerTodocesped(models.Model):
     def change_ar_qt_todocesped_pr_type_surface(self):
         for item in self:
             item._compute_ar_qt_todocesped_pr_type_surface_other_show()
-                
+
     ar_qt_todocesped_pr_type_surface_other = fields.Char(
         string='TC - Tipo de superficie - Otro',
         size=35
-    )        
+    )
     ar_qt_todocesped_pr_type_surface_other_show = fields.Boolean(
         compute='_compute_ar_qt_todocesped_pr_type_surface_other_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_todocesped_pr_type_surface_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pr_type_surface_other_show = False
-            for ar_qt_todocesped_pr_type_surface in item.ar_qt_todocesped_pr_type_surface:
-                if ar_qt_todocesped_pr_type_surface.other:
+            for item2 in item.ar_qt_todocesped_pr_type_surface:
+                if item2.other:
                     item.ar_qt_todocesped_pr_type_surface_other_show = True
-        
+
     '''3'''
     ar_qt_todocesped_pr_specific_segment = fields.Many2many(
         comodel_name='res.partner.specific.segment',
@@ -165,14 +165,14 @@ class ResPartnerTodocesped(models.Model):
             ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
         ],
         string='TC - Segmento específico',
-    )   
-     
+    )
+
     @api.multi
     @api.onchange('ar_qt_todocesped_pr_specific_segment')
     def change_ar_qt_todocesped_pr_specific_segment(self):
         for item in self:
             item._compute_ar_qt_todocesped_pr_specific_segment_other_show()
-        
+
     ar_qt_todocesped_pr_specific_segment_other = fields.Char(
         string='TC - Segmento específico - Otro',
         size=35
@@ -181,31 +181,31 @@ class ResPartnerTodocesped(models.Model):
         compute='_compute_ar_qt_todocesped_pr_specific_segment_other_show',
         store=False
     )
-           
+
     @api.multi
     def _compute_ar_qt_todocesped_pr_specific_segment_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pr_specific_segment_other_show = False
-            for ar_qt_todocesped_pr_specific_segment in item.ar_qt_todocesped_pr_specific_segment:
-                if ar_qt_todocesped_pr_specific_segment.other:
+            for item2 in item.ar_qt_todocesped_pr_specific_segment:
+                if item2.other:
                     item.ar_qt_todocesped_pr_specific_segment_other_show = True
-                                                                                                       
+
     '''4'''
     ar_qt_todocesped_pr_why_install_it = fields.Many2many(
-        comodel_name='res.partner.reason.install', 
+        comodel_name='res.partner.reason.install',
         domain=[
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
         ],
         string='TC - Por qué lo instala',
-    )    
-    
+    )
+
     @api.multi
     @api.onchange('ar_qt_todocesped_pr_why_install_it')
     def change_ar_qt_todocesped_pr_why_install_it(self):
         for item in self:
             item._compute_ar_qt_todocesped_pr_why_install_it_other_show()
-    
+
     ar_qt_todocesped_pr_why_install_it_other = fields.Char(
         string='TC - Por qué lo instala - Otro',
         size=35
@@ -214,49 +214,49 @@ class ResPartnerTodocesped(models.Model):
         compute='_compute_ar_qt_todocesped_pr_why_install_it_other_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_todocesped_pr_why_install_it_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pr_why_install_it_other_show = False
-            for ar_qt_todocesped_pr_why_install_it in item.ar_qt_todocesped_pr_why_install_it:
-                if ar_qt_todocesped_pr_why_install_it.other:
+            for item2 in item.ar_qt_todocesped_pr_why_install_it:
+                if item2.other:
                     item.ar_qt_todocesped_pr_why_install_it_other_show = True
-                            
+
     '''5'''
     ar_qt_todocesped_pr_who_values_more = fields.Many2many(
-        comodel_name='res.partner.valuation.thing', 
+        comodel_name='res.partner.valuation.thing',
         domain=[
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
         ],
         string='TC - Que valora más',
-    )    
-    
+    )
+
     @api.multi
     @api.onchange('ar_qt_todocesped_pr_who_values_more')
     def change_ar_qt_todocesped_pr_who_values_more(self):
         for item in self:
             item.ar_qt_todocesped_pr_who_values_more_other_show()
-    
+
     ar_qt_todocesped_pr_who_values_more_other = fields.Char(
         string='TC - Que valora más - Otro',
         size=35
-    )    
+    )
     ar_qt_todocesped_pr_who_values_more_other_show = fields.Boolean(
         compute='_compute_ar_qt_todocesped_pr_who_values_more_other_show',
         store=False
     )
-    
+
     @api.multi
     def ar_qt_todocesped_pr_who_values_more_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pr_who_values_more_other_show = False
-            for ar_qt_todocesped_pr_who_values_more in item.ar_qt_todocesped_pr_who_values_more:
-                if ar_qt_todocesped_pr_who_values_more.other:
+            for item2 in item.ar_qt_todocesped_pr_who_values_more:
+                if item2.other:
                     item.ar_qt_todocesped_pr_who_values_more_other_show = True
-        
-    '''Profesional'''      
+
+    '''Profesional'''
     '''1'''
     ar_qt_todocesped_pf_customer_type = fields.Selection(
         [
@@ -270,10 +270,10 @@ class ResPartnerTodocesped(models.Model):
             ('pool', 'Piscinas'),
             ('nursery', 'Vivero'),
             ('other', 'Otro'),
-        ], 
+        ],
         size=35,
-        string='TC - Tipo de cliente', 
-        copy=False, 
+        string='TC - Tipo de cliente',
+        copy=False,
         index=True
     )
     ar_qt_todocesped_pf_customer_type_other = fields.Char(
@@ -286,7 +286,7 @@ class ResPartnerTodocesped(models.Model):
     )
     '''3'''
     ar_qt_todocesped_pf_type_customers_sale = fields.Many2many(
-        comodel_name='res.partner.type.customer.sale', 
+        comodel_name='res.partner.type.customer.sale',
         domain=[
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'profesional'))
@@ -303,35 +303,34 @@ class ResPartnerTodocesped(models.Model):
         string='TC - Tiene capacidad de stockar',
     )
     '''5'''
-    ar_qt_todocesped_pf_valuation_thing= fields.Many2many(
+    ar_qt_todocesped_pf_valuation_thing = fields.Many2many(
         comodel_name='res.partner.valuation.thing',
         domain=[
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'profesional'))
         ],
         string='TC - Que valora más',
-    )    
-    
+    )
+
     @api.multi
     @api.onchange('ar_qt_todocesped_pf_valuation_thing')
     def change_ar_qt_todocesped_pf_valuation_thing(self):
         for item in self:
             item._compute_ar_qt_todocesped_pf_valuation_thing_other_show()
-    
+
     ar_qt_todocesped_pf_valuation_thing_other = fields.Char(
         string='TC - Qué valora más - Otro',
         size=35
     )
-    
     ar_qt_todocesped_pf_valuation_thing_other_show = fields.Boolean(
         compute='_compute_ar_qt_todocesped_pf_valuation_thing_other_show',
         store=False
     )
-    
+
     @api.multi
     def _compute_ar_qt_todocesped_pf_valuation_thing_other_show(self):
         for item in self:
             item.ar_qt_todocesped_pf_valuation_thing_other_show = False
-            for ar_qt_todocesped_pf_valuation_thing in item.ar_qt_todocesped_pf_valuation_thing:
-                if ar_qt_todocesped_pf_valuation_thing.other:
+            for item2 in item.ar_qt_todocesped_pf_valuation_thing:
+                if item2.other:
                     item.ar_qt_todocesped_pf_valuation_thing_other_show = True

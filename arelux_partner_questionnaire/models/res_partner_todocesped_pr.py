@@ -10,7 +10,8 @@ class ResPartnerTodocespedPrContactForm(models.Model):
     name = fields.Char(
         string="Nombre"
     )
-    
+
+
 class ResPartnerTodocespedPrValuationThing(models.Model):
     _name = 'res.partner.todocesped.pr.valuation.thing'
     _description = 'Res Partner Todocesped Pr Valuation Thing'

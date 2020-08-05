@@ -41,10 +41,11 @@ class WizardWasteRemove(models.TransientModel):
                 details_by_key = {}
                 for waste_remove_id in waste_remove_ids:
                     for detail_id in waste_remove_id.waste_remove_detail_ids:
-                        if detail_id.waste_remove_product_id.id not in details_by_key:
-                            details_by_key[detail_id.waste_remove_product_id.id] = detail_id.quantity
+                        detail_id_wrp = detail_id.waste_remove_product_id
+                        if detail_id_wrp not in details_by_key:
+                            details_by_key[detail_id_wrp] = detail_id.quantity
                         else:
-                            details_by_key[detail_id.waste_remove_product_id.id] += detail_id.quantity
+                            details_by_key[detail_id_wrp] += detail_id.quantity
                 # total
                 for product_id in product_ids:
                     data_item = {
@@ -71,12 +72,12 @@ class WizardWasteRemove(models.TransientModel):
                 item.date_to
             )
             if waste_remove_ids:
-                for waste_remove_id in waste_remove_ids:
+                for remove_id in waste_remove_ids:
                     data_item = {
-                        'date': waste_remove_id.date,
-                        'retired_by_name': waste_remove_id.retired_by.name,
-                        'sign_by_name': waste_remove_id.sign_by.name,
-                        'destination': dict(waste_remove_id.fields_get(
+                        'date': remove_id.date,
+                        'retired_by_name': remove_id.retired_by.name,
+                        'sign_by_name': remove_id.sign_by.name,
+                        'destination': dict(remove_id.fields_get(
                             allfields=['destination']
                         )['destination']['selection'])
                         [waste_remove_id.destination],
@@ -84,8 +85,10 @@ class WizardWasteRemove(models.TransientModel):
                     }
                     # details_by_key
                     details_by_key = {}
-                    for detail_id in waste_remove_id.waste_remove_detail_ids:
-                        details_by_key[detail_id.waste_remove_product_id.id] = detail_id.quantity
+                    for detail_id in remove_id.waste_remove_detail_ids:
+                        details_by_key[
+                            detail_id.waste_remove_product_id.id
+                        ] = detail_id.quantity
                     # waste_remove_product_ids
                     for product_id in product_ids:
                         vals = {

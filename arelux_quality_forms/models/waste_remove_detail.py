@@ -5,7 +5,7 @@ from odoo import fields, models
 
 class WasteRemoveDetail(models.Model):
     _name = 'waste.remove.detail'
-    _description = 'Waste Remove Detail'        
+    _description = 'Waste Remove Detail'
 
     waste_remove_id = fields.Many2one(
         comodel_name='waste.remove',
@@ -15,6 +15,6 @@ class WasteRemoveDetail(models.Model):
         comodel_name='waste.remove.product',
         string='Producto'
     )
-    quantity = fields.Integer(        
+    quantity = fields.Integer(
         string='Cantidad'
     )

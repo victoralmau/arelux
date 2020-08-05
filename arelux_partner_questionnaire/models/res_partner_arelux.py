@@ -337,10 +337,16 @@ class ResPartnerArelux(models.Model):
             ('architect', 'Arquitecto / Aparejador / Decorador'),
             ('construction', 'Constructora / Promotora'),
             ('energy_efficiency_company', 'Empresa de eficiencia energetica'),
-            ('humidity_treatment_company', 'Empresa de tratamiento de humedades o filtraciones'),
+            (
+                'humidity_treatment_company',
+                'Empresa de tratamiento de humedades o filtraciones'
+            ),
             ('painter', 'Pintor'),
             ('reform', 'Reforma / Albanil'),
-            ('companies_specialized_in_insulation', 'Empresas especializadas en aislamiento'),            
+            (
+                'companies_specialized_in_insulation',
+                'Empresas especializadas en aislamiento'
+            ),
             ('other', 'Otros'),
         ],
         size=30,
@@ -358,16 +364,16 @@ class ResPartnerArelux(models.Model):
     )
     '''2'''
     ar_qt_arelux_pf_type_customers_sale = fields.Many2many(
-        comodel_name='res.partner.type.customer.sale', 
+        comodel_name='res.partner.type.customer.sale',
         string='AR - A que tipo de clientes vende nuestros productos',
     )
     '''3'''
     ar_qt_arelux_pf_stock_capacity = fields.Many2many(
-        comodel_name='res.partner.stock.capacity', 
+        comodel_name='res.partner.stock.capacity',
         string='AR - Tiene capacidad de stockar',
     )
-    ar_qt_arelux_pf_valuation_thing= fields.Many2many(
-        comodel_name='res.partner.valuation.thing', 
+    ar_qt_arelux_pf_valuation_thing = fields.Many2many(
+        comodel_name='res.partner.valuation.thing',
         domain=[
             ('filter_company', 'in', ('all', 'arelux')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'profesional'))

@@ -47,9 +47,15 @@ class WizardMaintenanceInstallation(models.TransientModel):
                         # date_item
                         date_item = '%s-%s-01' % (self.year, month_item)
                         # get_total
-                        installation_ids = self.env['maintenance.installation'].sudo().search([
+                        installation_ids = self.env[
+                            'maintenance.installation'
+                        ].sudo().search([
                             ('state', '=', 'done'),
-                            ('maintenance_installation_need_check_id', '=', need_check_id.id),
+                            (
+                                'maintenance_installation_need_check_id',
+                                '=',
+                                need_check_id.id
+                            ),
                             ('date', '=', date_item)
                         ])
                         # define

@@ -1,17 +1,17 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
-
 import logging
+from odoo import api, fields, models
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 _logger = logging.getLogger(__name__)
 
-from datetime import datetime
 
 class MaintenanceInstallation(models.Model):
     _name = 'maintenance.installation'
     _description = 'Maintenance Installation'
     _order = 'date desc'
-    
-    date = fields.Date(        
+
+    date = fields.Date(
         string='Fecha'
     )
     date_done = fields.Date(
@@ -21,10 +21,10 @@ class MaintenanceInstallation(models.Model):
         comodel_name='maintenance.installation.need.check',
         string='Accion a revisar'
     )
-    incidence = fields.Text(        
+    incidence = fields.Text(
         string='Incidencia'
     )
-    solution = fields.Text(        
+    solution = fields.Text(
         string='Solucion'
     )
     user_id = fields.Many2one(
@@ -71,7 +71,11 @@ class MaintenanceInstallation(models.Model):
                     installation_ids = self.env['maintenance.installation'].search(
                         [
                             ('date', '=', date_next_month_item),
-                            ('maintenance_installation_need_check_id', '=', need_check_id.id)
+                            (
+                                'maintenance_installation_need_check_id',
+                                '=',
+                                need_check_id.id
+                            )
                         ]
                     )
                     if len(installation_ids) == 0:
