@@ -31,25 +31,29 @@ class SaleOrder(models.Model):
         string='Desactivar auto facturar'
     )
     partner_id_email = fields.Char(
-        compute='_compute_partner_id_email',
+        string='Email',
+        related='partner_id.email',
         store=False,
-        string='Email'
+        readonly=True
     )
     partner_id_phone = fields.Char(
-        compute='_compute_partner_id_phone',
+        string='Telefono',
+        related='partner_id.phone',
         store=False,
-        string='Telefono'
+        readonly=True
     )
     partner_id_mobile = fields.Char(
-        compute='_compute_partner_id_mobile',
+        string='Movil',
+        related='partner_id.mobile',
         store=False,
-        string='Movil'
+        readonly=True
     )
     partner_id_state_id = fields.Many2one(
         comodel_name='res.country.state',
-        compute='_compute_partner_id_state_id',
+        string='Provincia',
+        related='partner_id.state_id',
         store=False,
-        string='Provincia'
+        readonly=True
     )
 
     @api.onchange('partner_id')
@@ -110,30 +114,6 @@ class SaleOrder(models.Model):
                             message_follower_id.sudo().unlink()
 
         return res
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_state_id(self):
-        for item in self:
-            item.partner_id_state_id = item.partner_id.state_id.id
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_email(self):
-        for item in self:
-            item.partner_id_email = item.partner_id.email
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_phone(self):
-        for item in self:
-            item.partner_id_phone = item.partner_id.phone
-
-    @api.multi
-    @api.depends('partner_id')
-    def _compute_partner_id_mobile(self):
-        for item in self:
-            item.partner_id_mobile = item.partner_id.mobile
 
     @api.multi
     @api.onchange('user_id')
