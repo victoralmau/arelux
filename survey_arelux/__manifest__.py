@@ -3,23 +3,25 @@
 {
     "name": "Survey Arelux",
     "version": "12.0.1.0.0",
-    "author": "Odoo Nodriza Tech (ONT)",
+    "author": "Odoo Nodriza Tech (ONT), "
+              "Odoo Community Association (OCA)",
     "website": "https://nodrizatech.com/",
     "category": "Tools",
     "license": "AGPL-3",
     "depends": [
         "base",
-        "ont_base_survey",
-        "survey_extra_crm",
+        "ont_base_survey",  # https://github.com/OdooNodrizaTech/ont
+        "survey_extra_crm",  # https://github.com/OdooNodrizaTech/survey
         "crm",
-        "crm_claim",
+        "crm_claim",  # https://github.com/OdooNodrizaTech/crm
         "sale",
         "survey",
         "arelux_partner_questionnaire"
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/survey_user_input_view.xml",
         "views/survey_survey_view.xml",
-    ],        
+    ],
     "installable": True
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="maintenance_installation_need_check_form_view" model="ir.ui.view">
             <field name="name">Accion a revisar mantenimiento inst</field>
             <field name="model">maintenance.installation.need.check</field>
@@ -26,7 +27,8 @@
                     </sheet>                    
                 </form>                
             </field>
-        </record>                           
+        </record>
+
         <record id="maintenance_installation_need_check_tree" model="ir.ui.view">
             <field name="name">Acciones a revisar mantenimiento inst</field>
             <field name="model">maintenance.installation.need.check</field>            
@@ -48,7 +50,8 @@
                     <field name="month_12"/>                                        
                 </tree>
             </field>            
-        </record>                
+        </record>
+
         <record model="ir.actions.act_window" id="maintenance_installation_need_check_action">
             <field name="name">Acciones a revisar mantenimiento inst</field>
             <field name="type">ir.actions.act_window</field>
@@ -56,6 +59,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="maintenance_installation_need_check_tree"/>
-        </record>                        
+        </record>
+
     </data>
 </odoo>

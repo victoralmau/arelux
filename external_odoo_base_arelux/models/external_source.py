@@ -4,26 +4,26 @@ from odoo import fields, models
 
 
 class ExternalSource(models.Model):
-    _inherit = 'external.source'        
-    
-    #external_customer
+    _inherit = 'external.source'
+
+    # external_customer
     external_customer_ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
-            ('evert', 'Evert'),        
+            ('evert', 'Evert'),
         ],
-        string='Tipo de actividad', 
+        string='Tipo de actividad',
         default='arelux'
     )
     external_customer_ar_qt_customer_type = fields.Selection(
         [
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo de cliente',
         default='particular'
-    )    
+    )
     external_customer_res_partner_category_id = fields.Many2one(
         comodel_name='res.partner.category',
         string='Res partner category',
@@ -33,4 +33,4 @@ class ExternalSource(models.Model):
         comodel_name='res.partner.contact.form',
         string='Res partner contact form',
         help='Customer (res partner contact form)'
-    )                    
+    )

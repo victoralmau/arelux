@@ -2,7 +2,7 @@
 
 from odoo import models, fields
 
-                
+
 class ResPartnerStockCapacity(models.Model):
     _name = 'res.partner.stock.capacity'
     _description = 'Res Partner Stock Capacity'
@@ -16,18 +16,18 @@ class ResPartnerStockCapacity(models.Model):
             ('all', 'Todas'),
             ('todocesped', 'Todocesped'),
             ('evert', 'Evert'),
-            ('arelux', 'Arelux'),        
-        ], 
-        string='Empresa', 
+            ('arelux', 'Arelux'),
+        ],
+        string='Empresa',
         default='all'
     )
     filter_ar_qt_customer_type = fields.Selection(
         [
             ('all', 'Todas'),
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
-        string='Tipo cliente', 
+            ('profesional', 'Profesional'),
+        ],
+        string='Tipo cliente',
         default='particular'
     )
     position = fields.Integer(
@@ -35,4 +35,4 @@ class ResPartnerStockCapacity(models.Model):
     )
     other = fields.Boolean(
         string="Otro"
-    )                                                                                   
+    )

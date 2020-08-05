@@ -5,8 +5,8 @@ from odoo import fields, models
 
 class AreluxSaleReportLineUser(models.Model):
     _name = 'arelux.sale.report.line.user'
-    _description = 'Arelux Sale Report Line User'    
-        
+    _description = 'Arelux Sale Report Line User'
+
     arelux_sale_report_line_id = fields.Many2one(
         comodel_name='arelux.sale.report.line',
         string='Arelux Sale Report Line'

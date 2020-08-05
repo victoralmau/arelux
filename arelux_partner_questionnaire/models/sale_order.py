@@ -1,69 +1,78 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, fields
-
 import logging
+from odoo import api, models, fields, _
 _logger = logging.getLogger(__name__)
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-        
+
     ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
-            ('evert', 'Evert'),                    
+            ('evert', 'Evert'),
         ],
-        size=15, 
+        size=15,
         string='Tipo de actividad'
     )
     ar_qt_customer_type = fields.Selection(
         [
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ],        
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo de cliente',
     )
-    
+
+    @api.multi
     @api.onchange('partner_shipping_id')
     def onchange_partner_shipping_id(self):
-        if self.partner_id:
-            if self.opportunity_id.id == 0:
-                self.ar_qt_activity_type = self.partner_id.ar_qt_activity_type
-                self.ar_qt_customer_type = self.partner_id.ar_qt_customer_type
-                
+        for item in self:
+            if item.partner_id:
+                if item.opportunity_id.id == 0:
+                    item.ar_qt_activity_type = item.partner_id.ar_qt_activity_type
+                    item.ar_qt_customer_type = item.partner_id.ar_qt_customer_type
+
+    @api.multi
     @api.onchange('opportunity_id')
     def onchange_opportunity_id(self):
-        if self.opportunity_id:
-            self.ar_qt_activity_type = self.opportunity_id.ar_qt_activity_type
-            self.ar_qt_customer_type = self.opportunity_id.ar_qt_customer_type                        
-        
+        for item in self:
+            if item.opportunity_id:
+                item.ar_qt_activity_type = item.opportunity_id.ar_qt_activity_type
+                item.ar_qt_customer_type = item.opportunity_id.ar_qt_customer_type
+
     @api.model
-    def create(self, values):   
-        return_val = super(SaleOrder, self).create(values)
+    def create(self, values):
+        res = super(SaleOrder, self).create(values)
         # operations
-        if return_val.opportunity_id:
+        if res.opportunity_id:
             # ar_qt_activity_type
-            if not return_val.ar_qt_activity_type:
-                return_val.ar_qt_activity_type = return_val.opportunity_id.ar_qt_activity_type
+            if not res.ar_qt_activity_type:
+                res.ar_qt_activity_type = res.opportunity_id.ar_qt_activity_type
             # ar_qt_customer_type
-            if not return_val.ar_qt_customer_type:
-                return_val.ar_qt_customer_type = return_val.opportunity_id.ar_qt_customer_type
-        #return
-        return return_val
-        
+            if not res.ar_qt_customer_type:
+                res.ar_qt_customer_type = res.opportunity_id.ar_qt_customer_type
+        # return
+        return res
+
     @api.multi
     def write(self, vals):
-        allow_write = True                        
+        allow_write = True
         # fix validate template_id
         if 'template_id' in vals:
             if vals['template_id']:
-                template_id_check = vals['template_id']            
-                sale_quote_template_obj = self.env['sale.quote.template'].browse(template_id_check)
-                if sale_quote_template_obj.ar_qt_activity_type:
-                    if sale_quote_template_obj.ar_qt_activity_type != self.ar_qt_activity_type:
+                template_id_check = vals['template_id']
+                template_obj = self.env['sale.order.template'].browse(
+                    template_id_check
+                )
+                if template_obj.ar_qt_activity_type:
+                    if template_obj.ar_qt_activity_type != self.ar_qt_activity_type:
                         allow_write = False
-                        raise Warning("La plantilla de presupuesto no corresponde con el tipo de actividad")                    
+                        raise Warning(
+                            _("La plantilla de presupuesto no corresponde con "
+                              "el tipo de actividad")
+                        )
         # allow_write
         if allow_write:
-            return_object = super(SaleOrder, self).write(vals)                        
-            return return_object                                                                                               
+            return_object = super(SaleOrder, self).write(vals)
+            return return_object

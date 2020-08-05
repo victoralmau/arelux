@@ -272,5 +272,5 @@
         name="Razones compra"
         id="menuitem_partner_reason_buy" 
         parent="menu_odoo_arelux_partner_questionnaire"
-    />            
+    />
 </odoo>

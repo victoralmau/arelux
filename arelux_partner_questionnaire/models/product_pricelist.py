@@ -11,22 +11,21 @@ class ProductPricelist(models.Model):
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
             ('evert', 'Evert'),
-            ('both', 'Ambos'),        
+            ('both', 'Ambos'),
         ],
-        size=15, 
-        string='Tipo de actividad', 
+        size=15,
+        string='Tipo de actividad',
         default='todocesped'
     )
-    
     ar_qt_customer_type = fields.Selection(
         [
             ('all', 'Todos'),
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo de cliente',
     )
     state_ids = fields.Many2many(
-        comodel_name='res.country.state', 
+        comodel_name='res.country.state',
         string='Provincias',
     )

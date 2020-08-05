@@ -5,15 +5,15 @@ from odoo import fields, models
 
 class FireDrill(models.Model):
     _name = 'fire.drill'
-    _description = 'Fire Drill'            
-    
-    date = fields.Date(        
+    _description = 'Fire Drill'
+
+    date = fields.Date(
         string='Date'
-    )    
+    )
     emergency_type = fields.Selection(
         selection=[
-            ('general','General'), 
-            ('partial','Parcial')                          
+            ('general', 'General'),
+            ('partial', 'Parcial')
         ],
         string='Tipo de emergencia'
     )
@@ -37,7 +37,7 @@ class FireDrill(models.Model):
     )
     general_description_intervention_performed = fields.Text(
         string='Descripcion general de la intervencion realizada'
-    )        
+    )
     fire_drill_decision_ids = fields.One2many(
         'fire.drill.decision',
         'fire_drill_id',

@@ -11,10 +11,11 @@ class ResPartnerTodocespedProfesionalContactForm(models.Model):
         string="Nombre"
     )
 
+
 class ResPartnerTodocespedProfesionalValuationThing(models.Model):
     _name = 'res.partner.todocesped.profesional.valuation.thing'
     _description = 'Res Partner Todocesped Profesional Valuation Thing'
 
     name = fields.Char(
         string="Nombre"
-    )                                                 
+    )

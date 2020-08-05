@@ -5,9 +5,9 @@ from odoo import fields, models
 
 class WasteRemove(models.Model):
     _name = 'waste.remove'
-    _description = 'Waste Remove'        
-    
-    date = fields.Date(        
+    _description = 'Waste Remove'
+
+    date = fields.Date(
         string='Fecha'
     )
     retired_by = fields.Many2one(
@@ -20,8 +20,8 @@ class WasteRemove(models.Model):
     )
     destination = fields.Selection(
         selection=[
-            ('container','Contenedor'), 
-            ('clean_point','Punto limpio')                          
+            ('container', 'Contenedor'),
+            ('clean_point', 'Punto limpio')
         ],
         string='Destino'
     )

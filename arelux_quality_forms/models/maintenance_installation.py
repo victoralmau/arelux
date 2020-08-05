@@ -1,17 +1,17 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
-
 import logging
+from odoo import api, fields, models
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 _logger = logging.getLogger(__name__)
 
-from datetime import datetime
 
 class MaintenanceInstallation(models.Model):
     _name = 'maintenance.installation'
     _description = 'Maintenance Installation'
     _order = 'date desc'
-    
-    date = fields.Date(        
+
+    date = fields.Date(
         string='Fecha'
     )
     date_done = fields.Date(
@@ -21,10 +21,10 @@ class MaintenanceInstallation(models.Model):
         comodel_name='maintenance.installation.need.check',
         string='Accion a revisar'
     )
-    incidence = fields.Text(        
+    incidence = fields.Text(
         string='Incidencia'
     )
-    solution = fields.Text(        
+    solution = fields.Text(
         string='Solucion'
     )
     user_id = fields.Many2one(
@@ -36,8 +36,8 @@ class MaintenanceInstallation(models.Model):
     )
     state = fields.Selection(
         selection=[
-            ('draft','Borrador'), 
-            ('done','Hecho')
+            ('draft', 'Borrador'),
+            ('done', 'Hecho')
         ],
         string='Estado',
         default='draft',
@@ -45,39 +45,44 @@ class MaintenanceInstallation(models.Model):
 
     @api.multi
     def action_done_multi(self):
-        for obj in self:
-            if obj.state == 'draft':
-                obj.action_done()
+        for item in self:
+            if item.state == 'draft':
+                item.action_done()
 
-    @api.one
+    @api.multi
     def action_done(self):
-        if self.state == 'draft':
-            self.state = 'done'
-            self.date_done = fields.datetime.now()
+        for item in self:
+            if item.state == 'draft':
+                item.state = 'done'
+                item.date_done = fields.datetime.now()
 
     @api.model
     def maintenance_installation_generate(self, year, month):
-        maintenance_installation_need_check_ids = self.env['maintenance.installation.need.check'].search(
+        need_check_ids = self.env['maintenance.installation.need.check'].search(
             [
                 ('month_' + str(month), '=', True)
             ]
         )
-        if maintenance_installation_need_check_ids:
+        if need_check_ids:
             date_next_month_item = '%s-%s-01' % (year, month)
 
-            for maintenance_installation_need_check_id in maintenance_installation_need_check_ids:
-                if maintenance_installation_need_check_id.quality_team_id.user_id:
-                    maintenance_installation_ids = self.env['maintenance.installation'].search(
+            for need_check_id in need_check_ids:
+                if need_check_id.quality_team_id.user_id:
+                    installation_ids = self.env['maintenance.installation'].search(
                         [
                             ('date', '=', date_next_month_item),
-                            ('maintenance_installation_need_check_id', '=', maintenance_installation_need_check_id.id)
+                            (
+                                'maintenance_installation_need_check_id',
+                                '=',
+                                need_check_id.id
+                            )
                         ]
                     )
-                    if len(maintenance_installation_ids) == 0:
+                    if len(installation_ids) == 0:
                         vals = {
                             'date': date_next_month_item,
-                            'maintenance_installation_need_check_id': maintenance_installation_need_check_id.id,
-                            'user_id': maintenance_installation_need_check_id.quality_team_id.user_id.id,
+                            'maintenance_installation_need_check_id': need_check_id.id,
+                            'user_id': need_check_id.quality_team_id.user_id.id,
                             'state': 'draft'
                         }
                         self.env['maintenance.installation'].sudo().create(vals)

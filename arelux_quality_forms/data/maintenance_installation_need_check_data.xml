@@ -73,7 +73,7 @@
         <field name="month_12">False</field>
     </record>
 
-    <record id="maintenance_installation_need_check_data_4" model="maintenance.installation.need.check">
+    <record id="maintenance_installation_need_check_data_5" model="maintenance.installation.need.check">
         <field name="id">5</field>
         <field name="name">Comprobacion del sistema electronico (alumbrado), comunicar fallos a gerencia</field>
         <field name="quality_team_id">1</field>

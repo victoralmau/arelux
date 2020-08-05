@@ -1,16 +1,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, fields
+from odoo import models, fields
+
 
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
-    
-    lot_ref = fields.Char( 
+
+    lot_ref = fields.Char(
         string='Referencia interna',
-        compute='_get_lot_ref',
-        store=False
+        related='lot_id.ref',
+        store=False,
+        readonly=True
     )
-    
-    @api.one        
-    def _get_lot_ref(self):
-        for stock_quant in self:                              
-            stock_quant.lot_ref = stock_quant.lot_id.ref                                                                                                                   

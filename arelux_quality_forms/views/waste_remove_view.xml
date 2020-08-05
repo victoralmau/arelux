@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>        
+    <data>
+
         <record id="waste_remove_form_view" model="ir.ui.view">
             <field name="name">Retirada de residuo</field>
             <field name="model">waste.remove</field>
@@ -22,7 +23,8 @@
                     </sheet>                    
                 </form>                
             </field>
-        </record>                           
+        </record>
+
         <record id="waste_remove_tree" model="ir.ui.view">
             <field name="name">Retiradas de residuos</field>
             <field name="model">waste.remove</field>            
@@ -34,7 +36,8 @@
                     <field name="destination"/>                                        
                 </tree>
             </field>            
-        </record>                
+        </record>
+
         <record model="ir.actions.act_window" id="quality_forms_action">
             <field name="name">Retiradas de residuos</field>
             <field name="type">ir.actions.act_window</field>
@@ -42,6 +45,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="waste_remove_tree"/>
-        </record>                                
+        </record>
+
     </data>
 </odoo>

@@ -1,6 +1,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class MailComposeMessage(models.TransientModel):
@@ -8,7 +8,9 @@ class MailComposeMessage(models.TransientModel):
 
     @api.multi
     def send_mail(self, auto_commit=False):
-        if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
+        if self._context.get('default_model') == 'sale.order' \
+                and self._context.get('default_res_id') \
+                and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])
             # date_order_send_mail
             if not order.date_order_send_mail:

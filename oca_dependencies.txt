@@ -1,0 +1,13 @@
+partner-contact
+OdooNodrizaTech-account https://github.com/OdooNodrizaTech/account
+OdooNodrizaTech-automation_log https://github.com/OdooNodrizaTech/automation_log
+OdooNodrizaTech-crm https://github.com/OdooNodrizaTech/crm
+OdooNodrizaTech-external_odoo https://github.com/OdooNodrizaTech/external_odoo
+OdooNodrizaTech-mail https://github.com/OdooNodrizaTech/mail
+OdooNodrizaTech-ont https://github.com/OdooNodrizaTech/ont
+OdooNodrizaTech-sale https://github.com/OdooNodrizaTech/sale
+OdooNodrizaTech-slack https://github.com/OdooNodrizaTech/slack
+OdooNodrizaTech-sms https://github.com/OdooNodrizaTech/sms
+OdooNodrizaTech-stock https://github.com/OdooNodrizaTech/stock
+OdooNodrizaTech-survey https://github.com/OdooNodrizaTech/survey
+OdooNodrizaTech-tools https://github.com/OdooNodrizaTech/tools

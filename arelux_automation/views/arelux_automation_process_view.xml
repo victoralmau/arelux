@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="arelux_automation_form_view" model="ir.ui.view">
         <field name="name">Arelux Automation Process</field>
         <field name="model">arelux.automation.process</field>
@@ -40,6 +41,7 @@
             </form>
         </field>
     </record>
+
     <record id="arelux_automation_process_tree" model="ir.ui.view">
         <field name="name">Arelux Automation Process</field>
         <field name="model">arelux.automation.process</field>
@@ -57,6 +59,7 @@
             </tree>
         </field>
     </record>
+
     <record id="odoo_arelux_automation_process_action" model="ir.actions.act_window">
         <field name="name">Arelux Automation Process</field>
         <field name="type">ir.actions.act_window</field>
@@ -65,6 +68,7 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="arelux_automation_process_tree"/>
     </record>
+
     <menuitem
         action="odoo_arelux_automation_process_action"
         name="Arelux Automation Process"

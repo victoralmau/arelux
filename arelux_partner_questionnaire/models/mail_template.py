@@ -5,13 +5,13 @@ from odoo import models, fields
 
 class MailTemplate(models.Model):
     _inherit = 'mail.template'
-    
+
     ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
-            ('evert', 'Evert'),                    
+            ('evert', 'Evert'),
         ],
-        size=15, 
+        size=15,
         string='Tipo de actividad'
-    )                                                                                                                                                                                                         
+    )

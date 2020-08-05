@@ -3,23 +3,24 @@
 {
     "name": "Arelux Contact Form Submission",
     "version": "12.0.1.0.0",
-    "author": "Odoo Nodriza Tech (ONT)",
+    "author": "Odoo Nodriza Tech (ONT), "
+              "Odoo Community Association (OCA)",
     "website": "https://nodrizatech.com/",
     "category": "Tools",
     "license": "AGPL-3",
     "depends": [
         "base",
         "sale",
-        "utm_websites",
-        "tr_oniad",
+        "utm_websites",  # https://github.com/OdooNodrizaTech/tools
+        "tr_oniad",  # https://github.com/OdooNodrizaTech/tools
         "arelux_partner_questionnaire",
         "crm_arelux",
         "delivery",
         "mail",
-        "mail_activity_datetime"
+        "mail_activity_datetime"  # https://github.com/OdooNodrizaTech/mail
     ],
     "external_dependencies": {
-        "python3": [
+        "python": [
             "boto3"
         ],
     },

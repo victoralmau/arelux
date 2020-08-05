@@ -16,17 +16,17 @@ class ResPartnerTypeCustomerSale(models.Model):
             ('all', 'Todas'),
             ('todocesped', 'Todocesped'),
             ('evert', 'Evert'),
-            ('arelux', 'Arelux'),        
-        ], 
-        string='Empresa', 
+            ('arelux', 'Arelux'),
+        ],
+        string='Empresa',
         default='all'
     )
     filter_ar_qt_customer_type = fields.Selection(
         [
             ('all', 'Todas'),
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo cliente',
         default='particular'
     )

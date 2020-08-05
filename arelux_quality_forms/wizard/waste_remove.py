@@ -1,10 +1,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import api, fields, models
-from odoo.exceptions import Warning
 
-import logging
-_logger = logging.getLogger(__name__)
 
 class WizardWasteRemove(models.TransientModel):
     _name = 'wizard.waste.remove'
@@ -36,27 +32,31 @@ class WizardWasteRemove(models.TransientModel):
     def get_waste_remove_total(self):
         data = []
         for item in self:
-            waste_remove_product_ids = self.get_waste_remove_product_ids()
-            waste_remove_ids = self.get_waste_remove_ids(item.date_from, item.date_to)
+            product_ids = self.get_waste_remove_product_ids()
+            waste_remove_ids = self.get_waste_remove_ids(
+                item.date_from,
+                item.date_to
+            )
             if waste_remove_ids:
                 details_by_key = {}
                 for waste_remove_id in waste_remove_ids:
-                    for waste_remove_detail_id in waste_remove_id.waste_remove_detail_ids:
-                        if waste_remove_detail_id.waste_remove_product_id.id not in details_by_key:
-                            details_by_key[waste_remove_detail_id.waste_remove_product_id.id] = waste_remove_detail_id.quantity
+                    for detail_id in waste_remove_id.waste_remove_detail_ids:
+                        detail_id_wrp = detail_id.waste_remove_product_id
+                        if detail_id_wrp not in details_by_key:
+                            details_by_key[detail_id_wrp] = detail_id.quantity
                         else:
-                            details_by_key[waste_remove_detail_id.waste_remove_product_id.id] += waste_remove_detail_id.quantity
+                            details_by_key[detail_id_wrp] += detail_id.quantity
                 # total
-                for waste_remove_product_id in waste_remove_product_ids:
+                for product_id in product_ids:
                     data_item = {
-                        'name': waste_remove_product_id.name,
-                        'uom': waste_remove_product_id.uom,
+                        'name': product_id.name,
+                        'uom': product_id.uom,
                         'with_details': False
                     }
                     # search
-                    if waste_remove_product_id.id in details_by_key:
+                    if product_id.id in details_by_key:
                         data_item['with_details'] = True
-                        data_item['quantity'] = details_by_key[waste_remove_product_id.id]
+                        data_item['quantity'] = details_by_key[product_id.id]
                     # append
                     data.append(data_item)
         # return
@@ -66,34 +66,42 @@ class WizardWasteRemove(models.TransientModel):
     def get_waste_remove_items(self):
         data = []
         for item in self:
-            waste_remove_product_ids = self.get_waste_remove_product_ids()
-            waste_remove_ids = self.get_waste_remove_ids(item.date_from, item.date_to)
+            product_ids = self.get_waste_remove_product_ids()
+            waste_remove_ids = self.get_waste_remove_ids(
+                item.date_from,
+                item.date_to
+            )
             if waste_remove_ids:
-                for waste_remove_id in waste_remove_ids:
+                for remove_id in waste_remove_ids:
                     data_item = {
-                        'date': waste_remove_id.date,
-                        'retired_by_name': waste_remove_id.retired_by.name,
-                        'sign_by_name': waste_remove_id.sign_by.name,
-                        'destination': dict(waste_remove_id.fields_get(allfields=['destination'])['destination']['selection'])[waste_remove_id.destination],
+                        'date': remove_id.date,
+                        'retired_by_name': remove_id.retired_by.name,
+                        'sign_by_name': remove_id.sign_by.name,
+                        'destination': dict(remove_id.fields_get(
+                            allfields=['destination']
+                        )['destination']['selection'])
+                        [remove_id.destination],
                         'waste_remove_product_ids': []
                     }
                     # details_by_key
                     details_by_key = {}
-                    for waste_remove_detail_id in waste_remove_id.waste_remove_detail_ids:
-                        details_by_key[waste_remove_detail_id.waste_remove_product_id.id] = waste_remove_detail_id.quantity
+                    for detail_id in remove_id.waste_remove_detail_ids:
+                        details_by_key[
+                            detail_id.waste_remove_product_id.id
+                        ] = detail_id.quantity
                     # waste_remove_product_ids
-                    for waste_remove_product_id in waste_remove_product_ids:
-                        waste_remove_product_id_item = {
-                            'name': waste_remove_product_id.name,
-                            'uom': waste_remove_product_id.uom,
+                    for product_id in product_ids:
+                        vals = {
+                            'name': product_id.name,
+                            'uom': product_id.uom,
                             'with_detail': False
                         }
                         # search
-                        if waste_remove_product_id.id in details_by_key:
-                            waste_remove_product_id_item['with_detail'] = True
-                            waste_remove_product_id_item['quantity'] = details_by_key[waste_remove_product_id.id]
+                        if product_id.id in details_by_key:
+                            vals['with_detail'] = True
+                            vals['quantity'] = details_by_key[product_id.id]
                         # append
-                        data_item['waste_remove_product_ids'].append(waste_remove_product_id_item)
+                        data_item['waste_remove_product_ids'].append(vals)
                     # append
                     data.append(data_item)
         # return
@@ -106,4 +114,8 @@ class WizardWasteRemove(models.TransientModel):
         return self._print_report(data)
 
     def _print_report(self, data):
-        return self.env['report'].get_action(self, 'arelux_quality_forms.waste_remove_items', data=data)
+        return self.env['report'].get_action(
+            self,
+            'arelux_quality_forms.waste_remove_items',
+            data=data
+        )

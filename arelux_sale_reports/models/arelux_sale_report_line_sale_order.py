@@ -5,8 +5,8 @@ from odoo import fields, models
 
 class AreluxSaleReportLineSaleOrder(models.Model):
     _name = 'arelux.sale.report.line.sale.order'
-    _description = 'Arelux Sale Report Line Sale Order'    
-        
+    _description = 'Arelux Sale Report Line Sale Order'
+
     arelux_sale_report_line_id = fields.Many2one(
         comodel_name='arelux.sale.report.line',
         string='Arelux Sale Report Line'
@@ -14,4 +14,4 @@ class AreluxSaleReportLineSaleOrder(models.Model):
     sale_order_id = fields.Many2one(
         comodel_name='sale.order',
         string='Sale Order'
-    )    
+    )

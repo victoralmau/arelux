@@ -16,18 +16,18 @@ class ResPartnerValuationThing(models.Model):
             ('all', 'Todas'),
             ('todocesped', 'Todocesped'),
             ('evert', 'Evert'),
-            ('arelux', 'Arelux'),        
-        ], 
-        string='Empresa', 
+            ('arelux', 'Arelux'),
+        ],
+        string='Empresa',
         default='all'
     )
     filter_ar_qt_customer_type = fields.Selection(
         [
             ('all', 'Todas'),
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ], 
-        string='Tipo cliente', 
+            ('profesional', 'Profesional'),
+        ],
+        string='Tipo cliente',
         default='particular'
     )
     position = fields.Integer(
@@ -35,4 +35,4 @@ class ResPartnerValuationThing(models.Model):
     )
     other = fields.Boolean(
         string="Otro"
-    ) 
+    )

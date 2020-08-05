@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fire_drill_admin,fire.drill,model_fire_drill,,1,1,1,1
+access_fire_drill_group_user,fire.drill.user,model_fire_drill,base.group_user,1,1,1,1
+access_fire_drill_decision_admin,fire.drill.decision,model_fire_drill_decision,,1,1,1,1
+access_fire_drill_decision_group_user,fire.drill.decision.user,model_fire_drill_decision,base.group_user,1,1,1,1
+access_maintenance_installation_admin,maintenance.installation,model_maintenance_installation,,1,1,1,1
+access_maintenance_installation_group_user,maintenance.installation.user,model_maintenance_installation,base.group_user,1,1,1,1
+access_maintenance_installation_need_check_admin,maintenance.installation.need.check,model_maintenance_installation_need_check,,1,1,1,1
+access_maintenance_installation_need_check_group_user,maintenance.installation.need.check.user,model_maintenance_installation_need_check,base.group_user,1,1,1,1
+access_quality_team_admin,quality.team,model_quality_team,,1,1,1,1
+access_quality_team_group_user,quality.team.user,model_quality_team,base.group_user,1,1,1,1
+access_waste_remove_admin,waste.remove,model_waste_remove,,1,1,1,1
+access_waste_remove_group_user,waste.remove.user,model_waste_remove,base.group_user,1,1,1,1
+access_waste_remove_detail_admin,waste.remove.detail,model_waste_remove_detail,,1,1,1,1
+access_waste_remove_detail_group_user,waste.remove.detail.user,model_waste_remove_detail,base.group_user,1,1,1,1
+access_waste_remove_product_admin,waste.remove.product,model_waste_remove_product,,1,1,1,1
+access_waste_remove_product_group_user,waste.remove.product.user,model_waste_remove_product,base.group_user,1,1,1,1

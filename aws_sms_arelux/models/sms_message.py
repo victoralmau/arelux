@@ -6,8 +6,9 @@ from odoo import api, models
 class SmsMessage(models.Model):
     _inherit = 'sms.message'
 
-    @api.one
+    @api.multi
     def action_send_real(self):
+        self.ensure_one()
         # override sender
         if self.model_id and self.res_id:
             model_item_ids = self.env[self.model_id.model].sudo().search(

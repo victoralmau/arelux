@@ -5,14 +5,15 @@ from odoo import api, models
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
-        
-    @api.one    
+
+    @api.multi
     def action_regenerate_commission_percent_lines(self):
-        return_action = super(AccountInvoice, self).action_regenerate_commission_percent_lines()
+        res = super(AccountInvoice, self).action_regenerate_commission_percent_lines()
         # override
-        for invoice_line_id in self.invoice_line_ids:
-            if invoice_line_id.commission_percent > 0:
-                if self.ar_qt_activity_type == 'evert':
-                    invoice_line_id.commission_percent = 1
+        for item in self:
+            for invoice_line_id in item.invoice_line_ids:
+                if invoice_line_id.commission_percent > 0:
+                    if item.ar_qt_activity_type == 'evert':
+                        invoice_line_id.commission_percent = 1
         # return
-        return return_action
+        return res
