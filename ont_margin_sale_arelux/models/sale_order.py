@@ -24,17 +24,17 @@ class SaleOrder(models.Model):
                             if picking_id.move_lines:
                                 for move_line in picking_id.move_lines:
                                     if move_line.quant_ids:
-                                        for quant_id in move_line.quant_ids:
+                                        for q_id in move_line.quant_ids:
                                             # cost
-                                            if quant_id.cost > 0:
+                                            if q_id.cost > 0:
                                                 order_lines[
                                                     move_line.product_id.id
-                                                ]['purchase_price'] = quant_id.cost
+                                                ]['purchase_price'] = q_id.cost
                                             else:
                                                 order_lines[
                                                     move_line.product_id.id
                                                 ]['purchase_price'] = \
-                                                    (quant_id.inventory_value/quant_id.qty)
+                                                    (q_id.inventory_value/q_id.qty)
                 # operations
                 for order_line_key in order_lines:
                     if not order_lines[order_line_key]['is_delivery']:
@@ -43,27 +43,27 @@ class SaleOrder(models.Model):
                                 order_lines[order_line_key]['standard_price']
                 # operations2
                 margin_order = 0
-                for order_line in item.order_line:
+                for line in item.order_line:
                     # Fix Mer4
-                    if order_line.product_id.id != 277:
-                        order_line.purchase_price = \
-                            order_lines[order_line.product_id.id]['purchase_price']
+                    if line.product_id.id != 277:
+                        line.purchase_price = \
+                            order_lines[line.product_id.id]['purchase_price']
                         # margin_line
                         margin_line = 0
                         # margin (qty delivered if not qty_invoiced)
                         if item.invoice_status == 'invoiced':
-                            margin_line = order_line.price_subtotal - \
-                                          (order_line.purchase_price * order_line.qty_invoiced)
+                            operation = (line.purchase_price * line.qty_invoiced)
+                            margin_line = line.price_subtotal - operation
                         elif item.invoice_status == 'no':
-                            if order_line.qty_delivered > 0:
-                                margin_line = order_line.price_subtotal - \
-                                              (order_line.purchase_price * order_line.qty_delivered)
+                            if line.qty_delivered > 0:
+                                operation = (line.purchase_price * line.qty_delivered)
+                                margin_line = line.price_subtotal - operation
                         # define
-                        order_line.margin = "{:.2f}".format(margin_line)
+                        line.margin = "{:.2f}".format(margin_line)
                         # action_calculate_margin_percent
-                        order_line.action_calculate_margin_percent()
+                        line.action_calculate_margin_percent()
                         # margin_order
-                        margin_order += order_line.margin
+                        margin_order += line.margin
                 # margin
                 item.margin = "{:.2f}".format(margin_order)
                 # action_calculate_margin_percent

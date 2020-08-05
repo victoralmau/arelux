@@ -349,7 +349,7 @@ class AreluxSaleReport(models.Model):
                     for numerador_by_user_id_real in numerador_by_user_id:
                         if numerador_by_user_id_real not in user_ids:
                             user_ids.append(numerador_by_user_id_real)
-                            
+
                     for denominador_by_user_id_real in denominador_by_user_id:
                         if denominador_by_user_id_real not in user_ids:
                             user_ids.append(denominador_by_user_id_real)
@@ -361,24 +361,24 @@ class AreluxSaleReport(models.Model):
                         numerador = 0
                         if user_id in numerador_by_user_id:
                             numerador = numerador_by_user_id[user_id]
-                            
+
                         denominador = 0
                         if user_id in denominador_by_user_id:
                             denominador = denominador_by_user_id[user_id]
-                            
+
                         percent_item = 0
                         if numerador > 0 and denominador > 0:
                             percent_item = (float(numerador)/float(denominador))*100
-            
+
                         percent_item = "{0:.2f}".format(percent_item)
                         # add_report_line_user
                         vals = {
                             'arelux_sale_report_line_id': line.id,
                             'user_id': user_id,
-                            'percent': percent_item                                                                       
+                            'percent': percent_item
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-    
+
     @api.multi
     def auto_send_mail_item(self):
         self.ensure_one()
@@ -395,7 +395,7 @@ class AreluxSaleReport(models.Model):
                     ]
                 )[0]
                 vals = {
-                    'record_name': self.name,                                                                                                                                                                                           
+                    'record_name': self.name
                 }
                 message_obj = self.env['mail.compose.message'].sudo().create(vals)
                 res = message_obj.onchange_template_id(
@@ -405,8 +405,8 @@ class AreluxSaleReport(models.Model):
                     self.id
                 )
                 message_obj.update({
-                    'template_id': mail_template_item.id,                    
-                    'composition_mode': 'comment',                    
+                    'template_id': mail_template_item.id,
+                    'composition_mode': 'comment',
                     'model': self._name,
                     'res_id': self.id,
                     'body': res['value']['body'],
@@ -414,20 +414,20 @@ class AreluxSaleReport(models.Model):
                     'email_from': res['value']['email_from'],
                     'attachment_ids': res['value']['attachment_ids'],
                     'record_name': self.name,
-                    'no_auto_thread': False,                     
-                })                                                   
+                    'no_auto_thread': False
+                })
                 message_obj.send_mail_action()
-                self.state = 'sent'        
-    
+                self.state = 'sent'
+
     @api.multi
     def action_cancel_report(self):
         for item in self:
             if item.state != "sent":
                 item.state = 'new'
-            
+
     @api.multi
     def action_send_mail(self):
         for item in self:
             item.auto_send_mail_item()
-    
+
         return True

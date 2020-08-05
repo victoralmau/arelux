@@ -46,23 +46,23 @@ class CrmLeadReport(models.Model):
                 SELECT cl.id,
                 cl.id AS lead_id,
                 cl.currency_id,
-                MAX(so.orders_date_order_management)::date 
+                MAX(so.orders_date_order_management)::date
                 AS last_date_order_management,
-                max(COALESCE(so_last_30_days.orders_number, 0)) 
+                max(COALESCE(so_last_30_days.orders_number, 0))
                 AS total_sale_order_last_30_days,
-                max(COALESCE(so_last_90_days.orders_number, 0)) 
+                max(COALESCE(so_last_90_days.orders_number, 0))
                 AS total_sale_order_last_90_days,
-                max(COALESCE(so_last_12_months.orders_number, 0)) 
+                max(COALESCE(so_last_12_months.orders_number, 0))
                 AS total_sale_order_last_12_months,
-                max(COALESCE(so_more_than_300.orders_number, 0)) 
+                max(COALESCE(so_more_than_300.orders_number, 0))
                 AS total_sale_order
                 FROM crm_lead AS cl
                 LEFT JOIN (
-                SELECT opportunity_id, MAX(date_order_management) 
+                SELECT opportunity_id, MAX(date_order_management)
                 AS orders_date_order_management
                 FROM sale_order
-                WHERE claim = FALSE 
-                AND date_order_management IS NOT NULL 
+                WHERE claim = FALSE
+                AND date_order_management IS NOT NULL
                 AND amount_total > 0
                 AND STATE IN ('sale', 'done')
                 GROUP BY opportunity_id
@@ -70,8 +70,8 @@ class CrmLeadReport(models.Model):
                 LEFT JOIN (
                 SELECT opportunity_id, count(id) AS orders_number
                 FROM sale_order
-                WHERE claim = FALSE 
-                AND confirmation_date 
+                WHERE claim = FALSE
+                AND confirmation_date
                 BETWEEN (NOW()::date - INTERVAL '30' DAY)::date AND NOW()::DATE
                 AND amount_untaxed > 300
                 AND STATE IN ('sale', 'done')
@@ -80,8 +80,8 @@ class CrmLeadReport(models.Model):
                 LEFT JOIN (
                 SELECT opportunity_id, count(id) AS orders_number
                 FROM sale_order
-                WHERE claim = FALSE 
-                AND confirmation_date 
+                WHERE claim = FALSE
+                AND confirmation_date
                 BETWEEN (NOW()::date - INTERVAL '90' DAY)::date AND NOW()::DATE
                 AND amount_untaxed > 300
                 AND STATE IN ('sale', 'done')
@@ -90,8 +90,8 @@ class CrmLeadReport(models.Model):
                 LEFT JOIN (
                 SELECT opportunity_id, count(id) AS orders_number
                 FROM sale_order
-                WHERE claim = FALSE 
-                AND confirmation_date 
+                WHERE claim = FALSE
+                AND confirmation_date
                 BETWEEN (NOW()::date - INTERVAL '12' MONTH)::date AND NOW()::DATE
                 AND amount_untaxed > 300
                 AND STATE IN ('sale', 'done')
@@ -100,7 +100,7 @@ class CrmLeadReport(models.Model):
                 LEFT JOIN (
                 SELECT opportunity_id, count(id) AS orders_number
                 FROM sale_order
-                WHERE claim = FALSE 
+                WHERE claim = FALSE
                 AND amount_untaxed > 300
                 AND STATE IN ('sale', 'done')
                 GROUP BY opportunity_id
