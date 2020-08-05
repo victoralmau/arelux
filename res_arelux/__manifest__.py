@@ -11,6 +11,11 @@
     "depends": [
         "base"
     ],
+    "external_dependencies": {
+        "python": [
+            "validate_email"
+        ],
+    },
     "data": [
         "data/ir_cron.xml",
         "views/res_partner_view.xml",
