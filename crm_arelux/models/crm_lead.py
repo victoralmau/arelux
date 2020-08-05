@@ -21,9 +21,10 @@ class CrmLead(models.Model):
     )
     partner_id_user_id = fields.Many2one(
         comodel_name='res.users',
-        compute='_compute_partner_id_user_id',
+        string='User partner',
+        related='partner_id.user_id',
         store=False,
-        string='User partner'
+        readonly=True
     )
     sessionAdGroupCF7 = fields.Char(
         string='sessionAdGroupCF7'
@@ -43,13 +44,6 @@ class CrmLead(models.Model):
         string='Planned closure',
         store=False
     )
-
-    @api.multi
-    def partner_id_user_id(self):
-        for item in self:
-            item.partner_id_user_id = False
-            if item.partner_id:
-                item.partner_id_user_id = item.partner_id.user_id.id
 
     @api.multi
     @api.onchange('user_id')
