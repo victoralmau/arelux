@@ -25,7 +25,7 @@ class CrmLead(models.Model):
         string='Currency',
         default=lambda self: self.env.user.company_id.currency_id
     )
-    partner_id_total_sale_order = Integer.Char(
+    partner_id_total_sale_order = fields.Integer(
         string='Nº Pedidos (cliente)',
         related='partner_id.total_sale_order',
         store=False,
@@ -55,7 +55,7 @@ class CrmLead(models.Model):
         default=0,
         readonly=True
     )
-    partner_id_account_invoice_amount_untaxed_total = Integer.Monetary(
+    partner_id_account_invoice_amount_untaxed_total = fields.Monetary(
         string='Facturación (cliente)',
         related='partner_id.account_invoice_amount_untaxed_total',
         store=False,
