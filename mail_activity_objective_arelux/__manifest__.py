@@ -15,6 +15,7 @@
     ],
     "data": [
         "data/ir_cron.xml",
+        "security/ir.model.access.csv",
         "views/crm_lead_view.xml",
     ],
     "installable": True

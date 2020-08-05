@@ -14,6 +14,7 @@
     ],
     "data": [
         "data/ir_cron.xml",
+        "security/ir.model.access.csv",
         "views/res_city_zip_view.xml",
     ],
     "installable": True

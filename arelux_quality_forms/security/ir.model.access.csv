@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fire_drill,access_fire_drill,model_fire_drill,base.group_user,1,0,0,0
+access_maintenance_installation,access_maintenance_installation,model_maintenance_installation,base.group_user,1,0,0,0
+access_maintenance_installation_need_check,access_maintenance_installation_need_check,model_maintenance_installation_need_check,base.group_user,1,0,0,0
+access_quality_team,access_quality_team,model_quality_team,base.group_user,1,0,0,0
+access_waste_remove,access_waste_remove,model_waste_remove,base.group_user,1,0,0,0
+access_waste_remove_detail,access_waste_remove_detail,model_waste_remove_detail,base.group_user,1,0,0,0
+access_waste_remove_product,access_waste_remove_product,model_waste_remove_product,base.group_user,1,0,0,0

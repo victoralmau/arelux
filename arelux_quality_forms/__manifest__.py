@@ -13,7 +13,7 @@
         "mail"
     ],
     "data": [
-        "security/security.xml",
+        "security/ir.model.access.csv",
         "data/quality_team.xml",
         "data/waste_remove_product.xml",
         "data/maintenance_installation_need_check_data.xml",
