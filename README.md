@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/OdooNodrizaTech/arelux.svg?branch=12.0)](https://travis-ci.org/OdooNodrizaTech/arelux)
+[![codecov](https://codecov.io/gh/OdooNodrizaTech/arelux/branch/12.0/graph/badge.svg)](https://codecov.io/gh/OdooNodrizaTech/arelux)
 
 arelux
 =========
