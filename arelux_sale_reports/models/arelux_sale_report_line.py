@@ -158,20 +158,21 @@ class AreluxSaleReportLine(models.Model):
                         # sum
                         res_users[user_id]['amount_untaxed'] += order_id.amount_untaxed
                 # fix response_result_value
-                return_values['response_result_value'] = 'amount_untaxed'                                 
-                return_values['amount_untaxed'] = sum(order_ids.mapped('amount_untaxed'))
+                return_values['response_result_value'] = 'amount_untaxed'
+                return_values['amount_untaxed'] = \
+                    sum(order_ids.mapped('amount_untaxed'))
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'amount_untaxed': res_user['amount_untaxed']                                                                       
+                            'amount_untaxed': res_user['amount_untaxed']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-        
+
         elif custom_type == 'sale_order_done_count':
             filters = [
                 ('state', 'in', ('sale', 'done')),
@@ -207,12 +208,12 @@ class AreluxSaleReportLine(models.Model):
             order_ids = self.env['sale.order'].search(filters)
 
             if not self.group_by_user:
-                return_values['response_type'] = 'count'                                
+                return_values['response_type'] = 'count'
                 return_values['response_result_value'] = len(order_ids)
                 return_values['count'] = len(order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
-            
+
                 res_users = {}
                 if order_ids:
                     for order_id in order_ids:
@@ -232,17 +233,17 @@ class AreluxSaleReportLine(models.Model):
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(order_ids)
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'count': res_user['count']                                                                       
+                            'count': res_user['count']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-    
+
         elif custom_type == 'sale_order_ticket_medio':
             filters = [
                 ('state', 'in', ('sale', 'done')),
@@ -280,17 +281,17 @@ class AreluxSaleReportLine(models.Model):
             if not self.group_by_user:
                 return_values['response_type'] = 'sum'
                 amount_untaxed = sum(order_ids.mapped('amount_untaxed'))
-                
+
                 ticket_medio = 0
-                if sale_order_ids:
+                if order_ids:
                     ticket_medio = (amount_untaxed/len(order_ids))
-                
+
                 ticket_medio = "{0:.2f}".format(ticket_medio)
                 return_values['response_result_value'] = ticket_medio
                 return_values['ticket_medio'] = ticket_medio
             else:
                 return_values['response_type'] = 'list_by_user_id'
-            
+
                 res_users = {}
                 if order_ids:
                     for order_id in order_ids:
@@ -311,28 +312,29 @@ class AreluxSaleReportLine(models.Model):
                 # fix response_result_value
                 return_values['response_result_value'] = 'amount_untaxed'
                 amount_untaxed = sum(order_ids.mapped('amount_untaxed'))
-                
+
                 ticket_medio = 0
-                if sale_order_ids:
+                if order_ids:
                     ticket_medio = (amount_untaxed/len(order_ids))
-                
+
                 ticket_medio = "{0:.2f}".format(ticket_medio)                                        
                 return_values['ticket_medio'] = ticket_medio
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'amount_untaxed': 0                                                                       
+                            'amount_untaxed': 0
                         }
                         if res_user['count'] > 0:
-                            vals['amount_untaxed'] = (res_user['amount_untaxed']/res_user['count'])
+                            vals['amount_untaxed'] = \
+                                (res_user['amount_untaxed']/res_user['count'])
                         
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-                            
+
         elif custom_type == 'sale_order_sent_count':
             filters = [
                 ('date_order_management', '!=', False),
@@ -369,12 +371,12 @@ class AreluxSaleReportLine(models.Model):
             order_ids = self.env['sale.order'].search(filters)
 
             if not self.group_by_user:
-                return_values['response_type'] = 'count'            
+                return_values['response_type'] = 'count'
                 return_values['response_result_value'] = len(order_ids)
-                return_values['count'] = len(sale_order_ids)
+                return_values['count'] = len(order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
-            
+
                 res_users = {}
                 if order_ids:
                     for order_id in order_ids:
@@ -394,17 +396,17 @@ class AreluxSaleReportLine(models.Model):
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(order_ids)
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'count': res_user['count']                                                                       
+                            'count': res_user['count']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-        
+
         elif custom_type == 'sale_order_done_muestras':
             filters = [
                 ('state', 'in', ('sale', 'done')),
@@ -438,16 +440,16 @@ class AreluxSaleReportLine(models.Model):
                 filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
-            
+
             order_ids = self.env['sale.order'].search(filters)
-            
+
             if not self.group_by_user:
-                return_values['response_type'] = 'count'            
+                return_values['response_type'] = 'count'
                 return_values['response_result_value'] = len(order_ids)
                 return_values['count'] = len(order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
-            
+
                 res_users = {}
                 if order_ids:
                     for order_id in order_ids:
@@ -467,14 +469,14 @@ class AreluxSaleReportLine(models.Model):
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(order_ids)
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'count': res_user['count']                                                                       
+                            'count': res_user['count']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
 
@@ -523,7 +525,7 @@ class AreluxSaleReportLine(models.Model):
                     # sum
                     res_users[user_id]['total'] += 1
             # fix response_result_value
-            return_values['response_result_value'] = 'count'                
+            return_values['response_result_value'] = 'count'
             # remove_all
             self.remove_all_user_line()
             # creates
@@ -532,10 +534,10 @@ class AreluxSaleReportLine(models.Model):
                     vals = {
                         'arelux_sale_report_line_id': self.id,
                         'user_id': res_user['id'],
-                        'count': res_user['total']                                                                       
+                        'count': res_user['total']
                     }
                     self.env['arelux.sale.report.line.user'].sudo().create(vals)
-                    
+
         elif custom_type == 'cartera_actual_activa_count':
             filters = [
                 ('type', '=', 'contact'),
@@ -567,12 +569,12 @@ class AreluxSaleReportLine(models.Model):
             partner_ids = self.env['res.partner'].search(filters)
 
             if not self.group_by_user:
-                return_values['response_type'] = 'count'                        
+                return_values['response_type'] = 'count'
                 return_values['response_result_value'] = len(partner_ids)
                 return_values['count'] = len(partner_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
-            
+
                 res_users = {}
                 if partner_ids:
                     for partner_id in partner_ids:
@@ -592,14 +594,14 @@ class AreluxSaleReportLine(models.Model):
                 return_values['response_result_value'] = 'count'
                 return_values['count'] = len(partner_ids)
                 # remove_all
-                self.remove_all_user_line()                                               
+                self.remove_all_user_line()
                 # creates
                 if partner_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'count': res_user['count']                                                                       
+                            'count': res_user['count']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
         
@@ -638,7 +640,7 @@ class AreluxSaleReportLine(models.Model):
                 return_values['count'] = len(partner_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
-                res_users = {}            
+                res_users = {}
                 if partner_ids:
                     for partner_id in partner_ids:
                         # fix if need create
@@ -664,10 +666,10 @@ class AreluxSaleReportLine(models.Model):
                         vals = {
                             'arelux_sale_report_line_id': self.id,
                             'user_id': res_user['id'],
-                            'count': res_user['total']                                                                       
+                            'count': res_user['total']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-        
+
         elif custom_type == 'nuevos_clientes_con_ventas':
             return_values['response_type'] = 'list_sale_orders'
             # partner_ids with sale_orders < date_from
@@ -725,7 +727,7 @@ class AreluxSaleReportLine(models.Model):
                 filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
-                
+
             order_ids = self.env['sale.order'].search(filters)
             # sort_custom
             order_ids2 = []
@@ -749,7 +751,7 @@ class AreluxSaleReportLine(models.Model):
                         'sale_order_id': order_id.id
                     }
                     self.env['arelux.sale.report.line.sale.order'].sudo().create(vals)
-        
+
         return return_values
     
     @api.multi
@@ -758,34 +760,36 @@ class AreluxSaleReportLine(models.Model):
         if self.arelux_sale_report_type_id:
             if self.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                 if not self.group_by_user:
-                    res_so_done_muestras = self._get_line_info_real(
+                    res_so_muestras = self._get_line_info_real(
                         'sale_order_done_muestras'
                     )[0]
-                    res_so_sent_count = self._get_line_info_real(
+                    res_so_sent = self._get_line_info_real(
                         'sale_order_sent_count'
                     )[0]
                     self.response_type = 'percent'
                     ratio = 0
-                    if res_so_done_muestras['count'] > 0 and res_so_sent_count['count'] > 0:
-                        ratio = (float(res_so_done_muestras['count'])/float(res_so_sent_count['count']))*100
+                    if res_so_muestras['count'] > 0 \
+                            and res_so_sent['count'] > 0:
+                        ratio = (float(res_so_muestras['count'])/float(res_so_sent['count']))*100
                     
                     self.response_result_value = "{0:.2f}".format(ratio)
                 else:
                     self.response_type = 'percent'
                     self.response_result_value = 'percent'
-            
+
             elif self.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
                 if not self.group_by_user:
                     self.response_type = 'percent'
-                    res_so_done_count = self._get_line_info_real(
+                    res_so_done = self._get_line_info_real(
                         'sale_order_done_count'
                     )[0]
-                    res_so_sent_count = self._get_line_info_real(
+                    res_so_sent = self._get_line_info_real(
                         'sale_order_sent_count'
                     )[0]
                     ratio = 0
-                    if res_so_done_count['count'] > 0 and res_so_sent_count['count'] > 0:
-                        ratio = (float(res_so_done_count['count'])/float(res_so_sent_count['count']))*100
+                    if res_so_done['count'] > 0 \
+                            and res_so_sent['count'] > 0:
+                        ratio = (float(res_so_done['count'])/float(res_so_sent['count']))*100
 
                     self.response_result_value = "{0:.2f}".format(ratio)
                 else:

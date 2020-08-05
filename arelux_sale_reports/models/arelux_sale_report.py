@@ -11,26 +11,26 @@ _logger = logging.getLogger(__name__)
 class AreluxSaleReport(models.Model):
     _name = 'arelux.sale.report'
     _description = 'Arelux Sale Report'
-    _inherit = ['mail.thread']    
-    
+    _inherit = ['mail.thread']
+
     currency_id = fields.Many2one(
-        'res.currency', 
+        'res.currency',
         string='Currency',
         default=lambda self: self.env.user.company_id.currency_id
-    )        
-    name = fields.Char(        
+    )
+    name = fields.Char(
         string='Nombre'
     )
-    date_from = fields.Date(        
+    date_from = fields.Date(
         string='Fecha desde'
     )
-    date_to = fields.Date(        
+    date_to = fields.Date(
         string='Fecha hasta'
     )
-    date_from_filter = fields.Datetime(        
+    date_from_filter = fields.Datetime(
         string='Fecha desde filtro'
     )
-    date_to_filter = fields.Datetime(        
+    date_to_filter = fields.Datetime(
         string='Fecha hasta filtro'
     )
     arelux_sale_report_template_id = fields.Many2one(
@@ -49,16 +49,16 @@ class AreluxSaleReport(models.Model):
         ],
         string='Estado',
         default='new'
-    )    
+    )
     show_in_table_format = fields.Boolean(
         default=False,
         string='Show in table format'
     )
-    order_by = fields.Char(        
+    order_by = fields.Char(
         string='Order by',
         default='user_name'
     )
-    order_way = fields.Char(        
+    order_way = fields.Char(
         string='Order way',
         default='asc'
     )
@@ -76,49 +76,49 @@ class AreluxSaleReport(models.Model):
         string='Report Lines',
         copy=True
     )
-     
+
     def action_generate_ir_report(self, context=None):
         self.ensure_one()
         self.change_state_to_generate()
-            
+
         context = dict(context or {}, active_ids=self._ids, active_model=self._name)
-        
+
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'arelux_sale_reports.arelux_sale_report_pdf_template',
-            'context': context            
+            'context': context
         }
-    
-    @api.one   
+
+    @api.one
     def get_table_info_metrics(self):
-        metrics_info = {}                        
-        for report_line_item in self.report_line:
-            if report_line_item.show_in_table_format:
-                # report_line_item._get_line_info()
-                if report_line_item.position not in metrics_info:
-                    metrics_info[report_line_item.position] = {
-                        'position': report_line_item.position,
-                        'name': report_line_item.arelux_sale_report_type_id.name,
-                        'response_result_value': report_line_item.response_result_value,
-                        'custom_type': report_line_item.arelux_sale_report_type_id.custom_type                                                     
-                    }                                        
+        metrics_info = {}
+        for line in self.report_line:
+            if line.show_in_table_format:
+                # line._get_line_info()
+                if line.position not in metrics_info:
+                    metrics_info[line.position] = {
+                        'position': line.position,
+                        'name': line.arelux_sale_report_type_id.name,
+                        'response_result_value': line.response_result_value,
+                        'custom_type': line.arelux_sale_report_type_id.custom_type
+                    }
         # metrics_info_sort
         metrics_info_sorted = []
         for metrics_info_key in metrics_info:
             metric_info = metrics_info[metrics_info_key]
             metrics_info_sorted.append(metric_info)
-                                
-        return metrics_info_sorted            
-        
+
+        return metrics_info_sorted
+
     @api.multi
     def get_table_info(self):
         self.ensure_one()
-        metrics_info = {}        
+        metrics_info = {}
         table_info = {}
-        for report_line_item in self.report_line:
-            if report_line_item.show_in_table_format:
+        for line in self.report_line:
+            if line.show_in_table_format:
                 # report_line_item._get_line_info()
-                for user_line in report_line_item.user_line:
+                for user_line in line.user_line:
                     if user_line.user_id.id not in table_info:
                         table_info[user_line.user_id.id] = {
                             'id': user_line.user_id.id,
@@ -127,30 +127,30 @@ class AreluxSaleReport(models.Model):
                             'metrics_add': []
                         }                    
                     # Fix metric
-                    if report_line_item.position not in metrics_info:
-                        metrics_info[report_line_item.position] = {
-                            'position': report_line_item.position,
-                            'name': report_line_item.arelux_sale_report_type_id.name,
-                            'response_result_value': report_line_item.response_result_value,
-                            'custom_type': report_line_item.arelux_sale_report_type_id.custom_type,                            
+                    if line.position not in metrics_info:
+                        metrics_info[line.position] = {
+                            'position': line.position,
+                            'name': line.arelux_sale_report_type_id.name,
+                            'response_result_value': line.response_result_value,
+                            'custom_type': line.arelux_sale_report_type_id.custom_type,
                         }
                     # value_user
-                    if report_line_item.response_result_value == 'count':
+                    if line.response_result_value == 'count':
                         value_user = user_line.count
-                    elif report_line_item.response_result_value == 'percent':
+                    elif line.response_result_value == 'percent':
                         value_user = user_line.percent
                     else:
                         value_user = user_line.amount_untaxed                    
                     # metrics append
                     table_info[user_line.user_id.id]['metrics'].append({
-                        'position': report_line_item.position,
-                        'name': report_line_item.arelux_sale_report_type_id.name,
-                        'response_result_value': report_line_item.response_result_value,
-                        'custom_type': report_line_item.arelux_sale_report_type_id.custom_type,
+                        'position': line.position,
+                        'name': line.arelux_sale_report_type_id.name,
+                        'response_result_value': line.response_result_value,
+                        'custom_type': line.arelux_sale_report_type_id.custom_type,
                         'value': value_user
                     })
                     # metrics_add
-                    table_info[user_line.user_id.id]['metrics_add'].append(report_line_item.position) 
+                    table_info[user_line.user_id.id]['metrics_add'].append(line.position)
         # fix fill all users
         for table_info_key in table_info:
             table_info_item = table_info[table_info_key]
@@ -200,34 +200,36 @@ class AreluxSaleReport(models.Model):
     def get_table_info_total(self):
         self.ensure_one()
         metrics_info = {}
-        for report_line_item in self.report_line:
-            if report_line_item.show_in_table_format:
-                # report_line_item._get_line_info()
-                if report_line_item.arelux_sale_report_type_id.custom_type not in metrics_info:
-                    metrics_info[report_line_item.arelux_sale_report_type_id.custom_type] = {
-                        'position': report_line_item.position,
-                        'name': report_line_item.arelux_sale_report_type_id.name,
-                        'response_result_value': report_line_item.response_result_value,
-                        'custom_type': report_line_item.arelux_sale_report_type_id.custom_type,
+        for line in self.report_line:
+            if line.show_in_table_format:
+                # line._get_line_info()
+                if line.arelux_sale_report_type_id.custom_type not in metrics_info:
+                    metrics_info[line.arelux_sale_report_type_id.custom_type] = {
+                        'position': line.position,
+                        'name': line.arelux_sale_report_type_id.name,
+                        'response_result_value': line.response_result_value,
+                        'custom_type': line.arelux_sale_report_type_id.custom_type,
                         'value': 0                            
                     }
-                    for user_line in report_line_item.user_line:
+                    for user_line in line.user_line:
                         # value_user
-                        if report_line_item.response_result_value == 'count':
+                        if line.response_result_value == 'count':
                             value_user = user_line.count
                         else:
                             value_user = user_line.amount_untaxed
                             
-                        metrics_info[report_line_item.arelux_sale_report_type_id.custom_type]['value'] += value_user
+                        metrics_info[
+                            line.arelux_sale_report_type_id.custom_type
+                        ]['value'] += value_user
         # fix percents
-        for report_line_item in self.report_line:
-            if report_line_item.show_in_table_format \
-                    and report_line_item.group_by_user \
-                    and report_line_item.response_type == 'percent':
-                if report_line_item.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
+        for line in self.report_line:
+            if line.show_in_table_format \
+                    and line.group_by_user \
+                    and line.response_type == 'percent':
+                if line.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                     numerador = metrics_info['sale_order_done_muestras']['value']
                     denominador = metrics_info['sale_order_sent_count']['value']                                                                                                    
-                elif report_line_item.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
+                elif line.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
                     numerador = metrics_info['sale_order_done_count']['value']
                     denominador = metrics_info['sale_order_sent_count']['value']                
                 # percent_item
@@ -236,7 +238,9 @@ class AreluxSaleReport(models.Model):
                     percent_item = (float(numerador)/float(denominador))*100              
                     percent_item = "{0:.2f}".format(percent_item)
                     
-                metrics_info[report_line_item.arelux_sale_report_type_id.custom_type]['value'] = percent_item                                                               
+                metrics_info[
+                    line.arelux_sale_report_type_id.custom_type
+                ]['value'] = percent_item
         # metrics_info_sort
         metrics_info_sorted = []
         for metrics_info_key in metrics_info:
@@ -260,60 +264,60 @@ class AreluxSaleReport(models.Model):
                 '%Y-%m-%d %H:%M:%S'
             ) + relativedelta(hours=-2)
         
-            for report_line_item in self.report_line:
-                report_line_item._get_line_info()
+            for line in self.report_line:
+                line._get_line_info()
             
             self.state = 'generate'
             # Fix percents
-            for report_line_item in self.report_line:
-                if report_line_item.response_type == 'percent' and report_line_item.group_by_user:
+            for line in self.report_line:
+                if line.response_type == 'percent' and line.group_by_user:
                     user_ids = []
                     ratio_muestras_by_user_id = []
                     
                     numerador_by_user_id = {}
                     denominador_by_user_id = {}
                     
-                    if report_line_item.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
+                    if line.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                         # numerador
-                        arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search(
+                        line_ids = self.env['arelux.sale.report.line'].search(
                             [
                                 ('arelux_sale_report_id', '=', self.id),
                                 ('arelux_sale_report_type_id.custom_type', '=', 'sale_order_done_muestras')
                             ]
                         )
-                        if arelux_sale_report_line_ids:
-                            for user_line in arelux_sale_report_line_ids[0].user_line:
+                        if line_ids:
+                            for user_line in line_ids[0].user_line:
                                 numerador_by_user_id[user_line.user_id.id] = user_line.count
                         # denominador
-                        arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search(
+                        line_ids = self.env['arelux.sale.report.line'].search(
                             [
                                 ('arelux_sale_report_id', '=', self.id),
                                 ('arelux_sale_report_type_id.custom_type', '=', 'sale_order_sent_count')
                             ]
                         )
-                        if arelux_sale_report_line_ids:
-                            for user_line in arelux_sale_report_line_ids[0].user_line:
+                        if line_ids:
+                            for user_line in line_ids[0].user_line:
                                 denominador_by_user_id[user_line.user_id.id] = user_line.count
-                    elif report_line_item.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
+                    elif line.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
                         # numerador
-                        arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search(
+                        line_ids = self.env['arelux.sale.report.line'].search(
                             [
                                 ('arelux_sale_report_id', '=', self.id),
                                 ('arelux_sale_report_type_id.custom_type', '=', 'sale_order_done_count')
                             ]
                         )
-                        if arelux_sale_report_line_ids:
-                            for user_line in arelux_sale_report_line_ids[0].user_line:
+                        if line_ids:
+                            for user_line in line_ids[0].user_line:
                                 numerador_by_user_id[user_line.user_id.id] = user_line.count                                
                         # denominador
-                        arelux_sale_report_line_ids = self.env['arelux.sale.report.line'].search(
+                        line_ids = self.env['arelux.sale.report.line'].search(
                             [
                                 ('arelux_sale_report_id', '=', self.id),
                                 ('arelux_sale_report_type_id.custom_type', '=', 'sale_order_sent_count')
                             ]
                         )
-                        if arelux_sale_report_line_ids:
-                            for user_line in arelux_sale_report_line_ids[0].user_line:
+                        if line_ids:
+                            for user_line in line_ids[0].user_line:
                                 denominador_by_user_id[user_line.user_id.id] = user_line.count                                                                                        
                     # operations
                     for numerador_by_user_id_real in numerador_by_user_id:
@@ -325,7 +329,7 @@ class AreluxSaleReport(models.Model):
                             user_ids.append(denominador_by_user_id_real)
                     # save
                     # remove_all_previously
-                    report_line_item.remove_all_user_line()                                
+                    line.remove_all_user_line()
                     # calculate
                     for user_id in user_ids:
                         numerador_user_line = 0
@@ -337,7 +341,7 @@ class AreluxSaleReport(models.Model):
                             denominador_user_line = denominador_by_user_id[user_id]
                             
                         percent_item = 0
-                        if numerador_user_line>0 and denominador_user_line>0:
+                        if numerador_user_line > 0 and denominador_user_line > 0:
                             percent_item = (float(numerador_user_line)/float(denominador_user_line))*100  
             
                         percent_item = "{0:.2f}".format(percent_item)
@@ -358,7 +362,7 @@ class AreluxSaleReport(models.Model):
                     'arelux_sale_report_mail_template_id'
                 )
             )
-            if arelux_sale_report_mail_template_id > 0:
+            if template_id > 0:
                 mail_template_item = self.env['mail.template'].search(
                     [
                         ('id', '=', template_id)

@@ -5,7 +5,7 @@ from odoo import api, models
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-            
+
     @api.multi
     def action_regenerate_purchase_prices(self):
         for item in self:
@@ -27,9 +27,13 @@ class SaleOrder(models.Model):
                                         for quant_id in move_line.quant_ids:
                                             # cost
                                             if quant_id.cost > 0:
-                                                order_lines[move_line.product_id.id]['purchase_price'] = quant_id.cost
+                                                order_lines[
+                                                    move_line.product_id.id
+                                                ]['purchase_price'] = quant_id.cost
                                             else:
-                                                order_lines[move_line.product_id.id]['purchase_price'] = (quant_id.inventory_value/quant_id.qty)
+                                                order_lines[
+                                                    move_line.product_id.id
+                                                ]['purchase_price'] = (quant_id.inventory_value/quant_id.qty)
                 # operations
                 for order_line_key in order_lines:
                     if not order_lines[order_line_key]['is_delivery']:

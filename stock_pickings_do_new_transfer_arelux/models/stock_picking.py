@@ -5,7 +5,7 @@ from odoo import api, models
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
-    
+
     @api.model
     def cron_stock_pickings_do_new_transfer(self):
         picking_type_id = int(

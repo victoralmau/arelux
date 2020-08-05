@@ -15,14 +15,17 @@ class SaleOrder(models.Model):
             if item.state == 'sale':
                 for picking_id in item.picking_ids:
                     if item.external_sale_order_id:
-                        if item.external_sale_order_id.external_source_id:
+                        item_eso = item.external_sale_order_id
+                        if item_eso.external_source_id:
+                            item_eso_es = item_eso.external_source_id
                             for picking_id in item.picking_ids:
-                                if picking_id.picking_type_id.id != item.external_sale_order_id.external_source_id.external_sale_order_picking_type_id.id:
-                                    picking_id.picking_type_id = item.external_sale_order_id.external_source_id.external_sale_order_picking_type_id.id
+                                picking_id_pt = picking_id.picking_type_id
+                                if picking_id_pt.id != item_eso_es.external_sale_order_picking_type_id.id:
+                                    picking_id.picking_type_id = item_eso_es.external_sale_order_picking_type_id.id
                                     picking_id.name = self.env['ir.sequence'].next_by_code(
                                         self.env['stock.picking.type'].search(
                                             [
-                                                ('id', '=', picking_id.picking_type_id.id)
+                                                ('id', '=', picking_id_pt.id)
                                             ]
                                         )[0].sequence_id.code
                                     )

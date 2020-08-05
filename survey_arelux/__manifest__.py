@@ -21,6 +21,6 @@
     "data": [
         "views/survey_user_input_view.xml",
         "views/survey_survey_view.xml",
-    ],        
+    ],
     "installable": True
 }

@@ -110,12 +110,9 @@ class CrmLead(models.Model):
                     current_date = fields.Datetime.from_string(
                         str(datetime.today().strftime("%Y-%m-%d"))
                     )
-                    days_difference = (
-                            fields.Datetime.from_string(
-                                values.get('date_deadline')
-                            )-current_date
-                    ).days
-                    if days_difference > 90:
+                    dd = values.get('date_deadline')
+                    days_diff = (fields.Datetime.from_string(dd)-current_date).days
+                    if days_diff > 90:
                         allow_create = False
                         raise UserError(
                             _('The expected closure cannot be more than 90 '
@@ -124,10 +121,10 @@ class CrmLead(models.Model):
                         )
         # operations
         if allow_create:
-            return super(CrmLead, self).create(values)                                            
-    
+            return super(CrmLead, self).create(values)
+
     @api.multi
-    def write(self, vals):                              
+    def write(self, vals):
         allow_write = True
         if self.id > 0:
             # validation date_deadline and 90 days
@@ -143,12 +140,9 @@ class CrmLead(models.Model):
                         current_date = fields.Datetime.from_string(
                             str(datetime.today().strftime("%Y-%m-%d"))
                         )
-                        days_difference = (
-                                fields.Datetime.from_string(
-                                    vals['date_deadline']
-                                )-current_date
-                        ).days
-                        if days_difference > 90:
+                        dd = values.get('date_deadline')
+                        days_diff = (fields.Datetime.from_string(dd) - current_date).days
+                        if days_diff > 90:
                             allow_write = False
                             raise UserError(
                                 _('The expected closure cannot be more than 90 '
@@ -178,10 +172,10 @@ class CrmLead(models.Model):
             res = super(CrmLead, self).write(vals)
             # fix tags
             if 'tag_ids' in vals and self.tag_ids:
-                tag_ids = []    
+                tag_ids = []
                 for tag_id in self.tag_ids:
-                    tag_ids.append(tag_id.id)                        
-                
+                    tag_ids.append(tag_id.id)
+
                 if self.id > 0:
                     order_ids = self.env['sale.order'].search(
                         [
@@ -192,12 +186,12 @@ class CrmLead(models.Model):
                         tag_ids2 = []
                         for tag_id2 in order_id.tag_ids:
                             tag_ids2.append(tag_id2.id)
-                        
+
                         for tag_id in tag_ids:
                             if tag_id not in tag_ids2:
                                 tag_ids2.append(tag_id)
-                        
-                        sale_order.tag_ids = self.env['crm.lead.tag'].search(
+
+                        order_id.tag_ids = self.env['crm.lead.tag'].search(
                             [
                                 ('id', 'in', tag_ids2)
                             ]

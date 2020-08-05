@@ -4,11 +4,12 @@ from odoo import api, fields, models
 import logging
 _logger = logging.getLogger(__name__)
 
+
 class AreluxSaleReportType(models.Model):
     _name = 'arelux.sale.report.type'
-    _description = 'Arelux Sale Report Type'    
-    
-    name = fields.Char(        
+    _description = 'Arelux Sale Report Type'
+
+    name = fields.Char(
         string='Nombre'
     )
     custom_type = fields.Selection(
@@ -33,7 +34,7 @@ class AreluxSaleReportType(models.Model):
         default=False,
         string='Group by user'
     )
-    
+
     @api.multi
     def get_info(self,
                  date_from,
@@ -62,12 +63,12 @@ class AreluxSaleReportType(models.Model):
             if ar_qt_customer_type != 'none':
                 search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
             # sale_team_id
-            if sale_team_id>0:
+            if sale_team_id > 0:
                 search_filters.append(('sale_team_id', '=', sale_team_id))
-            
+
             sale_order_ids = self.env['sale.order'].search(search_filters)
             amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))
-                    
+
             response['result_value'] = amount_untaxed
             response['result'] = amount_untaxed
             return response
@@ -77,7 +78,7 @@ class AreluxSaleReportType(models.Model):
                 'result_value': '',
                 'result': ''
             }
-    
+
     @api.multi
     def _get_sale_order_done(self,
                              date_from,
@@ -100,15 +101,14 @@ class AreluxSaleReportType(models.Model):
         if ar_qt_customer_type != 'none':
             search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
         # sale_team_id
-        if sale_team_id>0:
+        if sale_team_id > 0:
             search_filters.append(('sale_team_id', '=', sale_team_id))
-        
+
         _logger.info(search_filters)
-                
         ids = self.env['sale.order'].search(search_filters)
         _logger.info(ids)
         return ids
-        
+
     @api.multi
     def _get_line_info_sale_order_done_amount_untaxed(self,
                                                       date_from,
@@ -135,12 +135,11 @@ class AreluxSaleReportType(models.Model):
         if ar_qt_customer_type != 'none':
             search_filters.append(('ar_qt_customer_type', '=', ar_qt_customer_type))
         # sale_team_id
-        if sale_team_id>0:
+        if sale_team_id > 0:
             search_filters.append(('sale_team_id', '=', sale_team_id))
-        
+
         sale_order_ids = self.env['sale.order'].search(search_filters)
         amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))
-                
         response['result_value'] = amount_untaxed
         response['result'] = amount_untaxed        
         return response

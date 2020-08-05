@@ -7,15 +7,15 @@ from datetime import datetime
 class AreluxSaleReportTemplate(models.Model):
     _name = 'arelux.sale.report.template'
     _description = 'Arelux Sale Report Template'
-    _inherit = ['mail.thread']    
-        
-    name = fields.Char(        
+    _inherit = ['mail.thread']
+
+    name = fields.Char(
         string='Nombre'
     )
     active = fields.Boolean(
-        default=True,        
+        default=True,
         string='Activo'
-    )    
+    )
     custom_type = fields.Selection(
         selection=[
             ('daily', 'Diario'),
@@ -30,14 +30,14 @@ class AreluxSaleReportTemplate(models.Model):
         default=False,
         string='Show in table format'
     )
-    order_by = fields.Char(        
+    order_by = fields.Char(
         string='Order by',
         default='user_name'
     )
     order_way = fields.Selection(
         selection=[
-            ('asc','ASC'),
-            ('desc','DESC')                                                                           
+            ('asc', 'ASC'),
+            ('desc', 'DESC')
         ],
         string='Order way',
         default='asc'
@@ -64,7 +64,7 @@ class AreluxSaleReportTemplate(models.Model):
                     end_date = start_date
                 elif template_id.custom_type == 'weekly':
                     start_date = current_date + relativedelta(days=-7)
-                    end_date = start_date + relativedelta(days=6)                
+                    end_date = start_date + relativedelta(days=6)
                 elif template_id.custom_type == 'monthly':
                     start_date = datetime(
                         current_date.year,
@@ -83,7 +83,7 @@ class AreluxSaleReportTemplate(models.Model):
                         12,
                         31
                     )
-                    
+
                 report_ids = self.env['arelux.sale.report'].search(
                     [
                         ('arelux_sale_report_template_id', '=', template_id.id),
@@ -107,7 +107,8 @@ class AreluxSaleReportTemplate(models.Model):
                     for line_id in template_id.report_template_line:
                         line_vals = {
                             'arelux_sale_report_id': report_obj.id,
-                            'arelux_sale_report_type_id': line_id.arelux_sale_report_type_id.id,
+                            'arelux_sale_report_type_id':
+                                line_id.arelux_sale_report_type_id.id,
                             'position': line_id.position,
                             'ar_qt_activity_type': line_id.ar_qt_activity_type,
                             'ar_qt_customer_type': line_id.ar_qt_customer_type,

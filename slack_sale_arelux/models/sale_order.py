@@ -6,13 +6,13 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-    
+
     @api.multi
     def action_confirm_create_message_slack(self):
         self.ensure_one()
         attachments = self.action_confirm_create_message_slack_pre()[0]
         # channel
-        if self.ar_qt_activity_type in ['todocesped','evert']:
+        if self.ar_qt_activity_type in ['todocesped', 'evert']:
             channel = self.env['ir.config_parameter'].sudo().get_param(
                 'slack_sale_order_confirm_todocesped'
             )
