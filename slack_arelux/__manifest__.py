@@ -20,6 +20,6 @@
     "data": [
         "data/slack_data.xml",
         "data/ir_cron.xml"
-    ],    
+    ],
     "installable": True
 }

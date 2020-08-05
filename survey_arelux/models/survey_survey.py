@@ -1,7 +1,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
-from odoo import _, api, exceptions, fields, models
+from odoo import api, fields, models
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import uuid
@@ -12,38 +12,37 @@ _logger = logging.getLogger(__name__)
 class SurveySurvey(models.Model):
     _inherit = 'survey.survey'
     _rec_name = 'internal_name'
-    
+
     ar_qt_activity_type = fields.Selection(
         [
             ('todocesped', 'Todocesped'),
             ('arelux', 'Arelux'),
-            ('evert', 'Evert'),                    
+            ('evert', 'Evert'),
         ],
-        size=15, 
+        size=15,
         string='Tipo de actividad'
     )
     ar_qt_customer_type = fields.Selection(
         [
             ('particular', 'Particular'),
-            ('profesional', 'Profesional'),        
-        ],        
+            ('profesional', 'Profesional'),
+        ],
         string='Tipo de cliente',
-    )    
+    )
     survey_filter_installer = fields.Selection(
         [
             ('none', 'Todos'),
             ('without_installer', 'Sin instalador'),
-            ('with_installer', 'Con instalador'),        
+            ('with_installer', 'Con instalador'),
         ],
-        string='Filtro instalador', 
+        string='Filtro instalador',
         default='none'
-    )   
-    
+    )
+
     @api.multi
     def get_sale_order_ids_satisfaction(self):
         self.ensure_one()
         current_date = datetime.now(pytz.timezone('Europe/Madrid'))
-        sale_order_ids = False
         if self.automation_difference_days > 0:
             # date_filters
             date_done_picking_start = current_date + relativedelta(
@@ -54,35 +53,65 @@ class SurveySurvey(models.Model):
             )
             # res_partner_sale_order_first_report_ids
             if self.survey_filter_installer == 'none':
-                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env[
+                    'res.partner.sale.order.first.report'
+                ].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),                
                         ('date_done_picking', '!=', False),
-                        ('date_done_picking', '>', date_done_picking_start.strftime("%Y-%m-%d")),
-                        ('date_done_picking', '<', date_done_picking_end.strftime("%Y-%m-%d")),                
+                        (
+                            'date_done_picking',
+                            '>',
+                            date_done_picking_start.strftime("%Y-%m-%d")
+                        ),
+                        (
+                            'date_done_picking',
+                            '<',
+                            date_done_picking_end.strftime("%Y-%m-%d")
+                        ),
                     ]
                 )
             elif self.survey_filter_installer == 'without_installer':
-                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env[
+                    'res.partner.sale.order.first.report'
+                ].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                         ('order_id.installer_id', '=', False),                
                         ('date_done_picking', '!=', False),
-                        ('date_done_picking', '>', date_done_picking_start.strftime("%Y-%m-%d")),
-                        ('date_done_picking', '<', date_done_picking_end.strftime("%Y-%m-%d")),                
+                        (
+                            'date_done_picking',
+                            '>',
+                            date_done_picking_start.strftime("%Y-%m-%d")
+                        ),
+                        (
+                            'date_done_picking',
+                            '<',
+                            date_done_picking_end.strftime("%Y-%m-%d")
+                        ),
                     ]
                 )
             elif self.survey_filter_installer == 'with_installer':
-                first_report_ids = self.env['res.partner.sale.order.first.report'].search(
+                first_report_ids = self.env[
+                    'res.partner.sale.order.first.report'
+                ].search(
                     [ 
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                         ('order_id.installer_id', '!=', False),                
                         ('date_done_picking', '!=', False),
-                        ('date_done_picking', '>', date_done_picking_start.strftime("%Y-%m-%d")),
-                        ('date_done_picking', '<', date_done_picking_end.strftime("%Y-%m-%d")),                
+                        (
+                            'date_done_picking',
+                            '>',
+                            date_done_picking_start.strftime("%Y-%m-%d")
+                        ),
+                        (
+                            'date_done_picking',
+                            '<',
+                            date_done_picking_end.strftime("%Y-%m-%d")
+                        ),
                     ]
                 )            
             # operations
@@ -106,7 +135,11 @@ class SurveySurvey(models.Model):
                         ]
                     )
                 else:
-                    order_ids = self.env['sale.order'].search([('id', 'in', order_ids_mapped.ids)])
+                    order_ids = self.env['sale.order'].search(
+                        [
+                            ('id', 'in', order_ids_mapped.ids)
+                        ]
+                    )
                 
         return order_ids
         
@@ -132,27 +165,46 @@ class SurveySurvey(models.Model):
             if self.ar_qt_customer_type == 'profesional':
                 # res_partner_sale_order_report_ids
                 if self.ar_qt_activity_type == 'arelux':
-                    order_report_ids = self.env['res.partner.sale.order.report'].search(
+                    order_report_ids = self.env[
+                        'res.partner.sale.order.report'
+                    ].search(
                         [ 
                             ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                             ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                             ('partner_id.ar_qt_arelux_pf_customer_type', '!=', False),
                             ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),                                        
                             ('date_done_picking', '!=', False),
-                            ('date_done_picking', '>', date_filter_start.strftime("%Y-%m-%d")),
-                            ('date_done_picking', '<', date_filter_end.strftime("%Y-%m-%d")),                
+                            (
+                                'date_done_picking', '>',
+                                date_filter_start.strftime("%Y-%m-%d")
+                            ),
+                            (
+                                'date_done_picking',
+                                '<',
+                                date_filter_end.strftime("%Y-%m-%d")
+                            ),
                         ]
                     )
                 else:
-                    order_report_ids = self.env['res.partner.sale.order.report'].search(
+                    order_report_ids = self.env[
+                        'res.partner.sale.order.report'
+                    ].search(
                         [ 
                             ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                             ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                             ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', False),
                             ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),                                        
                             ('date_done_picking', '!=', False),
-                            ('date_done_picking', '>', date_filter_start.strftime("%Y-%m-%d")),
-                            ('date_done_picking', '<', date_filter_end.strftime("%Y-%m-%d")),                
+                            (
+                                'date_done_picking',
+                                '>',
+                                date_filter_start.strftime("%Y-%m-%d")
+                            ),
+                            (
+                                'date_done_picking',
+                                '<',
+                                date_filter_end.strftime("%Y-%m-%d"))
+                            ,
                         ]
                     )
                 # operations
@@ -174,10 +226,10 @@ class SurveySurvey(models.Model):
     
                         if len(partner_ids_mapped) > 0:
                             # operations
-                            res_partner_ids_max_date_sui = {}
+                            partner_ids_max_date_sui = {}
                             for partner_id_mapped in partner_ids_mapped:
-                                if partner_id_mapped not in res_partner_ids_max_date_sui:
-                                    res_partner_ids_max_date_sui[partner_id_mapped] = None
+                                if partner_id_mapped not in partner_ids_max_date_sui:
+                                    partner_ids_max_date_sui[partner_id_mapped] = None
                             # survey_user_input_ids
                             user_input_ids = self.env['survey.user_input'].search(
                                 [ 
@@ -190,22 +242,25 @@ class SurveySurvey(models.Model):
                             )                                
                             if user_input_ids:
                                 # operations
-                                for user_input_id in user_input_ids:
+                                for input_id in user_input_ids:
                                     date_create_item_format = datetime.strptime(
-                                        user_input_id.date_create,
+                                        input_id.date_create,
                                         "%Y-%m-%d %H:%M:%S"
                                     ).strftime('%Y-%m-%d')
                                     
-                                    if res_partner_ids_max_date_sui[user_input_id.partner_id.id] is None:
-                                        res_partner_ids_max_date_sui[user_input_id.partner_id.id] = date_create_item_format
+                                    if partner_ids_max_date_sui[input_id.partner_id.id] is None:
+                                        partner_ids_max_date_sui[input_id.partner_id.id] = \
+                                            date_create_item_format
                                     else:
-                                        if date_create_item_format > res_partner_ids_max_date_sui[user_input_id.partner_id.id]:
-                                            res_partner_ids_max_date_sui[user_input_id.partner_id.id] = date_create_item_format
+                                        item_check = partner_ids_max_date_sui[input_id.partner_id.id]
+                                        if date_create_item_format > item_check:
+                                            partner_ids_max_date_sui[input_id.partner_id.id] = \
+                                                date_create_item_format
                             # operations
                             partner_ids_final = []
                             b = datetime.strptime(date_filter_end.strftime("%Y-%m-%d"), "%Y-%m-%d")
-                            survey_frequence_days_item = survey_frequence_days[self.survey_frequence]
-                            for partner_id in res_partner_ids_max_date_sui:
+                            frequence_days_item = survey_frequence_days[self.survey_frequence]
+                            for partner_id in partner_ids_max_date_sui:
                                 partner_id_item = res_partner_ids_max_date_sui[partner_id]
                                  # checks
                                 if partner_id_item is None:
@@ -214,7 +269,7 @@ class SurveySurvey(models.Model):
                                     a = datetime.strptime(partner_id_item, "%Y-%m-%d")                                
                                     delta = b - a
                                     difference_days = delta.days                                                                                                            
-                                    if difference_days >= survey_frequence_days_item:
+                                    if difference_days >= frequence_days_item:
                                         partner_ids_final.append(partner_id)
                             # final
                             partner_ids = self.env['res.partner'].search(

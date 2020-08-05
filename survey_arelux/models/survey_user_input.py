@@ -9,21 +9,21 @@ class SurveyUserinput(models.Model):
 
     installer_id = fields.Many2one(
         comodel_name='res.partner',
-        domain="[('installer', '=', True)]",        
+        domain="[('installer', '=', True)]",
         string='Instalador'
     )
     lead_id_evert_create = fields.Many2one(
-        comodel_name='crm.lead',        
+        comodel_name='crm.lead',
         string='Lead Id Evert'
     )
-    
+
     @api.multi
     def action_generate_lead_evert_slack(self):
         self.ensure_one()
         return super(SurveyUserinput, self).action_generate_lead_evert_slack()
-    
+
     @api.model
-    def create(self, values):                    
+    def create(self, values):
         return_object = super(SurveyUserinput, self).create(values)
         # installer_id
         if self.lead_id:

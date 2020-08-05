@@ -29,20 +29,16 @@ class StockPicking(models.Model):
             toolbar=toolbar,
             submenu=submenu
         )
-        if view_type == 'tree':            
+        if view_type == 'tree':
             picking_type_id = self.env.context.get('default_picking_type_id')
             doc = etree.fromstring(res['arch'])
-            
             if picking_type_id != 1:
-                # fields_invisible = ['date', 'min_date']
                 fields_invisible = ['date']
-                
                 fields = doc.findall('field')
                 for field in fields:
                     field_name = field.get('name')
                     if field_name in fields_invisible:
-                        # field.set('invisible', '1')
-                        doc.remove(field)                    
+                        doc.remove(field)
             else:
                 doc.set('default_order', 'min_date asc')
                 fields_invisible = [
@@ -54,25 +50,25 @@ class StockPicking(models.Model):
                     field_name = field.get('name')
                     if field_name in fields_invisible:
                         doc.remove(field)
-            
-            res['arch'] = etree.tostring(doc)                                                    
-                                                                    
-        return res    
-    
+
+            res['arch'] = etree.tostring(doc)
+
+        return res
+
     @api.multi
     def do_transfer(self):
         res = super(StockPicking, self).do_transfer()
         if res:
             if self.pack_operation_product_ids:
-                for po_product_id in self.pack_operation_product_ids:
-                    if po_product_id.product_id and po_product_id.product_id.tracking == 'lot':
-                        if po_product_id.pack_lot_ids:
-                            for lot_id in po_product_id.pack_lot_ids:
+                for pop_id in self.pack_operation_product_ids:
+                    if pop_id.product_id and pop_id.product_id.tracking == 'lot':
+                        if pop_id.pack_lot_ids:
+                            for lot_id in pop_id.pack_lot_ids:
                                 if lot_id.lot_id:
                                     quantity_sum = 0
                                     quant_ids = self.env['stock.quant'].search(
                                         [
-                                            ('product_id', '=', po_product_id.product_id.id),
+                                            ('product_id', '=', pop_id.product_id.id),
                                             ('lot_id', '=', lot_id.lot_id.id),
                                             ('location_id.usage', '=', 'internal')
                                         ]

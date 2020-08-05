@@ -15,7 +15,7 @@ class StockMove(models.Model):
         compute='_compute_qty_to_lot_id_domain'
     )
 
-    @api.one
+    @api.multi
     def _compute_name(self):
         for item in self:
             item.name = item.product_id.name

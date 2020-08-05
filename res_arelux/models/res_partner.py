@@ -60,11 +60,11 @@ class ResPartner(models.Model):
                                 _('The NIF already exists for another contact')
                             )
         # check_email
-        email_string = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
+        string = "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$"
         if allow_write:
             if 'email' in vals:
                 if vals['email'] != '':
-                    match = re.match(email_string, vals['email'])
+                    match = re.match(string, vals['email'])
                     if match is None:
                         allow_write = False
                         raise ValidationError(_('Email incorrect'))
@@ -80,11 +80,15 @@ class ResPartner(models.Model):
             WHERE id IN (
             SELECT rp.id
             FROM res_partner AS rp
-            WHERE rp.id > 1 AND rp.type = 'contact' AND rp.active = True AND rp.customer = False
+            WHERE rp.id > 1 AND rp.type = 'contact' AND rp.active = True
+            AND rp.customer = False
             AND ((
             SELECT COUNT(cl.id)
             FROM crm_lead AS cl
             WHERE cl.type = 'opportunity' AND cl.partner_id = rp.id
             ) > 0
-            OR (SELECT COUNT(so.id) FROM sale_order AS so WHERE so.partner_id = rp.id) > 0))
+            OR (
+            SELECT COUNT(so.id)
+            FROM sale_order AS so
+            WHERE so.partner_id = rp.id) > 0))
         """)
