@@ -101,7 +101,7 @@ class AreluxSaleReportLine(models.Model):
             'response_result_value': ''
         }
         if custom_type == 'sale_order_done_amount_untaxed':
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('amount_untaxed', '>', 0),
                 ('claim', '=', False),
@@ -118,35 +118,35 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
             # sale_team_id
             if self.crm_team_id:
-                search_filters.append(
+                filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
-            
-            sale_order_ids = self.env['sale.order'].search(search_filters)
-            
+
+            order_ids = self.env['sale.order'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'sum'
-                amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))                                
+                amount_untaxed = sum(order_ids.mapped('amount_untaxed'))
                 return_values['response_result_value'] = amount_untaxed
                 return_values['amount_untaxed'] = amount_untaxed
             else:
-                return_values['response_type'] = 'list_by_user_id'                        
-            
+                return_values['response_type'] = 'list_by_user_id'
+
                 res_users = {}
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
+                if order_ids:
+                    for order_id in order_ids:
                         # fix if need create
-                        user_id = int(sale_order_id.user_id.id)
+                        user_id = int(order_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -154,16 +154,16 @@ class AreluxSaleReportLine(models.Model):
                                 'amount_untaxed': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = sale_order_id.user_id.name                                
+                                res_users[user_id]['name'] = order_id.user_id.name
                         # sum
-                        res_users[user_id]['amount_untaxed'] += sale_order_id.amount_untaxed
+                        res_users[user_id]['amount_untaxed'] += order_id.amount_untaxed
                 # fix response_result_value
                 return_values['response_result_value'] = 'amount_untaxed'                                 
-                return_values['amount_untaxed'] = sum(sale_order_ids.mapped('amount_untaxed'))                    
+                return_values['amount_untaxed'] = sum(order_ids.mapped('amount_untaxed'))
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if sale_order_ids:
+                if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -173,7 +173,7 @@ class AreluxSaleReportLine(models.Model):
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
         
         elif custom_type == 'sale_order_done_count':
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('amount_untaxed', '>', 0),
                 ('claim', '=', False),
@@ -190,34 +190,34 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
             # sale_team_id
             if self.crm_team_id:
-                search_filters.append(
+                filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
-            
-            sale_order_ids = self.env['sale.order'].search(search_filters)
-            
+
+            order_ids = self.env['sale.order'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'count'                                
-                return_values['response_result_value'] = len(sale_order_ids)
-                return_values['count'] = len(sale_order_ids)
+                return_values['response_result_value'] = len(order_ids)
+                return_values['count'] = len(order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
             
                 res_users = {}
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
+                if order_ids:
+                    for order_id in order_ids:
                         # fix if need create
-                        user_id = int(sale_order_id.user_id.id)
+                        user_id = int(order_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -225,16 +225,16 @@ class AreluxSaleReportLine(models.Model):
                                 'count': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = sale_order_id.user_id.name
+                                res_users[user_id]['name'] = order_id.user_id.name
                         # sum
                         res_users[user_id]['count'] += 1
                 # fix response_result_value
                 return_values['response_result_value'] = 'count'
-                return_values['count'] = len(sale_order_ids)
+                return_values['count'] = len(order_ids)
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if sale_order_ids:
+                if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -244,7 +244,7 @@ class AreluxSaleReportLine(models.Model):
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
     
         elif custom_type == 'sale_order_ticket_medio':
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('amount_untaxed', '>', 0),
                 ('claim', '=', False),
@@ -261,43 +261,41 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
             # sale_team_id
             if self.crm_team_id:
-                search_filters.append(
+                filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
-            
-            sale_order_ids = self.env['sale.order'].search(search_filters)
-            
+
+            order_ids = self.env['sale.order'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'sum'
-            
-                amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))
+                amount_untaxed = sum(order_ids.mapped('amount_untaxed'))
                 
                 ticket_medio = 0
                 if sale_order_ids:
-                    ticket_medio = (amount_untaxed/len(sale_order_ids))
+                    ticket_medio = (amount_untaxed/len(order_ids))
                 
                 ticket_medio = "{0:.2f}".format(ticket_medio)
-                                        
                 return_values['response_result_value'] = ticket_medio
                 return_values['ticket_medio'] = ticket_medio
             else:
                 return_values['response_type'] = 'list_by_user_id'
             
                 res_users = {}
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
+                if order_ids:
+                    for order_id in order_ids:
                         # fix if need create
-                        user_id = int(sale_order_id.user_id.id)
+                        user_id = int(order_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -306,25 +304,24 @@ class AreluxSaleReportLine(models.Model):
                                 'amount_untaxed': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = sale_order_id.user_id.name
+                                res_users[user_id]['name'] = order_id.user_id.name
                         # sum
                         res_users[user_id]['count'] += 1
-                        res_users[user_id]['amount_untaxed'] += sale_order_id.amount_untaxed
+                        res_users[user_id]['amount_untaxed'] += order_id.amount_untaxed
                 # fix response_result_value
                 return_values['response_result_value'] = 'amount_untaxed'
-                
-                amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))
+                amount_untaxed = sum(order_ids.mapped('amount_untaxed'))
                 
                 ticket_medio = 0
                 if sale_order_ids:
-                    ticket_medio = (amount_untaxed/len(sale_order_ids))
+                    ticket_medio = (amount_untaxed/len(order_ids))
                 
                 ticket_medio = "{0:.2f}".format(ticket_medio)                                        
                 return_values['ticket_medio'] = ticket_medio
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if sale_order_ids:
+                if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -337,7 +334,7 @@ class AreluxSaleReportLine(models.Model):
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
                             
         elif custom_type == 'sale_order_sent_count':
-            search_filters = [
+            filters = [
                 ('date_order_management', '!=', False),
                 ('amount_untaxed', '>', 0),
                 ('opportunity_id', '!=', False),
@@ -355,34 +352,34 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
             # sale_team_id
             if self.crm_team_id:
-                search_filters.append(
+                filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
-            
-            sale_order_ids = self.env['sale.order'].search(search_filters)
-            
+
+            order_ids = self.env['sale.order'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'count'            
-                return_values['response_result_value'] = len(sale_order_ids)
+                return_values['response_result_value'] = len(order_ids)
                 return_values['count'] = len(sale_order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
             
                 res_users = {}
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
+                if order_ids:
+                    for order_id in order_ids:
                         # fix if need create
-                        user_id = int(sale_order_id.user_id.id)
+                        user_id = int(order_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -390,16 +387,16 @@ class AreluxSaleReportLine(models.Model):
                                 'count': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = sale_order_id.user_id.name
+                                res_users[user_id]['name'] = order_id.user_id.name
                         # sum
                         res_users[user_id]['count'] += 1
                 # fix response_result_value
                 return_values['response_result_value'] = 'count'
-                return_values['count'] = len(sale_order_ids)
+                return_values['count'] = len(order_ids)
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if sale_order_ids:
+                if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -409,7 +406,7 @@ class AreluxSaleReportLine(models.Model):
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
         
         elif custom_type == 'sale_order_done_muestras':
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('amount_untaxed', '=', 0),
                 ('claim', '=', False),
@@ -428,34 +425,34 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
             # sale_team_id
             if self.crm_team_id:
-                search_filters.append(
+                filters.append(
                     ('sale_team_id', '=', self.crm_team_id.id)
                 )
             
-            sale_order_ids = self.env['sale.order'].search(search_filters)
+            order_ids = self.env['sale.order'].search(filters)
             
             if not self.group_by_user:
                 return_values['response_type'] = 'count'            
-                return_values['response_result_value'] = len(sale_order_ids)
-                return_values['count'] = len(sale_order_ids)
+                return_values['response_result_value'] = len(order_ids)
+                return_values['count'] = len(order_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
             
                 res_users = {}
-                if sale_order_ids:
-                    for sale_order_id in sale_order_ids:
+                if order_ids:
+                    for order_id in order_ids:
                         # fix if need create
-                        user_id = int(sale_order_id.user_id.id)
+                        user_id = int(order_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -463,16 +460,16 @@ class AreluxSaleReportLine(models.Model):
                                 'count': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = sale_order_id.user_id.name
+                                res_users[user_id]['name'] = order_id.user_id.name
                         # sum
                         res_users[user_id]['count'] += 1
                 # fix response_result_value
                 return_values['response_result_value'] = 'count'
-                return_values['count'] = len(sale_order_ids)
+                return_values['count'] = len(order_ids)
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if sale_order_ids:
+                if order_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -483,8 +480,7 @@ class AreluxSaleReportLine(models.Model):
 
         elif custom_type == 'res_partner_potencial_count':
             return_values['response_type'] = 'list_by_user_id'
-            
-            search_filters = [
+            filters = [
                 ('type', '=', 'contact'),
                 ('active', '=', True),
                 ('create_uid', '!=', 1),
@@ -501,21 +497,21 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
-            
+
             res_users = {}
-            res_partner_ids = self.env['res.partner'].search(search_filters)
-            if res_partner_ids:
-                for res_partner_id in res_partner_ids:
+            partner_ids = self.env['res.partner'].search(filters)
+            if partner_ids:
+                for partner_id in partner_ids:
                     # fix if need create
-                    user_id = int(res_partner_id.create_uid.id)
+                    user_id = int(partner_id.create_uid.id)
                     if user_id not in res_users:
                         res_users[user_id] = {
                             'id': user_id,
@@ -523,7 +519,7 @@ class AreluxSaleReportLine(models.Model):
                             'total': 0
                         }
                         if user_id > 0:
-                            res_users[user_id]['name'] = res_partner_id.create_uid.name
+                            res_users[user_id]['name'] = partner_id.create_uid.name
                     # sum
                     res_users[user_id]['total'] += 1
             # fix response_result_value
@@ -531,7 +527,7 @@ class AreluxSaleReportLine(models.Model):
             # remove_all
             self.remove_all_user_line()
             # creates
-            if res_partner_ids:
+            if partner_ids:
                 for res_user_id, res_user in res_users.items():
                     vals = {
                         'arelux_sale_report_line_id': self.id,
@@ -541,7 +537,7 @@ class AreluxSaleReportLine(models.Model):
                     self.env['arelux.sale.report.line.user'].sudo().create(vals)
                     
         elif custom_type == 'cartera_actual_activa_count':
-            search_filters = [
+            filters = [
                 ('type', '=', 'contact'),
                 ('active', '=', True),
                 ('user_id', '!=', False),
@@ -559,29 +555,29 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
-            
-            res_partner_ids = self.env['res.partner'].search(search_filters)
-            
+
+            partner_ids = self.env['res.partner'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'count'                        
-                return_values['response_result_value'] = len(res_partner_ids)
-                return_values['count'] = len(res_partner_ids)
+                return_values['response_result_value'] = len(partner_ids)
+                return_values['count'] = len(partner_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
             
                 res_users = {}
-                if res_partner_ids:
-                    for res_partner_id in res_partner_ids:
+                if partner_ids:
+                    for partner_id in partner_ids:
                         # fix if need create
-                        user_id = int(res_partner_id.user_id.id)
+                        user_id = int(partner_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -589,16 +585,16 @@ class AreluxSaleReportLine(models.Model):
                                 'count': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = res_partner_id.user_id.name
+                                res_users[user_id]['name'] = partner_id.user_id.name
                         # sum
                         res_users[user_id]['count'] += 1
                 # fix response_result_value
                 return_values['response_result_value'] = 'count'
-                return_values['count'] = len(res_partner_ids)
+                return_values['count'] = len(partner_ids)
                 # remove_all
                 self.remove_all_user_line()                                               
                 # creates
-                if res_partner_ids:
+                if partner_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -608,7 +604,7 @@ class AreluxSaleReportLine(models.Model):
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
         
         elif custom_type == 'cartera_actual_count':
-            search_filters = [
+            filters = [
                 ('type', '=', 'contact'),
                 ('active', '=', True),
                 ('user_id', '!=', False),
@@ -625,28 +621,28 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
-            
-            res_partner_ids = self.env['res.partner'].search(search_filters)
-            
+
+            partner_ids = self.env['res.partner'].search(filters)
+
             if not self.group_by_user:
                 return_values['response_type'] = 'count'
-                return_values['response_result_value'] = len(res_partner_ids)
-                return_values['count'] = len(res_partner_ids)
+                return_values['response_result_value'] = len(partner_ids)
+                return_values['count'] = len(partner_ids)
             else:
                 return_values['response_type'] = 'list_by_user_id'
                 res_users = {}            
-                if res_partner_ids:
-                    for res_partner_id in res_partner_ids:
+                if partner_ids:
+                    for partner_id in partner_ids:
                         # fix if need create
-                        user_id = int(res_partner_id.user_id.id)
+                        user_id = int(partner_id.user_id.id)
                         if user_id not in res_users:
                             res_users[user_id] = {
                                 'id': user_id,
@@ -654,16 +650,16 @@ class AreluxSaleReportLine(models.Model):
                                 'total': 0
                             }
                             if user_id > 0:
-                                res_users[user_id]['name'] = res_partner_id.user_id.name
+                                res_users[user_id]['name'] = partner_id.user_id.name
                         # sum
                         res_users[user_id]['total'] += 1
                 # fix response_result_value
                 return_values['response_result_value'] = 'count'
-                return_values['count'] = len(res_partner_ids)                    
+                return_values['count'] = len(partner_ids)
                 # remove_all
                 self.remove_all_user_line()
                 # creates
-                if len(res_partner_ids)>0:
+                if partner_ids:
                     for res_user_id, res_user in res_users.items():
                         vals = {
                             'arelux_sale_report_line_id': self.id,
@@ -676,7 +672,7 @@ class AreluxSaleReportLine(models.Model):
             return_values['response_type'] = 'list_sale_orders'
             # partner_ids with sale_orders < date_from
             res_partner_ids = []
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('claim', '=', False),
                 ('amount_untaxed', '>', 0),
@@ -688,22 +684,22 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
-                
-            sale_order_ids = self.env['sale.order'].search(search_filters)            
-            if sale_order_ids:
-                for sale_order_id in sale_order_ids:
-                    if sale_order_id.partner_id.id not in res_partner_ids:
-                        res_partner_ids.append(sale_order_id.partner_id.id)                
+
+            order_ids = self.env['sale.order'].search(filters)
+            if order_ids:
+                for order_id in order_ids:
+                    if order_id.partner_id.id not in res_partner_ids:
+                        res_partner_ids.append(order_id.partner_id.id)
             # sale_orders with filters and partner_id not in
-            search_filters = [
+            filters = [
                 ('state', 'in', ('sale', 'done')),
                 ('claim', '=', False),
                 ('amount_untaxed', '>', 0),
@@ -721,36 +717,36 @@ class AreluxSaleReportLine(models.Model):
             ]
             # ar_qt_activity_type
             if self.ar_qt_activity_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_activity_type', '=', self.ar_qt_activity_type)
                 )
             # ar_qt_customer_type
             if self.ar_qt_customer_type != 'none':
-                search_filters.append(
+                filters.append(
                     ('ar_qt_customer_type', '=', self.ar_qt_customer_type)
                 )
                 
-            sale_order_ids = self.env['sale.order'].search(search_filters)
+            order_ids = self.env['sale.order'].search(filters)
             # sort_custom
-            sale_order_ids2 = []
-            if sale_order_ids:
-                for sale_order_id in sale_order_ids:
-                    sale_order_ids2.append({
-                        'id': sale_order_id.id,
-                        'user_name': sale_order_id.user_id.name
+            order_ids2 = []
+            if order_ids:
+                for order_id in order_ids:
+                    order_ids2.append({
+                        'id': order_id.id,
+                        'user_name': order_id.user_id.name
                     })
-                sale_order_ids = sorted(
-                    sale_order_ids2,
+                order_ids = sorted(
+                    order_ids2,
                     key=operator.itemgetter('user_name')
                 )
             # remove_all
             self.remove_all_sale_order_line()
             # creates
-            if sale_order_ids:
-                for sale_order_id in sale_order_ids:
+            if order_ids:
+                for order_id in order_ids:
                     vals = {
                         'arelux_sale_report_line_id': self.id,
-                        'sale_order_id': sale_order_id['id']                                                                
+                        'sale_order_id': order_id.id
                     }
                     self.env['arelux.sale.report.line.sale.order'].sudo().create(vals)
         
@@ -790,7 +786,7 @@ class AreluxSaleReportLine(models.Model):
                     ratio = 0
                     if res_so_done_count['count'] > 0 and res_so_sent_count['count'] > 0:
                         ratio = (float(res_so_done_count['count'])/float(res_so_sent_count['count']))*100
-                    
+
                     self.response_result_value = "{0:.2f}".format(ratio)
                 else:
                     self.response_type = 'percent'

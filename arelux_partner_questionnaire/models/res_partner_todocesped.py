@@ -295,7 +295,7 @@ class ResPartnerTodocesped(models.Model):
     )
     '''4'''
     ar_qt_todocesped_pf_stock_capacity = fields.Many2many(
-        comodel_name='res.partner.stock.capacity', 
+        comodel_name='res.partner.stock.capacity',
         domain=[
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'profesional'))

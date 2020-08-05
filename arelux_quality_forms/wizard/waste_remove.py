@@ -80,7 +80,7 @@ class WizardWasteRemove(models.TransientModel):
                         'destination': dict(remove_id.fields_get(
                             allfields=['destination']
                         )['destination']['selection'])
-                        [waste_remove_id.destination],
+                        [remove_id.destination],
                         'waste_remove_product_ids': []
                     }
                     # details_by_key
