@@ -1,2 +1,2 @@
-access_weather_history,access_weather_history,model_weather_history,base.group_user,1,0,0,0
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_weather_history,access_weather_history,model_weather_history,base.group_user,1,0,0,0
