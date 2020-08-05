@@ -16,7 +16,7 @@ class SurveyMailComposeMessage(models.TransientModel):
                 "title": _('The survey has been automatically sent by email'),
                 "text": user_input.survey_id.title,
                 "color": "#36a64f",
-                "fields": [                    
+                "fields": [
                     {
                         "title": _('Customer'),
                         "value": '%s (%s - %s)' % (
@@ -37,7 +37,7 @@ class SurveyMailComposeMessage(models.TransientModel):
         vals = {
             'attachments': attachments,
             'model': 'survey.user_input',
-            'res_id': survey_user_input.id,
+            'res_id': user_input.id,
             'channel': self.env['ir.config_parameter'].sudo().get_param(
                 'slack_log_calidad_channel'
             ),

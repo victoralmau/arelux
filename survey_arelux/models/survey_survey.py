@@ -56,9 +56,9 @@ class SurveySurvey(models.Model):
                 first_report_ids = self.env[
                     'res.partner.sale.order.first.report'
                 ].search(
-                    [ 
+                    [
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                        ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),                
+                        ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                         ('date_done_picking', '!=', False),
                         (
                             'date_done_picking',
@@ -76,10 +76,10 @@ class SurveySurvey(models.Model):
                 first_report_ids = self.env[
                     'res.partner.sale.order.first.report'
                 ].search(
-                    [ 
+                    [
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
-                        ('order_id.installer_id', '=', False),                
+                        ('order_id.installer_id', '=', False),
                         ('date_done_picking', '!=', False),
                         (
                             'date_done_picking',
@@ -97,10 +97,10 @@ class SurveySurvey(models.Model):
                 first_report_ids = self.env[
                     'res.partner.sale.order.first.report'
                 ].search(
-                    [ 
+                    [
                         ('order_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                         ('order_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
-                        ('order_id.installer_id', '!=', False),                
+                        ('order_id.installer_id', '!=', False),
                         ('date_done_picking', '!=', False),
                         (
                             'date_done_picking',
@@ -113,23 +113,31 @@ class SurveySurvey(models.Model):
                             date_done_picking_end.strftime("%Y-%m-%d")
                         ),
                     ]
-                )            
+                )
             # operations
             if first_report_ids:
                 order_ids_mapped = first_report_ids.mapped('order_id')
                 # survey_user_input_ids
                 user_input_ids = self.env['survey.user_input'].search(
-                    [ 
-                        ('survey_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                        ('survey_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
+                    [
+                        (
+                            'survey_id.ar_qt_activity_type',
+                            '=',
+                            self.ar_qt_activity_type
+                        ),
+                        (
+                            'survey_id.ar_qt_customer_type',
+                            '=',
+                            self.ar_qt_customer_type
+                        ),
                         ('survey_id.survey_type', '=', self.survey_type),
-                        ('survey_id.survey_subtype', '=', self.survey_subtype),                                        
-                        ('order_id', 'in', order_ids_mapped.ids)                
+                        ('survey_id.survey_subtype', '=', self.survey_subtype),
+                        ('order_id', 'in', order_ids_mapped.ids)
                     ]
                 )
                 if user_input_ids:
                     order_ids = self.env['sale.order'].search(
-                        [ 
+                        [
                             ('id', 'in', order_ids_mapped.ids),
                             ('id', 'not in', user_input_ids.mapped('order_id').ids)
                         ]
@@ -168,9 +176,17 @@ class SurveySurvey(models.Model):
                     order_report_ids = self.env[
                         'res.partner.sale.order.report'
                     ].search(
-                        [ 
-                            ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                            ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
+                        [
+                            (
+                                'partner_id.ar_qt_activity_type',
+                                '=',
+                                self.ar_qt_activity_type
+                            ),
+                            (
+                                'partner_id.ar_qt_customer_type',
+                                '=',
+                                self.ar_qt_customer_type
+                            ),
                             ('partner_id.ar_qt_arelux_pf_customer_type', '!=', False),
                             ('partner_id.ar_qt_arelux_pf_customer_type', '!=', 'other'),                                        
                             ('date_done_picking', '!=', False),
@@ -189,9 +205,17 @@ class SurveySurvey(models.Model):
                     order_report_ids = self.env[
                         'res.partner.sale.order.report'
                     ].search(
-                        [ 
-                            ('partner_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
-                            ('partner_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
+                        [
+                            (
+                                'partner_id.ar_qt_activity_type',
+                                '=',
+                                self.ar_qt_activity_type
+                            ),
+                            (
+                                'partner_id.ar_qt_customer_type',
+                                '=',
+                                self.ar_qt_customer_type
+                            ),
                             ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', False),
                             ('partner_id.ar_qt_todocesped_pf_customer_type', '!=', 'other'),                                        
                             ('date_done_picking', '!=', False),
@@ -232,7 +256,7 @@ class SurveySurvey(models.Model):
                                     partner_ids_max_date_sui[partner_id_mapped] = None
                             # survey_user_input_ids
                             user_input_ids = self.env['survey.user_input'].search(
-                                [ 
+                                [
                                     ('survey_id.ar_qt_activity_type', '=', self.ar_qt_activity_type),
                                     ('survey_id.ar_qt_customer_type', '=', self.ar_qt_customer_type),
                                     ('survey_id.survey_type', '=', self.survey_type),
@@ -301,7 +325,6 @@ class SurveySurvey(models.Model):
                     ('survey_type', '=', 'mail'),
                     ('survey_type_origin', '=', 'none'),
                     ('id', '<', 13)
-
                 ]
             )
             if survey_survey_old_ids:

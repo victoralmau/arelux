@@ -88,18 +88,18 @@ class SaleOrder(models.Model):
         if res.user_id.id and res.partner_id.user_id.id\
                 and self.user_id.id != res.partner_id.user_id.id:
             res.user_id = res.partner_id.user_id.id
-        
+
         if res.user_id.id == 6:
             res.user_id = 0
 
         res.fix_copy_custom_field_opportunity_id()
         return res
-    
+
     @api.multi
     def write(self, vals):
         # date_order_management
         if vals.get('state') == 'sent' and 'date_order_management' not in vals:
-            vals['date_order_management'] = fields.datetime.now()                            
+            vals['date_order_management'] = fields.datetime.now()
 
         res = super(SaleOrder, self).write(vals)
         if self.user_id.id:
@@ -130,13 +130,13 @@ class SaleOrder(models.Model):
     def _compute_partner_id_phone(self):
         for item in self:
             item.partner_id_phone = item.partner_id.phone
-            
+
     @api.multi
     @api.depends('partner_id')
     def _compute_partner_id_mobile(self):
         for item in self:
             item.partner_id_mobile = item.partner_id.mobile
-    
+
     @api.multi
     @api.onchange('user_id')
     def change_user_id(self):
@@ -144,7 +144,7 @@ class SaleOrder(models.Model):
             if item.user_id:
                 if item.user_id.sale_team_id:
                     item.team_id = item.user_id.sale_team_id.id
-                                                        
+
     @api.multi
     @api.onchange('template_id')
     def change_template_id(self):

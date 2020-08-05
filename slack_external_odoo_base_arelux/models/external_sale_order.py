@@ -54,7 +54,7 @@ class ExternalSaleOrder(models.Model):
             )
         }
         self.env['slack.message'].sudo().create(vals)
-        
+
     @api.multi
     def action_so_done_error_esa_id_without_country_id(self):
         self.ensure_one()
@@ -65,12 +65,12 @@ class ExternalSaleOrder(models.Model):
         )
         # attachments
         attachments = [
-            {                    
+            {
                 "title": _('Error creating external.sale.order'),
                 "text":
                     _('The order cannot be confirmed because the customers shipping '
                       'address has NO mapped COUNTRY'),
-                "color": "#ff0000",                                             
+                "color": "#ff0000",
                 "fallback": _('View order %s') % url_item,
                 "actions": [
                     {
@@ -103,7 +103,7 @@ class ExternalSaleOrder(models.Model):
             )
         }
         self.env['slack.message'].sudo().create(vals)
-        
+
     @api.multi
     def action_so_done_error_esa_id_without_country_state_id(self):
         self.ensure_one()
@@ -114,12 +114,12 @@ class ExternalSaleOrder(models.Model):
         )
         # attachments
         attachments = [
-            {                    
+            {
                 "title": _('Error creating external.sale.order'),
                 "text":
                     _('The order cannot be confirmed because the customers shipping '
                       'address DOES NOT have a mapped STATE'),
-                "color": "#ff0000",                                             
+                "color": "#ff0000",
                 "fallback": _('View order %s') % url_item,
                 "actions": [
                     {

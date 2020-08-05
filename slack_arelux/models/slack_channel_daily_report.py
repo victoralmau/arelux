@@ -63,7 +63,8 @@ class SlackChannelDailyReport(models.Model):
                 if data_item['data'] > 0 or data_item['data_previous'] > 0:
                     data_item['color'] = '#fbff00'
                     # increment
-                    data_item['increment'] = data_item['data']-data_item['data_previous']
+                    data_item['increment'] = \
+                        data_item['data']-data_item['data_previous']
                     if data_item['increment'] != 0:
                         # possitive-neggative
                         if data_item['increment'] > 0:
@@ -71,7 +72,7 @@ class SlackChannelDailyReport(models.Model):
                             data_item['color'] = '#36a64f'
                         else:
                             data_item['color'] = '#ff0000'
-                        #add and close
+                        # add and close
                         data_item['text'] = '%s (%s%s)' % (
                             data_item['text'],
                             '%',
@@ -81,7 +82,7 @@ class SlackChannelDailyReport(models.Model):
                 data[ar_qt_activity_type][ar_qt_customer_type] = data_item
         # return
         return data
-        
+
     @api.model        
     def sale_order_filter_amount_untaxed(self,
                                          ar_qt_activity_type,
@@ -97,17 +98,25 @@ class SlackChannelDailyReport(models.Model):
                 ('amount_total', '>', 0),
                 ('ar_qt_activity_type', '=', ar_qt_activity_type),
                 ('ar_qt_customer_type', '=', ar_qt_customer_type),
-                ('confirmation_date', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                ('confirmation_date', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                (
+                    'confirmation_date',
+                    '>=',
+                    date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                ),
+                (
+                    'confirmation_date',
+                    '<=',
+                    date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                )
             ]
         )
         if order_ids:
             for order_id in order_ids:
-                amount_untaxed += sale_order_id.amount_untaxed
+                amount_untaxed += order_id.amount_untaxed
         # return
         return amount_untaxed
-        
-    @api.model        
+
+    @api.model
     def total_pedidos_dia(self,
                           date_start,
                           date_end,
@@ -142,18 +151,25 @@ class SlackChannelDailyReport(models.Model):
                 # text
                 data_item['text'] = str(data_item['data'])
                 # increment
-                if data_item['data'] > 0 or data_item['data_previous'] > 0:
+                if data_item['data'] > 0 \
+                        or data_item['data_previous'] > 0:
                     data_item['color'] = '#fbff00'
                     # increment
-                    data_item['increment'] = data_item['data']-data_item['data_previous']
+                    data_item['increment'] = \
+                        data_item['data']-data_item['data_previous']
                     # increment_percent
                     inc_item = 0
-                    if data_item['data'] > 0 and data_item['data_previous'] > 0:
-                        inc_item = (float(data_item['data'])/float(data_item['data_previous']))*100
-                    elif data_item['data'] == 0 and data_item['data_previous'] > 0:
+                    if data_item['data'] > 0 \
+                            and data_item['data_previous'] > 0:
+                        data_1 = float(data_item['data'])
+                        data_2 = float(data_item['data_previous'])
+                        inc_item = (data_1/data_2)*100
+                    elif data_item['data'] == 0 \
+                            and data_item['data_previous'] > 0:
                         inc_item = -100
                     # format
-                    data_item['increment_percent'] = "{0:.2f}".format(inc_item)
+                    data_item['increment_percent'] = \
+                        "{0:.2f}".format(inc_item)
                     # operations
                     if data_item['increment'] != 0:
                         # possitive-neggative
@@ -189,13 +205,21 @@ class SlackChannelDailyReport(models.Model):
                     ('amount_total', '>', 0),
                     ('ar_qt_activity_type', '=', ar_qt_activity_type),
                     ('ar_qt_customer_type', '=', ar_qt_customer_type),
-                    ('confirmation_date', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                    ('confirmation_date', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                    (
+                        'confirmation_date',
+                        '>=',
+                        date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                    ),
+                    (
+                        'confirmation_date',
+                        '<=',
+                        date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                    )
                 ]
             )
         )
-    
-    @api.model        
+
+    @api.model
     def total_pedidos_dia_por_comercial(self,
                                         date_start,
                                         date_end,
@@ -207,7 +231,7 @@ class SlackChannelDailyReport(models.Model):
         # data
         data = {}
         for ar_qt_activity_type in ar_qt_activity_types:
-            #d ata_item
+            # d ata_item
             data_item = {
                 'items': []
             }
@@ -241,18 +265,25 @@ class SlackChannelDailyReport(models.Model):
                     # text
                     data_item2['text'] = str(data_item2['data'])
                     # increment
-                    if data_item2['data'] > 0 or data_item2['data_previous'] > 0:
+                    if data_item2['data'] > 0 \
+                            or data_item2['data_previous'] > 0:
                         data_item2['color'] = '#fbff00'
                         # increment
-                        data_item2['increment'] = data_item2['data']-data_item2['data_previous']
+                        data_item2['increment'] = \
+                            data_item2['data']-data_item2['data_previous']
                         # increment_percent
                         inc_item = 0
-                        if data_item2['data'] > 0 and data_item2['data_previous'] > 0:
-                            inc_item = (float(data_item2['data'])/float(data_item2['data_previous']))*100
-                        elif data_item2['data'] == 0 and data_item2['data_previous'] > 0:
+                        if data_item2['data'] > 0 \
+                                and data_item2['data_previous'] > 0:
+                            data_1 = float(data_item['data'])
+                            data_2 = float(data_item['data_previous'])
+                            inc_item = (data_1 / data_2) * 100
+                        elif data_item2['data'] == 0 \
+                                and data_item2['data_previous'] > 0:
                             inc_item = -100
                         # format
-                        data_item2['increment_percent'] = "{0:.2f}".format(inc_item)
+                        data_item2['increment_percent'] = \
+                            "{0:.2f}".format(inc_item)
                         # operations
                         if data_item2['increment'] != 0:
                             # possitive-neggative
@@ -290,8 +321,16 @@ class SlackChannelDailyReport(models.Model):
                 ('amount_total', '>', 0),
                 ('user_id', '!=', False),
                 ('ar_qt_activity_type', '=', ar_qt_activity_type),
-                ('confirmation_date', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                ('confirmation_date', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                (
+                    'confirmation_date',
+                    '>=',
+                    date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                ),
+                (
+                    'confirmation_date',
+                    '<=',
+                    date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                )
             ]
         )
         if order_ids:
@@ -307,7 +346,7 @@ class SlackChannelDailyReport(models.Model):
         # return
         return data
         
-    @api.model        
+    @api.model
     def sale_order_filter_get_user_id(self,
                                       ar_qt_activity_type,
                                       user_id,
@@ -322,13 +361,21 @@ class SlackChannelDailyReport(models.Model):
                     ('amount_total', '>', 0),
                     ('user_id', '=', user_id),
                     ('ar_qt_activity_type', '=', ar_qt_activity_type),
-                    ('confirmation_date', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                    ('confirmation_date', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                    (
+                        'confirmation_date',
+                        '>=',
+                        date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                    ),
+                    (
+                        'confirmation_date',
+                        '<=',
+                        date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                    )
                 ]
             )
         )
     
-    @api.model    
+    @api.model
     def total_muestras_enviadas(self,
                                 date_start,
                                 date_end,
@@ -360,18 +407,25 @@ class SlackChannelDailyReport(models.Model):
             # text
             data_item['text'] = str(data_item['data'])
             # increment
-            if data_item['data'] > 0 or data_item['data_previous'] > 0:
+            if data_item['data'] > 0 \
+                    or data_item['data_previous'] > 0:
                 data_item['color'] = '#fbff00'
                 # increment
-                data_item['increment'] = data_item['data']-data_item['data_previous']
+                data_item['increment'] = \
+                    data_item['data']-data_item['data_previous']
                 # increment_percent
                 inc_item = 0
-                if data_item['data'] > 0 and data_item['data_previous'] > 0:
-                    inc_item = (float(data_item['data'])/float(data_item['data_previous']))*100
-                elif data_item['data'] == 0 and data_item['data_previous'] > 0:
+                if data_item['data'] > 0 \
+                        and data_item['data_previous'] > 0:
+                    data_1 = float(data_item['data'])
+                    data_2 = float(data_item['data_previous'])
+                    inc_item = (data_1 / data_2) * 100
+                elif data_item['data'] == 0 \
+                        and data_item['data_previous'] > 0:
                     inc_item = -100
                 # format
-                data_item['increment_percent'] = "{0:.2f}".format(inc_item)
+                data_item['increment_percent'] = \
+                    "{0:.2f}".format(inc_item)
                 # operations
                 if data_item['increment'] != 0:
                     # possitive-neggative
@@ -392,7 +446,7 @@ class SlackChannelDailyReport(models.Model):
         # return
         return data
     
-    @api.model        
+    @api.model
     def stock_picking_filter_count(self,
                                    ar_qt_activity_type,
                                    picking_type_id,
@@ -404,8 +458,16 @@ class SlackChannelDailyReport(models.Model):
                     ('state', '=', 'done'),
                     ('ar_qt_activity_type', '=', ar_qt_activity_type),
                     ('picking_type_id', '=', picking_type_id),
-                    ('date_done', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                    ('date_done', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                    (
+                        'date_done',
+                        '>=',
+                        date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                    ),
+                    (
+                        'date_done',
+                        '<=',
+                        date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                    )
                 ]
             )
         )
@@ -445,18 +507,25 @@ class SlackChannelDailyReport(models.Model):
                 # text
                 data_item['text'] = str(data_item['data'])
                 # increment
-                if data_item['data'] > 0 or data_item['data_previous'] > 0:
+                if data_item['data'] > 0 \
+                        or data_item['data_previous'] > 0:
                     data_item['color'] = '#fbff00'
                     # increment
-                    data_item['increment'] = data_item['data']-data_item['data_previous']
+                    data_item['increment'] = \
+                        data_item['data']-data_item['data_previous']
                     # increment_percent
                     inc_item = 0
-                    if data_item['data'] > 0 and data_item['data_previous'] > 0:
-                        inc_item = (float(data_item['data'])/float(data_item['data_previous']))*100
-                    elif data_item['data'] == 0 and data_item['data_previous'] > 0:
+                    if data_item['data'] > 0 \
+                            and data_item['data_previous'] > 0:
+                        data_1 = float(data_item['data'])
+                        data_2 = float(data_item['data_previous'])
+                        inc_item = (data_1 / data_2) * 100
+                    elif data_item['data'] == 0 \
+                            and data_item['data_previous'] > 0:
                         inc_item = -100
                     # format
-                    data_item['increment_percent'] = "{0:.2f}".format(inc_item)
+                    data_item['increment_percent'] = \
+                        "{0:.2f}".format(inc_item)
                     # operations
                     if data_item['increment'] != 0:
                         # possitive-neggative
@@ -490,8 +559,16 @@ class SlackChannelDailyReport(models.Model):
                     ('type', '=', 'contact'),
                     ('ar_qt_activity_type', '=', ar_qt_activity_type),
                     ('ar_qt_customer_type', '=', ar_qt_customer_type),
-                    ('create_date', '>=', date_from.strftime("%Y-%m-%d")+' 00:00:00'),
-                    ('create_date', '<=', date_to.strftime("%Y-%m-%d")+' 23:59:59')
+                    (
+                        'create_date',
+                        '>=',
+                        date_from.strftime("%Y-%m-%d")+' 00:00:00'
+                    ),
+                    (
+                        'create_date',
+                        '<=',
+                        date_to.strftime("%Y-%m-%d")+' 23:59:59'
+                    )
                 ]
             )
         )
@@ -603,11 +680,13 @@ class SlackChannelDailyReport(models.Model):
                     for c_type in ar_qt_customer_types:
                         if c_type in total_clientes_nuevos[a_type]:
                             attachment_item = {
-                                "text": '[%s] [%s] Clientes profesionales nuevos metidos al sistema: %s' % (
-                                    a_type.title(),
-                                    c_type.title(),
-                                    total_clientes_nuevos[a_type][c_type]['text']
-                                ),
+                                "text":
+                                    '[%s] [%s] Clientes profesionales '
+                                    'nuevos metidos al sistema: %s' % (
+                                        a_type.title(),
+                                        c_type.title(),
+                                        total_clientes_nuevos[a_type][c_type]['text']
+                                    ),
                                 "color": total_clientes_nuevos[a_type][c_type]['color'],
                             }
                             attachments.append(attachment_item)

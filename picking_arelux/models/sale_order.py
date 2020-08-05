@@ -55,7 +55,7 @@ class SaleOrder(models.Model):
                                         )
                             # only_prduct_MCH12
                             if len(codes) > 0:
-                                if len(codes) == 1 and default_codes[0] == 'MCH12':
+                                if len(codes) == 1 and codes[0] == 'MCH12':
                                     type_ids = self.env[
                                         'stock.picking.type'
                                     ].sudo().search(
@@ -74,7 +74,11 @@ class SaleOrder(models.Model):
                                         ].next_by_code(
                                             self.env['stock.picking.type'].search(
                                                 [
-                                                    ('id', '=', picking_id.picking_type_id.id)
+                                                    (
+                                                        'id',
+                                                        '=',
+                                                        picking_id.picking_type_id.id
+                                                    )
                                                 ]
                                             )[0].sequence_id.code)
         # return

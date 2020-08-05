@@ -36,7 +36,7 @@ class ResPartner(models.Model):
                 for order_id in order_ids:
                     item.sale_order_sale_sum = \
                         item.sale_order_sale_sum + order_id.amount_untaxed
-    
+
     @api.multi
     def _compute_sale_order_pto_count(self):
         for item in self:
@@ -54,7 +54,7 @@ class ResPartner(models.Model):
                 ]
             )
             item.sale_order_pto_count = len(order_ids)
-            
+
     @api.model
     def create(self, values):
         res = super(ResPartner, self).create(values)
@@ -73,11 +73,13 @@ class ResPartner(models.Model):
                 res.property_product_pricelist = 1
         # return
         return res
-    
-    @api.model    
+
+    @api.model
     def cron_operations_res_partners(self):
         # reset all 0
-        self.env.cr.execute("UPDATE res_partner SET sale_order_count_store = 0 WHERE id > 0")
+        self.env.cr.execute("""
+        UPDATE res_partner SET sale_order_count_store = 0 WHERE id > 0
+        """)
         # update only with sales
         order_ids = self.env['sale.order'].search(
             [

@@ -72,20 +72,20 @@ class StockPicking(models.Model):
                                             ('lot_id', '=', lot_id.lot_id.id),
                                             ('location_id.usage', '=', 'internal')
                                         ]
-                                    )                
+                                    )
                                     if quant_ids:
                                         for quant_id in quant_ids:
                                             quantity_sum += quant_id.qty
-                                                                                                                        
+
                                     lot_id.product_qty_store = quantity_sum
         # return
         return res
-        
+
     @api.multi
     def action_send_account_invoice_out_refund(self):
         self.ensure_one()
         return False
-    
+
     @api.model
     def cron_operations_autogenerate_invoices_stock_picking_return(self):
         picking_ids = self.env['stock.picking'].search(
@@ -128,7 +128,8 @@ class StockPicking(models.Model):
                                 if picking_id_origin.sale_id.invoice_ids:
                                     # invoice_id
                                     invoice_id = False
-                                    for invoice_id_get in picking_id_origin.sale_id.invoice_ids:
+                                    for invoice_id_get in \
+                                            picking_id_origin.sale_id.invoice_ids:
                                         if invoice_id_get.type == 'out_invoice':
                                             invoice_id = invoice_id_get
                                     # contionue
@@ -136,7 +137,7 @@ class StockPicking(models.Model):
                                         # products_info
                                         products_info = {}
                                         for line_id in invoice_id.invoice_line_ids:
-                                            if line_id.product_id.id>0:
+                                            if line_id.product_id.id > 0:
                                                 products_info[line_id.product_id.id] = {
                                                     'name': line_id.name,
                                                     'price_unit': line_id.price_unit,
@@ -154,37 +155,43 @@ class StockPicking(models.Model):
                                             'type': 'out_refund',
                                             'comment': ' ',
                                             'origin': invoice_id.number,
-                                            'name': stock_picking_id.name,
-                                            'ar_qt_activity_type': invoice_id.ar_qt_activity_type,
-                                            'ar_qt_customer_type': invoice_id.ar_qt_customer_type,
-                                            'payment_mode_id': invoice_id.payment_mode_id.id,
-                                            'payment_term_id': invoice_id.payment_term_id.id,
-                                            'fiscal_position_id': invoice_id.fiscal_position_id.id,
+                                            'name': picking_id.name,
+                                            'ar_qt_activity_type':
+                                                invoice_id.ar_qt_activity_type,
+                                            'ar_qt_customer_type':
+                                                invoice_id.ar_qt_customer_type,
+                                            'payment_mode_id':
+                                                invoice_id.payment_mode_id.id,
+                                            'payment_term_id':
+                                                invoice_id.payment_term_id.id,
+                                            'fiscal_position_id':
+                                                invoice_id.fiscal_position_id.id,
                                             'team_id': invoice_id.team_id.id,
                                             'user_id': invoice_id.user_id.id
                                         }
                                         # partner_bank_id
                                         if invoice_id.partner_bank_id:
-                                            vals['partner_bank_id'] = invoice_id.partner_bank_id.id
+                                            vals['partner_bank_id'] = \
+                                                invoice_id.partner_bank_id.id
                                         # mandate_id
                                         if invoice_id.mandate_id:
                                             vals['mandate_id'] = invoice_id.mandate_id.id
                                         # create
-                                        invoice_obj = self.env['account.invoice'].sudo().create(vals)
+                                        invoice_obj = self.env[
+                                            'account.invoice'
+                                        ].sudo().create(vals)
                                         # lines
-                                        for product_id in picking_id_origin.pack_operation_product_ids:
+                                        for product_id in \
+                                                picking_id_origin.pack_operation_product_ids:
+                                            product_info = products_info[product_id.product_id.id]
                                             line_vals = {
                                                 'invoice_id': invoice_obj.id,
                                                 'product_id': product_id.product_id.id,
                                                 'quantity': product_id.qty_done,
-                                                'price_unit':
-                                                    products_info[product_id.product_id.id]['price_unit'],
-                                                'discount':
-                                                    products_info[product_id.product_id.id]['discount'],
-                                                'account_id':
-                                                    products_info[product_id.product_id.id]['account_id'],
-                                                'name':
-                                                    products_info[product_id.product_id.id]['name']
+                                                'price_unit': product_info['price_unit'],
+                                                'discount': product_info['discount'],
+                                                'account_id': product_info['account_id'],
+                                                'name': product_info['name']
                                             }
                                             line_obj = self.env['account.invoice.line'].sudo().create(
                                                 line_vals
