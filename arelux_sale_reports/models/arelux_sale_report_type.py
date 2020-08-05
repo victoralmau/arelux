@@ -141,5 +141,5 @@ class AreluxSaleReportType(models.Model):
         sale_order_ids = self.env['sale.order'].search(search_filters)
         amount_untaxed = sum(sale_order_ids.mapped('amount_untaxed'))
         response['result_value'] = amount_untaxed
-        response['result'] = amount_untaxed        
+        response['result'] = amount_untaxed
         return response

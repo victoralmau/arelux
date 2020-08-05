@@ -10,6 +10,7 @@
     "license": "AGPL-3",
     "depends": [
         "mail_activity_objective",  # https://github.com/OdooNodrizaTech/mail
+        "crm_claim",  # https://github.com/OdooNodrizaTech/crm
         "sale_arelux"
     ],
     "data": [

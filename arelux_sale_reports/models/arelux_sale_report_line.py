@@ -317,7 +317,7 @@ class AreluxSaleReportLine(models.Model):
                 if order_ids:
                     ticket_medio = (amount_untaxed/len(order_ids))
 
-                ticket_medio = "{0:.2f}".format(ticket_medio)                                        
+                ticket_medio = "{0:.2f}".format(ticket_medio)
                 return_values['ticket_medio'] = ticket_medio
                 # remove_all
                 self.remove_all_user_line()
@@ -332,7 +332,7 @@ class AreluxSaleReportLine(models.Model):
                         if res_user['count'] > 0:
                             vals['amount_untaxed'] = \
                                 (res_user['amount_untaxed']/res_user['count'])
-                        
+
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
 
         elif custom_type == 'sale_order_sent_count':
@@ -604,7 +604,7 @@ class AreluxSaleReportLine(models.Model):
                             'count': res_user['count']
                         }
                         self.env['arelux.sale.report.line.user'].sudo().create(vals)
-        
+
         elif custom_type == 'cartera_actual_count':
             filters = [
                 ('type', '=', 'contact'),
@@ -753,25 +753,25 @@ class AreluxSaleReportLine(models.Model):
                     self.env['arelux.sale.report.line.sale.order'].sudo().create(vals)
 
         return return_values
-    
+
     @api.multi
     def _get_line_info(self):
         self.ensure_one()
         if self.arelux_sale_report_type_id:
             if self.arelux_sale_report_type_id.custom_type == 'ratio_muestras':
                 if not self.group_by_user:
-                    res_so_muestras = self._get_line_info_real(
+                    res_1 = self._get_line_info_real(
                         'sale_order_done_muestras'
                     )[0]
-                    res_so_sent = self._get_line_info_real(
+                    res_2 = self._get_line_info_real(
                         'sale_order_sent_count'
                     )[0]
                     self.response_type = 'percent'
                     ratio = 0
-                    if res_so_muestras['count'] > 0 \
-                            and res_so_sent['count'] > 0:
-                        ratio = (float(res_so_muestras['count'])/float(res_so_sent['count']))*100
-                    
+                    if res_1['count'] > 0 \
+                            and res_2['count'] > 0:
+                        ratio = (float(res_1['count'])/float(res_2['count']))*100
+
                     self.response_result_value = "{0:.2f}".format(ratio)
                 else:
                     self.response_type = 'percent'
@@ -780,24 +780,24 @@ class AreluxSaleReportLine(models.Model):
             elif self.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
                 if not self.group_by_user:
                     self.response_type = 'percent'
-                    res_so_done = self._get_line_info_real(
+                    res_1 = self._get_line_info_real(
                         'sale_order_done_count'
                     )[0]
-                    res_so_sent = self._get_line_info_real(
+                    res_2 = self._get_line_info_real(
                         'sale_order_sent_count'
                     )[0]
                     ratio = 0
-                    if res_so_done['count'] > 0 \
-                            and res_so_sent['count'] > 0:
-                        ratio = (float(res_so_done['count'])/float(res_so_sent['count']))*100
+                    if res_1['count'] > 0 \
+                            and res_2['count'] > 0:
+                        ratio = (float(res_1['count'])/float(res_2['count']))*100
 
                     self.response_result_value = "{0:.2f}".format(ratio)
                 else:
                     self.response_type = 'percent'
                     self.response_result_value = 'percent'
-                    
+
             elif self.arelux_sale_report_type_id.custom_type == 'line_break':
-                self.response_type = 'line_break'                                           
+                self.response_type = 'line_break'
             else:
                 res = self._get_line_info_real(
                     self.arelux_sale_report_type_id.custom_type

@@ -2,7 +2,7 @@
 
 import logging
 from odoo import api, models, fields
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning as UserError
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import pytz
@@ -14,7 +14,7 @@ class CrmLead(models.Model):
 
     activities_count = fields.Integer(
         compute='_compute_activities_count',
-        string="Actividades",        
+        string="Actividades",
     )
     crm_activity_ids = fields.One2many(
         'crm.activity.report',
@@ -22,20 +22,20 @@ class CrmLead(models.Model):
         string='Actividades'
     )
     currency_id = fields.Many2one(
-        'res.currency', 
+        'res.currency',
         string='Currency',
         default=lambda self: self.env.user.company_id.currency_id
-    )                
+    )
     partner_id_total_sale_order = fields.Integer(
         compute='_partner_id_total_sale_order',
-        string="Nº Pedidos (cliente)",        
+        string="Nº Pedidos (cliente)",
     )
     total_sale_order = fields.Integer(
         string="Nº Pedidos (oport)",
         help="Nº pedidos > 300€ de ese cliente (Flujo)",
         default=0,
         readonly=True
-    )    
+    )
     total_sale_order_last_30_days = fields.Integer(
         string="Nº pedidos 30 dias",
         help="Nº pedidos (>300€) de los ultimos 30 dias",
@@ -75,7 +75,8 @@ class CrmLead(models.Model):
     )
     days_from_last_message = fields.Integer(
         string="Dias desde contacto",
-        help="Nº de dias desde el ultimo contacto (Generalmente mensaje enviado como remitente el comercial)",
+        help="Nº de dias desde el ultimo contacto (Generalmente "
+             "mensaje enviado como remitente el comercial)",
         default=0,
         readonly=True
     )
@@ -89,129 +90,135 @@ class CrmLead(models.Model):
     def _compute_activities_count(self):
         for item in self:
             item.activities_count = len(item.crm_activity_ids)
-    
+
     @api.multi
     @api.depends('partner_id')
     def _partner_id_total_sale_order(self):
         for item in self:
             if item.partner_id:
                 item.partner_id_total_sale_order = item.partner_id.total_sale_order
-                
+
     @api.multi
     @api.depends('partner_id')
     def _partner_id_account_invoice_amount_untaxed_total(self):
         for item in self:
             if item.partner_id:
-                item.partner_id_account_invoice_amount_untaxed_total = item.partner_id.account_invoice_amount_untaxed_total
-            
-    @api.model    
+                item.partner_id_account_invoice_amount_untaxed_total = \
+                    item.partner_id.account_invoice_amount_untaxed_total
+
+    @api.model
     def cron_odoo_crm_lead_fields_generate(self):
-        _logger.info('sql_1 (total_sale_order,total_sale_order_last_30_days,total_sale_order_last_90_days, date_from_last_sale_order)')
         self._cr.execute("""
-            UPDATE crm_lead SET (total_sale_order, total_sale_order_last_30_days, total_sale_order_last_90_days, total_sale_order_last_12_months, date_from_last_sale_order) = (
-            	SELECT clr.total_sale_order, total_sale_order_last_30_days, total_sale_order_last_90_days, total_sale_order_last_12_months, last_date_order_management 
-            	FROM crm_lead_report AS clr 
-            	WHERE clr.lead_id = crm_lead.id
+            UPDATE crm_lead SET (total_sale_order, total_sale_order_last_30_days, 
+            total_sale_order_last_90_days, total_sale_order_last_12_months, 
+            date_from_last_sale_order) = (
+            SELECT clr.total_sale_order, total_sale_order_last_30_days, 
+            total_sale_order_last_90_days, total_sale_order_last_12_months, 
+            last_date_order_management 
+            FROM crm_lead_report AS clr 
+            WHERE clr.lead_id = crm_lead.id
             ) 
             WHERE crm_lead.id IN (
-            	SELECT clr2.lead_id 
-            	FROM crm_lead_report AS clr2 
-            	LEFT JOIN crm_lead AS cl ON clr2.lead_id = cl.id 
-            	WHERE (
-            		(cl.total_sale_order <> clr2.total_sale_order) 
-            		OR (cl.total_sale_order_last_30_days <> clr2.total_sale_order_last_30_days) 
-            		OR (cl.total_sale_order_last_90_days <> clr2.total_sale_order_last_90_days)
-                    OR (cl.total_sale_order_last_12_months  <> clr2.total_sale_order_last_12_months )                    
-            		OR (cl.date_from_last_sale_order IS NOT NULL AND cl.date_from_last_sale_order <> clr2.last_date_order_management) 
-            		OR (cl.date_from_last_sale_order IS NULL AND clr2.last_date_order_management IS NOT NULL)
-            	) 
-            	LIMIT 1000
+            SELECT clr2.lead_id 
+            FROM crm_lead_report AS clr2 
+            LEFT JOIN crm_lead AS cl ON clr2.lead_id = cl.id 
+            WHERE (
+            (cl.total_sale_order <> clr2.total_sale_order) 
+            OR (cl.total_sale_order_last_30_days <> clr2.total_sale_order_last_30_days) 
+            OR (cl.total_sale_order_last_90_days <> clr2.total_sale_order_last_90_days)
+            OR (cl.total_sale_order_last_12_months  <> clr2.total_sale_order_last_12_months )                    
+            OR (cl.date_from_last_sale_order IS NOT NULL 
+            AND cl.date_from_last_sale_order <> clr2.last_date_order_management) 
+            OR (cl.date_from_last_sale_order IS NULL AND clr2.last_date_order_management IS NOT NULL)
+            ) 
+            LIMIT 1000
             )
         """)
-        _logger.info('sql_2 (account_invoice_amount_untaxed_total)')
         self._cr.execute("""
             UPDATE crm_lead SET (account_invoice_amount_untaxed_total) = (
-            	SELECT ROUND((clair.amount_untaxed_total_out_invoice-clair.amount_untaxed_total_out_refund)::numeric,2)::float 
-            	FROM crm_lead_account_invoice_report AS clair 
-            	WHERE clair.lead_id = crm_lead.id
+            SELECT ROUND((clair.amount_untaxed_total_out_invoice-
+            clair.amount_untaxed_total_out_refund)::numeric,2)::float 
+            FROM crm_lead_account_invoice_report AS clair 
+            WHERE clair.lead_id = crm_lead.id
             ) 
             WHERE crm_lead.id IN (
-            	SELECT clair2.lead_id 
-                FROM crm_lead_account_invoice_report AS clair2 
-                LEFT JOIN crm_lead AS cl ON clair2.lead_id = cl.id 
-                WHERE (clair2.amount_untaxed_total_out_invoice IS NOT NULL OR clair2.amount_untaxed_total_out_refund IS NOT NULL) 
-                AND (
-                	(
-                	cl.account_invoice_amount_untaxed_total IS NOT NULL
-                	AND (ROUND((clair2.amount_untaxed_total_out_invoice-clair2.amount_untaxed_total_out_refund)::numeric,2)::float <> cl.account_invoice_amount_untaxed_total)
-                	)
-                	OR cl.account_invoice_amount_untaxed_total IS NULL
-                ) 
-            	LIMIT 1000
+            SELECT clair2.lead_id 
+            FROM crm_lead_account_invoice_report AS clair2 
+            LEFT JOIN crm_lead AS cl ON clair2.lead_id = cl.id 
+            WHERE (clair2.amount_untaxed_total_out_invoice IS NOT NULL 
+            OR clair2.amount_untaxed_total_out_refund IS NOT NULL) 
+            AND (
+            (
+            cl.account_invoice_amount_untaxed_total IS NOT NULL
+            AND (ROUND((clair2.amount_untaxed_total_out_invoice-
+            clair2.amount_untaxed_total_out_refund)::numeric,2)::float <> cl.account_invoice_amount_untaxed_total)
             )
-        """)        
-        _logger.info('sql_3 (date_from_last_message)')
+            OR cl.account_invoice_amount_untaxed_total IS NULL
+            ) 
+            LIMIT 1000
+            )
+        """)
         self._cr.execute("""
-        	SELECT clmmr2.lead_id, clmmr2.date 
-        	FROM crm_lead_mail_message_report AS clmmr2 
-        	LEFT JOIN crm_lead AS cl ON clmmr2.lead_id = cl.id 
-        	WHERE (
-        		(cl.date_from_last_message IS NOT NULL AND clmmr2.date  <> cl.date_from_last_message) 
-        		OR (cl.date_from_last_message IS NULL AND clmmr2.date IS NOT NULL)
-        	)
-            AND clmmr2.lead_id > 0
-        	LIMIT 1000            
+        SELECT clmmr2.lead_id, clmmr2.date 
+        FROM crm_lead_mail_message_report AS clmmr2 
+        LEFT JOIN crm_lead AS cl ON clmmr2.lead_id = cl.id 
+        WHERE (
+        (cl.date_from_last_message IS NOT NULL AND clmmr2.date  <> cl.date_from_last_message) 
+        OR (cl.date_from_last_message IS NULL AND clmmr2.date IS NOT NULL)
+        )
+        AND clmmr2.lead_id > 0
+        LIMIT 1000            
         """)
         items = self._cr.fetchall()
-        if len(items)>0:
+        if len(items) > 0:
             for item in items:
-                self._cr.execute("""UPDATE crm_lead SET date_from_last_message = '"""+str(item[1])+"""' WHERE id = """+str(item[0]))                
-        
-        _logger.info('sql_4 (mobile, phone)')
+                sql_item = "UPDATE crm_lead SET date_from_last_message ='%s' WHERE id = %s" % (
+                    item[1],
+                    item[0]
+                )
+                self._cr.execute(sql_item)
+
         self._cr.execute("""                
             UPDATE crm_lead SET (mobile, phone) = (
-            	SELECT rp.mobile, rp.phone
-            	FROM res_partner AS rp
-            	WHERE crm_lead.partner_id = rp.id
+            SELECT rp.mobile, rp.phone
+            FROM res_partner AS rp
+            WHERE crm_lead.partner_id = rp.id
             ) 
             WHERE crm_lead.id IN (
-            	SELECT cl.id 
-            	FROM crm_lead AS cl
-            	LEFT JOIN res_partner AS rp ON cl.partner_id = rp.id
-            	WHERE cl.partner_id IS NOT NULL
-            	AND (rp.mobile IS NOT NULL OR rp.phone IS NOT NULL)
-            	AND (
-            		(rp.mobile IS NOT NULL AND cl.mobile IS NULL)
-            		OR (rp.mobile IS NOT NULL AND cl.mobile IS NOT NULL AND rp.mobile <> cl.mobile)
-            		OR (rp.phone IS NOT NULL AND cl.phone IS NULL)
-            		OR (rp.phone IS NOT NULL AND cl.phone IS NOT NULL AND rp.phone <> cl.phone)
-            	) 
-            	LIMIT 1000
+            SELECT cl.id 
+            FROM crm_lead AS cl
+            LEFT JOIN res_partner AS rp ON cl.partner_id = rp.id
+            WHERE cl.partner_id IS NOT NULL
+            AND (rp.mobile IS NOT NULL OR rp.phone IS NOT NULL)
+            AND (
+            (rp.mobile IS NOT NULL AND cl.mobile IS NULL)
+            OR (rp.mobile IS NOT NULL AND cl.mobile IS NOT NULL AND rp.mobile <> cl.mobile)
+            OR (rp.phone IS NOT NULL AND cl.phone IS NULL)
+            OR (rp.phone IS NOT NULL AND cl.phone IS NOT NULL AND rp.phone <> cl.phone)
+            ) 
+            LIMIT 1000
             )
         """)            
-        
-    @api.model    
+
+    @api.model
     def cron_odoo_crm_lead_fields_generate_days(self):
-        _logger.info('cron_odoo_crm_lead_fields_generate_days')
-        _logger.info('sql_1 (days_from_last_sale_order)')
         self._cr.execute("""
             UPDATE crm_lead SET (days_from_last_sale_order) = (
-            	SELECT(NOW()::date - cl.date_from_last_sale_order) 
-            	FROM crm_lead AS cl 
-            	WHERE cl.id = crm_lead.id
+            SELECT(NOW()::date - cl.date_from_last_sale_order) 
+            FROM crm_lead AS cl 
+            WHERE cl.id = crm_lead.id
             ) 
             WHERE crm_lead.date_from_last_sale_order IS NOT NULL
-        """)  
-        _logger.info('sql_2 (days_from_last_message)')
+        """)
         self._cr.execute("""
             UPDATE crm_lead SET (days_from_last_message) = (
-            	SELECT(NOW()::date - cl.date_from_last_message) 
-            	FROM crm_lead AS cl 
-            	WHERE cl.id = crm_lead.id
+            SELECT(NOW()::date - cl.date_from_last_message) 
+            FROM crm_lead AS cl 
+            WHERE cl.id = crm_lead.id
             ) 
             WHERE crm_lead.date_from_last_message IS NOT NULL
-        """)        
-    
+        """)
+
     @api.model    
     def cron_odoo_crm_lead_change_empty_next_activity_objective_id(self):
         _logger.info('cron_odoo_crm_lead_change_empty_next_activity_objective_id')

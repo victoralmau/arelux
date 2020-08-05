@@ -33,7 +33,7 @@ class ExternalSaleOrder(models.Model):
               'cliente NO tiene PAIS mapeado')
             % self.sale_order_id.name
         )
-        
+
     @api.multi
     def action_so_done_error_esa_id_without_country_state_id(self):
         self.ensure_one()
@@ -42,7 +42,7 @@ class ExternalSaleOrder(models.Model):
               'cliente NO tiene PROVINCIA mapeada')
             % self.sale_order_id.name
         )
-    
+
     @api.multi
     def action_sale_order_done(self):
         self.ensure_one()
@@ -54,13 +54,13 @@ class ExternalSaleOrder(models.Model):
                     if line.product_id:
                         if line.product_uom_qty > 0:
                             if line.product_id.weight > 0:
-                                weight_item = line.product_id.weight*line.product_uom_qty
-                                weight_total += weight_item
+                                weight = line.product_id.weight*line.product_uom_qty
+                                weight_total += weight
                 # operations
                 if self.external_source_id:
                     es = self.external_source_id
-                    if self.external_source_id.external_sale_order_carrier_id:
-                        es_esoc = self.external_source_id.external_sale_order_carrier_id
+                    if es.external_sale_order_carrier_id:
+                        es_esoc = es.external_sale_order_carrier_id
                         if weight_total <= 10:
                             self.sale_order_id.carrier_id = es_esoc.id
         # check country_id and state_id
@@ -72,7 +72,7 @@ class ExternalSaleOrder(models.Model):
                 allow_confirm = False
             if self.external_shipping_address_id.country_state_id.id == 0:
                 self.action_so_done_error_esa_id_without_country_state_id()
-                allow_confirm = False                
+                allow_confirm = False
         # allow_confirm
         if allow_confirm:
             return super(ExternalSaleOrder, self).action_sale_order_done()

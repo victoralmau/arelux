@@ -117,7 +117,7 @@ class CrmLead(models.Model):
                         raise UserError(
                             _('The expected closure cannot be more than 90 '
                               'days or prior to the current date (%s) when creating')
-                            % days_difference
+                            % days_diff
                         )
         # operations
         if allow_create:
@@ -137,17 +137,18 @@ class CrmLead(models.Model):
                               'to be able to create the flow')
                         )
                     else:
-                        current_date = fields.Datetime.from_string(
+                        now_date = fields.Datetime.from_string(
                             str(datetime.today().strftime("%Y-%m-%d"))
                         )
-                        dd = values.get('date_deadline')
-                        days_diff = (fields.Datetime.from_string(dd) - current_date).days
+                        dd = vals.get('date_deadline')
+                        days_diff = (fields.Datetime.from_string(dd) - now_date).days
                         if days_diff > 90:
                             allow_write = False
                             raise UserError(
                                 _('The expected closure cannot be more than 90 '
-                                  'days or prior to the current date (%s) when creating')
-                                % days_difference
+                                  'days or prior to the current date (%s) '
+                                  'when creating')
+                                % days_diff
                             )
             # operations
             if allow_write:

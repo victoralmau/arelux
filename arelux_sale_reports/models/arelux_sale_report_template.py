@@ -49,7 +49,7 @@ class AreluxSaleReportTemplate(models.Model):
         copy=True
     )
 
-    @api.model    
+    @api.model
     def cron_generate_automatic_arelux_sale_report(self):
         current_date = datetime.today()
         template_ids = self.env['arelux.sale.report.template'].search(
