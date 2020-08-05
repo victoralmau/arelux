@@ -15,9 +15,11 @@ class ExternalCustomer(models.Model):
             if self.external_source_id:
                 es = self.external_source_id
                 # ar_qt_activity_type
-                self.partner_id.ar_qt_activity_type = es.external_customer_ar_qt_activity_type
+                self.partner_id.ar_qt_activity_type = \
+                    es.external_customer_ar_qt_activity_type
                 # ar_qt_customer_type
-                self.partner_id.ar_qt_customer_type = es.external_customer_ar_qt_customer_type
+                self.partner_id.ar_qt_customer_type = \
+                    es.external_customer_ar_qt_customer_type
                 # external_customer_res_partner_category_id
                 if es.external_customer_res_partner_category_id:
                     self.partner_id.category_id = [

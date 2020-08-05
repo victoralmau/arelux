@@ -249,7 +249,10 @@ class AreluxSaleReport(models.Model):
             metric_info = metrics_info[metrics_info_key]
             metrics_info_sorted.append(metric_info)
 
-        metrics_info_sorted = sorted(metrics_info_sorted, key=operator.itemgetter('position'))            
+        metrics_info_sorted = sorted(
+            metrics_info_sorted,
+            key=operator.itemgetter('position')
+        )
 
         return metrics_info_sorted
 
@@ -290,7 +293,9 @@ class AreluxSaleReport(models.Model):
                         )
                         if line_ids:
                             for user_line in line_ids[0].user_line:
-                                numerador_by_user_id[user_line.user_id.id] = user_line.count
+                                numerador_by_user_id[
+                                    user_line.user_id.id
+                                ] = user_line.count
                         # denominador
                         line_ids = self.env['arelux.sale.report.line'].search(
                             [
@@ -304,7 +309,9 @@ class AreluxSaleReport(models.Model):
                         )
                         if line_ids:
                             for user_line in line_ids[0].user_line:
-                                denominador_by_user_id[user_line.user_id.id] = user_line.count
+                                denominador_by_user_id[
+                                    user_line.user_id.id
+                                ] = user_line.count
                     elif line.arelux_sale_report_type_id.custom_type == 'ratio_calidad':
                         # numerador
                         line_ids = self.env['arelux.sale.report.line'].search(
@@ -319,7 +326,9 @@ class AreluxSaleReport(models.Model):
                         )
                         if line_ids:
                             for user_line in line_ids[0].user_line:
-                                numerador_by_user_id[user_line.user_id.id] = user_line.count                                
+                                numerador_by_user_id[
+                                    user_line.user_id.id
+                                ] = user_line.count
                         # denominador
                         line_ids = self.env['arelux.sale.report.line'].search(
                             [
@@ -333,7 +342,9 @@ class AreluxSaleReport(models.Model):
                         )
                         if line_ids:
                             for user_line in line_ids[0].user_line:
-                                denominador_by_user_id[user_line.user_id.id] = user_line.count                                                                                        
+                                denominador_by_user_id[
+                                    user_line.user_id.id
+                                ] = user_line.count
                     # operations
                     for numerador_by_user_id_real in numerador_by_user_id:
                         if numerador_by_user_id_real not in user_ids:
@@ -347,17 +358,17 @@ class AreluxSaleReport(models.Model):
                     line.remove_all_user_line()
                     # calculate
                     for user_id in user_ids:
-                        numerador_user_line = 0
+                        numerador = 0
                         if user_id in numerador_by_user_id:
-                            numerador_user_line = numerador_by_user_id[user_id]
+                            numerador = numerador_by_user_id[user_id]
                             
-                        denominador_user_line = 0
+                        denominador = 0
                         if user_id in denominador_by_user_id:
-                            denominador_user_line = denominador_by_user_id[user_id]
+                            denominador = denominador_by_user_id[user_id]
                             
                         percent_item = 0
-                        if numerador_user_line > 0 and denominador_user_line > 0:
-                            percent_item = (float(numerador_user_line)/float(denominador_user_line))*100  
+                        if numerador > 0 and denominador > 0:
+                            percent_item = (float(numerador)/float(denominador))*100
             
                         percent_item = "{0:.2f}".format(percent_item)
                         # add_report_line_user
@@ -386,7 +397,7 @@ class AreluxSaleReport(models.Model):
                 vals = {
                     'record_name': self.name,                                                                                                                                                                                           
                 }
-                message_obj = self.env['mail.compose.message'].with_context().sudo().create(vals)
+                message_obj = self.env['mail.compose.message'].sudo().create(vals)
                 res = message_obj.onchange_template_id(
                     mail_template_item.id,
                     'comment',
