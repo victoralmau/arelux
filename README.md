@@ -1,3 +1,4 @@
+[![Build Status](https://runbot.nodrizatech.com/runbot/badge/15/12.0.svg)](https://runbot.nodrizatech.com/runbot/repo/https-github-com-odoonodrizatech-arelux-15)
 [![Build Status](https://travis-ci.org/OdooNodrizaTech/arelux.svg?branch=12.0)](https://travis-ci.org/OdooNodrizaTech/arelux)
 [![codecov](https://codecov.io/gh/OdooNodrizaTech/arelux/branch/12.0/graph/badge.svg)](https://codecov.io/gh/OdooNodrizaTech/arelux)
 
