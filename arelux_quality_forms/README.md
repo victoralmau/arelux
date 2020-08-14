@@ -1,10 +1,9 @@
 El módulo contiene el desarrollo implementar los formularios de calidad e Informes.
 
 ## Parámetros de configuración
-```
-maintenance_installation_job_nodriza_manager_user_id
-maintenance_installation_job_logistic_operator_user_id
-``` 
+- maintenance_installation_job_nodriza_manager_user_id
+- maintenance_installation_job_logistic_operator_user_id
+
 ## Informes
 Se recomienda cambiar el formato del papel de los reportes a A4 Apaisado (Landscape) para una correcta visualización.
 
