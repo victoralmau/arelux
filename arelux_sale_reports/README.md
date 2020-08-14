@@ -1,9 +1,7 @@
 El módulo contiene el desarrollo que permite crear y gestionar plantillas de reportes y crear reportes automáticamente en base a ellas.
 
 ## Parámetros de configuración
-```
-arelux_sale_report_mail_template_id
-``` 
+- arelux_sale_report_mail_template_id
 
 ### arelux.sale.report.template
 id | name | active | custom_type | show_in_table_format
