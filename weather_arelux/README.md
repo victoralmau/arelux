@@ -1,13 +1,11 @@
 El módulo implementa cosas respecto al "servicio del tiempo"
 
 ## odoo.conf
-```
-aws_access_key_id=xxxx
-aws_secret_key_id=xxxx
-aws_region_name=eu-west-1
-weather_api_endpoint=https://api.grupoarelux.com/prod/
-weather_api_x_api_key=xxxxx
-``` 
+- aws_access_key_id=xxxx
+- aws_secret_key_id=xxxx
+- aws_region_name=eu-west-1
+- weather_api_endpoint=https://api.grupoarelux.com/prod/
+- weather_api_x_api_key=xxxxx
 
 ## Crones
 
