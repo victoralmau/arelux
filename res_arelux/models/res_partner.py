@@ -2,7 +2,7 @@
 from odoo import api, models, fields, _
 from odoo.exceptions import Warning as UserError
 from odoo.exceptions import ValidationError
-import re
+from validate_email import validate_email
 
 
 class ResPartner(models.Model):
@@ -57,12 +57,11 @@ class ResPartner(models.Model):
                                 _('The NIF already exists for another contact')
                             )
         # check_email
-        pat = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
         if allow_write:
             if 'email' in vals:
                 if vals['email'] != '':
-                    match = re.match(pat, vals['email'])
-                    if match is None:
+                    is_valid = validate_email(vals['email'])
+                    if not is_valid:
                         allow_write = False
                         raise ValidationError(_('Email incorrect'))
         # return
