@@ -2,7 +2,7 @@ El módulo contiene el desarrollo que permite realizar toda la integración resp
 
  
 ## Parámetros de configuración
-- slack_arelux_report_channel 
+- slack_arelux_report_channel
 
 ## Cron
 

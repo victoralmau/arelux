@@ -8,4 +8,4 @@ Partiendo del addon slack_sale y arelux_partner_questionnaire se diferencian ent
 - slack_sale_order_confirm_todocesped
 - slack_sale_order_confirm_arelux
 - slack_sale_order_confirm_with_claim_todocesped
-- slack_sale_order_confirm_with_claim_arelux 
+- slack_sale_order_confirm_with_claim_arelux
