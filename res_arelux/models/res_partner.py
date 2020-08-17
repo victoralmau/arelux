@@ -17,20 +17,20 @@ class ResPartner(models.Model):
 
     @api.constrains("email")
     def _check_email_valid(self):
-        for record in self:
-            if not record.email:
+        for item in self:
+            if not item.email:
                 continue
-            test_condition = config["test_enable"] and not self.env.context.get(
+            test_condition = tools.config["test_enable"] and not self.env.context.get(
                 "test_email"
             )
             if test_condition:
                 continue
 
-            if record.email:
-                is_valid = validate_email(vals['email'])
+            if item.email:
+                is_valid = validate_email(item['email'])
                 if not is_valid:
                     raise ValidationError(
-                        _("Email &s incorrect'") % record.email
+                        _("Email &s incorrect'") % item.email
                     )
 
     @api.multi
