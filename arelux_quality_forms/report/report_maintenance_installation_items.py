@@ -5,6 +5,7 @@ from odoo import api, models
 
 class ReportMaintenanceInstallationItems(models.AbstractModel):
     _name = 'report.arelux_quality_forms.maintenance_installation_items'
+    _description = 'Report Arelux quality forms maintenance installation items'
 
     @api.model
     def render_html(self, docids, data=None):

@@ -5,6 +5,7 @@ from odoo import api, models
 
 class ReportWasteRemoveItems(models.AbstractModel):
     _name = 'report.arelux_quality_forms.waste_remove_items'
+    _description = 'Report Arelux quality forms waste remove items'
 
     @api.model
     def render_html(self, docids, data=None):
