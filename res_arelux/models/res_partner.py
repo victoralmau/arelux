@@ -27,7 +27,12 @@ class ResPartner(models.Model):
                 continue
 
             if item.email:
-                is_valid = validate_email(item['email'])
+                is_valid = validate_email(
+                    item['email'],
+                    check_regex=False,
+                    check_mx=False,
+                    use_blacklist=False
+                )
                 if not is_valid:
                     raise ValidationError(
                         _("Email &s incorrect'") % item.email
