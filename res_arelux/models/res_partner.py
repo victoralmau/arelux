@@ -1,5 +1,5 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, fields, _
+from odoo import api, models, fields, tools, _
 from odoo.exceptions import Warning as UserError
 from odoo.exceptions import ValidationError
 from validate_email import validate_email
