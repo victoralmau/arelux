@@ -27,7 +27,7 @@ class ResPartnerReasonBuy(models.Model):
             ('particular', 'Particular'),
             ('profesional', 'Profesional'),
         ],
-        string='Empresa',
+        string='Customer type',
         default='particular'
     )
     position = fields.Integer(
