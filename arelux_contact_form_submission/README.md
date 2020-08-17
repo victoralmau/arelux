@@ -5,7 +5,7 @@ Realiza el proceso de creación de contacto, leads, presupuestos y envío de ema
 - aws_secret_key_id=xxxxx
 - aws_region_name=eu-west-1
 - #arelux_contact_form_submission
-- sqs_contact_form_submission_url=https://sqs.eu-west-1.amazonaws.com/381857310472/arelux-odoo_dev-command-contact-form-submission-create 
+- sqs_contact_form_submission_url=https://sqs.eu-west-1.amazonaws.com/381857310472/arelux-odoo_dev-command-contact-form-submission-create
 
 ## Crones
 
