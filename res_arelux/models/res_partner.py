@@ -2,7 +2,6 @@
 from odoo import api, models, fields, _
 from odoo.exceptions import Warning as UserError
 from odoo.exceptions import ValidationError
-from validate_email import validate_email
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -63,11 +62,11 @@ class ResPartner(models.Model):
         if allow_write:
             if 'email' in vals:
                 if vals['email'] != '':
-                    is_valid = validate_email(
-                        email_address=vals['email'],
-                        check_regex=True
+                    match = re.match(
+                        '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                        vals['email']
                     )
-                    if not is_valid:
+                    if match is None:
                         allow_write = False
                         raise ValidationError(_('Email incorrect'))
         # return
