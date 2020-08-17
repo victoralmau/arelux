@@ -15,6 +15,24 @@ class ResPartner(models.Model):
         string='Propuesta trae a un amigo'
     )
 
+    @api.constrains("email")
+    def _check_email_valid(self):
+        for record in self:
+            if not record.email:
+                continue
+            test_condition = config["test_enable"] and not self.env.context.get(
+                "test_email"
+            )
+            if test_condition:
+                continue
+
+            if record.email:
+                is_valid = validate_email(vals['email'])
+                if not is_valid:
+                    raise ValidationError(
+                        _("Email &s incorrect'") % record.email
+                    )
+
     @api.multi
     def write(self, vals):
         allow_write = True
@@ -56,14 +74,6 @@ class ResPartner(models.Model):
                             raise UserError(
                                 _('The NIF already exists for another contact')
                             )
-        # check_email
-        if allow_write:
-            if 'email' in vals:
-                if vals['email'] != '':
-                    is_valid = validate_email(vals['email'])
-                    if not is_valid:
-                        allow_write = False
-                        raise ValidationError(_('Email incorrect'))
         # return
         if allow_write:
             return super(ResPartner, self).write(vals)
