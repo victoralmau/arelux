@@ -27,6 +27,7 @@ install:
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - pip install unidecode
   - sudo apt-get install libgnutls28-dev
+  - sudo python -m pip install py3-validate-email
   - travis_install_nightly
 
 
