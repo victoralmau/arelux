@@ -128,7 +128,7 @@ Tipo de cliente (ventas importe)*:
 - >20000 y <=40000 (Cliente oro)
 - >40000 (Cliente diamante)
 
-*Todos los datos se analizan respecto a las ventas en número (count) o importe (sum BI)
+* Todos los datos se analizan respecto a las ventas en número (count) o importe (sum BI)
 
 Existe un cron definido: Arelux - Generar tipo cliente que se encarga de auto-definir el tipo de cliente según las ventas + Leads - Generar ar_qt_todocesped_pf_customer_type 
 
