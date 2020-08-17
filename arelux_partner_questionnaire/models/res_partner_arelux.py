@@ -251,7 +251,7 @@ class ResPartnerArelux(models.Model):
                     item.ar_qt_arelux_pr_ql_product_other_show = True
 
     ar_qt_arelux_pr_ql_product_other = fields.Char(
-        string='AR - Otro',
+        string='AR - Otro (Producto)',
         size=35
     )
     # 1b'
@@ -271,7 +271,7 @@ class ResPartnerArelux(models.Model):
             item._get_ar_qt_arelux_pr_reason_buy_other_show()
 
     ar_qt_arelux_pr_reason_buy_other = fields.Char(
-        string='AR - Otro',
+        string='AR - Otro (Razón para comprar)',
         size=35
     )
     ar_qt_arelux_pr_reason_buy_other_show = fields.Boolean(

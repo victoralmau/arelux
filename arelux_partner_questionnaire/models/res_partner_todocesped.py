@@ -230,10 +230,10 @@ class ResPartnerTodocesped(models.Model):
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'particular'))
         ],
-        string='TC - Que valora más',
+        string='TC - Quién valora más',
     )
     ar_qt_todocesped_pr_who_values_more_other = fields.Char(
-        string='TC - Que valora más - Otro',
+        string='TC - Quién valora más - Otro',
         size=35
     )
     ar_qt_todocesped_pr_who_values_more_other_show = fields.Boolean(
@@ -308,7 +308,7 @@ class ResPartnerTodocesped(models.Model):
             ('filter_company', 'in', ('all', 'todocesped')),
             ('filter_ar_qt_customer_type', 'in', ('all', 'profesional'))
         ],
-        string='TC - Que valora más',
+        string='TC - Que valora más ',
     )
 
     @api.multi
