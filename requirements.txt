@@ -1,2 +1,2 @@
 boto3
-py3-validate-email
+# py3-validate-email
