@@ -57,13 +57,19 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def check_message_follower_ids(self):
+        partner_ids_exclude = [
+            self.env.ref('base.res_partner_1').id,
+            self.env.ref('base.res_partner_2').id,
+            self.env.ref('base.res_partner_12').id
+        ]
         for item in self:
-            if item.user_id.id:
-                for message_follower_id in item.message_follower_ids:
-                    if message_follower_id.partner_id.user_ids:
-                        for user_id in message_follower_id.partner_id.user_ids:
-                            if user_id.id == item.user_id.id or user_id.id == 1:
-                                message_follower_id.sudo().unlink()
+            if item.partner_id.id not in partner_ids_exclude:
+                if item.user_id.id:
+                    for message_follower_id in item.message_follower_ids:
+                        if message_follower_id.partner_id.user_ids:
+                            for user_id in message_follower_id.partner_id.user_ids:
+                                if user_id.id == item.user_id.id or user_id.id == 1:
+                                    message_follower_id.sudo().unlink()
 
     @api.multi
     def action_send_account_invoice_create_message_slack(self):
