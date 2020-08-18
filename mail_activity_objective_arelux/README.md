@@ -60,9 +60,9 @@ Resto de meses (Septiembre a Febrero incluidos):
 Nota: Cuando se indica (del cliente) quiere decir que esa información también existe y se calcula en el lead pudiendo ser distinta en el lead de en el cliente.
 Nota2: Este funcionamiento SOLO se aplica cuando hay definido un objetivo de siguiente actividad puesto que SIEMPRE debe estar uno definido (salvo que esté ganado o perdido el flujo).
 
-*Nº total pedidos: Nº pedidos >300€ en BI
-*Nº total pedidos últimos 30 días: Nº pedidos confirmados en los últimos 30 días >300€ en BI
-*Nº total pedidos últimos 90 días: Nº pedidos confirmados en los últimos 90 días >300€ en BI
+* Nº total pedidos: Nº pedidos >300€ en BI
+* Nº total pedidos últimos 30 días: Nº pedidos confirmados en los últimos 30 días >300€ en BI
+* Nº total pedidos últimos 90 días: Nº pedidos confirmados en los últimos 90 días >300€ en BI
 
 
 ### Odoo Crm Lead Change Inactivos

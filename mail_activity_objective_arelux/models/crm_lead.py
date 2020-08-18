@@ -13,7 +13,7 @@ class CrmLead(models.Model):
 
     activities_count = fields.Integer(
         compute='_compute_activities_count',
-        string="Actividades",
+        string="Actividades (count)",
     )
     crm_activity_ids = fields.One2many(
         'crm.activity.report',
@@ -22,7 +22,7 @@ class CrmLead(models.Model):
     )
     currency_id = fields.Many2one(
         'res.currency',
-        string='Currency',
+        string='Currency id',
         default=lambda self: self.env.user.company_id.currency_id
     )
     partner_id_total_sale_order = fields.Integer(

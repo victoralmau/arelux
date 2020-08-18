@@ -80,7 +80,7 @@ class AreluxAutomationProcess(models.Model):
     )
     mail_activity_type_id = fields.Many2one(
         comodel_name='mail.activity.type',
-        string='Activity type'
+        string='Mail Activity type'
     )
     mail_activity_date_deadline_days = fields.Integer(
         string='Activity date deadline days'

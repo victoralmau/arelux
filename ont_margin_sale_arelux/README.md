@@ -19,4 +19,4 @@ Omitimos el producto (277) > Mer4
 Definimos el margen por línea de pedido: price_subtotal - (purchase_price * qty_invoiced)
 Sumamos el margen de la línea al margen del pedido
 
-*Solo se calcula para los ptos con importe > 0€ y con estado 'Pedido de venta' o 'Bloqueado'
+* Solo se calcula para los ptos con importe > 0€ y con estado 'Pedido de venta' o 'Bloqueado'

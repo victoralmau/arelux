@@ -42,43 +42,46 @@ class ResPartner(models.Model):
     def write(self, vals):
         allow_write = True
         # check_dni
-        if self.type == 'contact' and self.parent_id.id == 0:
-            if 'vat' in vals:
-                if vals['vat']:
-                    vals['vat'] = vals['vat'].strip().replace(' ', '').upper()
+        for item in self:
+            if item.type == 'contact' and item.parent_id.id == 0:
+                if 'vat' in vals:
+                    if vals['vat']:
+                        vals['vat'] = vals['vat'].strip().replace(' ', '').upper()
 
-                    if self.country_id and self.country_id.code == 'ES':
-                        if '-' in vals['vat']:
-                            allow_write = False
-                            raise UserError(_('The NIF does not allow the character -'))
+                        if item.country_id and item.country_id.code == 'ES':
+                            if '-' in vals['vat']:
+                                allow_write = False
+                                raise UserError(
+                                    _('The NIF does not allow the character -')
+                                )
 
-                    if allow_write:
-                        if self.supplier:
-                            partner_ids = self.env['res.partner'].search(
-                                [
-                                    ('id', 'not in', (1, str(self.id))),
-                                    ('type', '=', 'contact'),
-                                    ('parent_id', '=', False),
-                                    ('supplier', '=', True),
-                                    ('vat', '=', vals['vat'])
-                                ]
-                            )
-                        else:
-                            partner_ids = self.env['res.partner'].search(
-                                [
-                                    ('id', 'not in', (1, str(self.id))),
-                                    ('type', '=', 'contact'),
-                                    ('parent_id', '=', False),
-                                    ('supplier', '=', False),
-                                    ('vat', '=', vals['vat'])
-                                ]
-                            )
+                        if allow_write:
+                            if item.supplier:
+                                partner_ids = self.env['res.partner'].search(
+                                    [
+                                        ('id', 'not in', (1, str(item.id))),
+                                        ('type', '=', 'contact'),
+                                        ('parent_id', '=', False),
+                                        ('supplier', '=', True),
+                                        ('vat', '=', vals['vat'])
+                                    ]
+                                )
+                            else:
+                                partner_ids = self.env['res.partner'].search(
+                                    [
+                                        ('id', 'not in', (1, str(item.id))),
+                                        ('type', '=', 'contact'),
+                                        ('parent_id', '=', False),
+                                        ('supplier', '=', False),
+                                        ('vat', '=', vals['vat'])
+                                    ]
+                                )
 
-                        if partner_ids:
-                            allow_write = False
-                            raise UserError(
-                                _('The NIF already exists for another contact')
-                            )
+                            if partner_ids:
+                                allow_write = False
+                                raise UserError(
+                                    _('The NIF already exists for another contact')
+                                )
         # return
         if allow_write:
             return super(ResPartner, self).write(vals)
