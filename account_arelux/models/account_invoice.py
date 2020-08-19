@@ -23,38 +23,14 @@ class AccountInvoice(models.Model):
     @api.model
     def create(self, values):
         obj = super(AccountInvoice, self).create(values)
-        # Fix payment_mode_id
-        if obj.payment_mode_id:
-            if obj.payment_mode_id.payment_method_id.mandate_required:
-                if obj.partner_id.bank_ids:
-                    for bank_id in obj.partner_id.bank_ids:
-                        if bank_id.mandate_ids:
-                            for mandate_id in bank_id.mandate_ids:
-                                if mandate_id.state == 'valid':
-                                    obj.mandate_id = mandate_id.id
-
-        partner_ids_exclude = [
-            self.env.ref('base.res_partner_1').id,
-            self.env.ref('base.res_partner_2').id,
-            self.env.ref('base.res_partner_12').id
-        ]
-        if obj.partner_id.id not in partner_ids_exclude:
-            obj.check_message_follower_ids()
+        self.check_message_follower_ids()
         return obj
 
     @api.multi
     def write(self, vals):
         # write
         return_object = super(AccountInvoice, self).write(vals)
-        # check_message_follower_ids
-        partner_ids_exclude = [
-            self.env.ref('base.res_partner_1').id,
-            self.env.ref('base.res_partner_2').id,
-            self.env.ref('base.res_partner_12').id
-        ]
-        for item in self:
-            if item.partner_id.id not in partner_ids_exclude:
-                item.check_message_follower_ids()
+        self.check_message_follower_ids()
         # return
         return return_object
 
