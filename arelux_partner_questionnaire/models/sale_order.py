@@ -59,14 +59,14 @@ class SaleOrder(models.Model):
     def write(self, vals):
         allow_write = True
         # fix validate template_id
-        if 'template_id' in vals:
-            if vals['template_id']:
-                template_id_check = vals['template_id']
-                template_obj = self.env['sale.order.template'].browse(
-                    template_id_check
+        if 'sale_order_template_id' in vals:
+            if vals['sale_order_template_id']:
+                sale_order_template_id_check = vals['sale_order_template_id']
+                sale_order_template_obj = self.env['sale.order.template'].browse(
+                    sale_order_template_id_check
                 )
-                if template_obj.ar_qt_activity_type:
-                    if template_obj.ar_qt_activity_type != self.ar_qt_activity_type:
+                if sale_order_template_obj.ar_qt_activity_type:
+                    if sale_order_template_obj.ar_qt_activity_type != self.ar_qt_activity_type:
                         allow_write = False
                         raise Warning(
                             _("La plantilla de presupuesto no corresponde con "

@@ -124,11 +124,11 @@ class SaleOrder(models.Model):
                     item.team_id = item.user_id.sale_team_id.id
 
     @api.multi
-    @api.onchange('template_id')
-    def change_template_id(self):
+    @api.onchange('sale_order_template_id')
+    def change_sale_order_template_id(self):
         for item in self:
-            if item.template_id:
-                if item.template_id.delivery_carrier_id:
-                    item.carrier_id = item.template_id.delivery_carrier_id
+            if item.sale_order_template_id:
+                if item.sale_order_template_id.delivery_carrier_id:
+                    item.carrier_id = item.sale_order_template_id.delivery_carrier_id
                 else:
                     item.carrier_id = False
