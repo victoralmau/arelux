@@ -10,8 +10,7 @@ class SaleOrder(models.Model):
     opportunity_id = fields.Many2one(
         comodel_name='crm.lead',
         string='Opportunity',
-        domain="[('type', '=', 'opportunity')]",
-        required=True
+        domain="[('type', '=', 'opportunity')]"
     )
     show_total = fields.Boolean(
         string='Mostrar total'

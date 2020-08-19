@@ -43,7 +43,13 @@ class AccountInvoice(models.Model):
                                                 values['mandate_id'] = mandate_id.id
         # create
         return_object = super(AccountInvoice, self).create(values)
-        self.check_message_follower_ids()
+        partner_ids_exclude = [
+            self.env.ref('base.res_partner_1').id,
+            self.env.ref('base.res_partner_2').id,
+            self.env.ref('base.res_partner_12').id
+        ]
+        if return_object.partner_id.id not in partner_ids_exclude:
+            self.check_message_follower_ids()
         return return_object
 
     @api.multi
@@ -51,7 +57,14 @@ class AccountInvoice(models.Model):
         # write
         return_object = super(AccountInvoice, self).write(vals)
         # check_message_follower_ids
-        self.check_message_follower_ids()
+        partner_ids_exclude = [
+            self.env.ref('base.res_partner_1').id,
+            self.env.ref('base.res_partner_2').id,
+            self.env.ref('base.res_partner_12').id
+        ]
+        for item in self:
+            if item.partner_id.id not in partner_ids_exclude:
+                item.check_message_follower_ids()
         # return
         return return_object
 
