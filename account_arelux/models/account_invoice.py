@@ -15,7 +15,7 @@ class AccountInvoice(models.Model):
         string='Date',
         copy=False,
         help="Leave empty to use the invoice date",
-        track_visibility='onchange',
+        track_visibility='always',
         readonly=True,
         states={'draft': [('readonly', False)]}
     )
