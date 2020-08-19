@@ -20,12 +20,6 @@ class AccountInvoice(models.Model):
         states={'draft': [('readonly', False)]}
     )
 
-    @api.model
-    def create(self, values):
-        obj = super(AccountInvoice, self).create(values)
-        self.check_message_follower_ids()
-        return obj
-
     @api.multi
     def write(self, vals):
         # write
