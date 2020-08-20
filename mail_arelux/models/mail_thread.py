@@ -7,7 +7,7 @@ class MailThread(models.AbstractModel):
     _inherit = 'mail.thread'
 
     @api.multi
-    def _message_auto_subscribe_notify(self, partner_ids):
+    def _message_auto_subscribe_notify(self, partner_ids, template):
         not_notify = False
         for item in self:
             if item._name == 'sale.order':
@@ -22,7 +22,7 @@ class MailThread(models.AbstractModel):
 
             if not not_notify:
                 return super(MailThread, self)._message_auto_subscribe_notify(
-                    partner_ids
+                    partner_ids, template
                 )
             else:
                 return False
