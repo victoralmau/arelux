@@ -68,18 +68,18 @@
             </field>            
         </field>                                                           
     </record>
-    <record id="sale_order_view_search_inherit_quotation_account_arelux" model="ir.ui.view">
-        <field name="name">sale_order_view_search_inherit_quotation_account_arelux</field>
+    <record id="view_sales_order_filter_account_arelux" model="ir.ui.view">
+        <field name="name">view_sales_order_filter_account_arelux</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation" />
+        <field name="inherit_id" ref="sale.view_sales_order_filter" />
         <field name="priority" eval="21"/>
         <field name="arch" type="xml">
-            <filter name="sales" position="before">
+            <filter name="my_sale_orders_filter" position="before">
                 <separator/>
                 <filter string="Total > 0" name="amount_untaxed_bigger_0" domain="[('amount_untaxed','>','0')]"/>
                 <filter string="Total = 0" name="amount_untaxed_equal_0" domain="[('amount_untaxed','=','0')]"/>
-                <separator/>                
-            </filter>                                                                                                                
+                <separator/>
+            </filter>
         </field>
-    </record>            
+    </record>
 </odoo>
